@@ -23,9 +23,10 @@ La voz añade una interfaz; no reemplaza a ninguno de los cuatro especialistas. 
 
 ## Estado comprobado y pendiente
 
-- Se inspeccionó F.R.I.D.A.Y: idioma español, modelo gpt-5-mini, LFT en la base de conocimiento y ninguna herramienta personalizada conectada en la rama compartida.
-- El enlace del responsable apunta a la rama RH-BYD, que al inspeccionarse tenía 0 % de tráfico; Main tenía 100 %. Un widget sin selección explícita de rama no acredita usar RH-BYD. Configurar y probar la rama y su despliegue antes de declarar conectada la web.
-- Se prepararon los dos workflows privados, las plantillas de herramientas y el prompt; no se han importado/publicado en la cuenta de n8n ni conectado las herramientas en ElevenLabs.
+- F.R.I.D.A.Y conserva español, modelo gpt-5-mini y el documento LFT. Se crearon consultar_estado_rh y consultar_saldo_rh con autenticación mediante secreto y URL de producción de n8n.
+- Jorge verificó en Preview la consulta del folio VAC-20261102-YTLSBKE8E (Aprobada, EMP-005, cuatro días) y el saldo de EMP-005 (seis días; periodo 2026-10-01 a 2027-09-30 después de corregir la lectura de fechas de calendario). Esta evidencia de Preview no sustituye la prueba desde Pages.
+- El widget no expone selección de rama en el código de inserción utilizado. Main mantiene el tráfico del widget y se le adjuntaron las dos herramientas probadas y las instrucciones de RH. La configuración se verificó por lectura de API; el borrador pendiente de RH-BYD no se modificó. No se cambió el reparto de tráfico.
+- El receptor de voz ya fue importado, autenticado y publicado por Jorge. El workflow de exportación del panel sigue pendiente de ejecutar. La primera prueba mostró un fallo al registrar auditoría; se corrigió la referencia de rh_trazas y luego la consulta respondió.
 - El HTML se revisó localmente a 390 y 1366 píxeles, sin desbordamiento horizontal en el estado vacío. El botón de voz queda deshabilitado sin consentimiento. No se inició una conversación ni se concedió micrófono durante esta revisión.
 - Pages quedó habilitado con GitHub Actions. La publicación se completó y la URL se abrió y verificó en el navegador. Se comprobó también una ejecución fallida deliberada que omitió el job de publicación. Ver enlaces abajo.
 - Primera exportación real, prueba de herramienta desde la página y medición de conversación: pendientes. No se sustituyen por respuestas de muestra.
