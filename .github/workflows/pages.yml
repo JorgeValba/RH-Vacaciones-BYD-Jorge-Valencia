@@ -1,0 +1,56 @@
+# Elaborado por: Jorge Valencia.
+name: Validar y publicar RH Vacaciones
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      publicar:
+        description: Publicar en Pages después de validar
+        type: boolean
+        default: false
+      prueba_bloqueo:
+        description: Forzar dato inválido para demostrar bloqueo de publicación
+        type: boolean
+        default: false
+permissions:
+  contents: read
+concurrency:
+  group: rh-pages
+  cancel-in-progress: true
+jobs:
+  validar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Comprobar skills reutilizables
+        run: node tests/skills.test.mjs
+      - name: Comprobar consultas de voz
+        run: node tests/voz.test.mjs
+      - name: Validar datos, cálculos y privacidad
+        run: node tests/validar_panel.mjs
+      - name: Falla deliberada de la puerta de publicación
+        if: ${{ inputs.prueba_bloqueo == true }}
+        run: node tests/validar_panel.mjs --forzar-fallo
+      - uses: actions/upload-pages-artifact@v4
+        with:
+          path: web
+  publicar:
+    if: ${{ github.event_name == 'workflow_dispatch' && inputs.publicar == true }}
+    needs: validar
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Preparar Pages
+        uses: actions/configure-pages@v5
+      - name: Publicar únicamente el artefacto validado
+        id: deployment
+        uses: actions/deploy-pages@v4
