@@ -27,7 +27,8 @@ La voz añade una interfaz; no reemplaza a ninguno de los cuatro especialistas. 
 - El enlace del responsable apunta a la rama RH-BYD, que al inspeccionarse tenía 0 % de tráfico; Main tenía 100 %. Un widget sin selección explícita de rama no acredita usar RH-BYD. Configurar y probar la rama y su despliegue antes de declarar conectada la web.
 - Se prepararon los dos workflows privados, las plantillas de herramientas y el prompt; no se han importado/publicado en la cuenta de n8n ni conectado las herramientas en ElevenLabs.
 - El HTML se revisó localmente a 390 y 1366 píxeles, sin desbordamiento horizontal en el estado vacío. El botón de voz queda deshabilitado sin consentimiento. No se inició una conversación ni se concedió micrófono durante esta revisión.
-- Primera exportación real, publicación en Pages, prueba de herramienta desde la página y medición de conversación: pendientes. No se sustituyen por respuestas de muestra.
+- Pages quedó habilitado con GitHub Actions. La publicación se completó y la URL se abrió y verificó en el navegador. Se comprobó también una ejecución fallida deliberada que omitió el job de publicación. Ver enlaces abajo.
+- Primera exportación real, prueba de herramienta desde la página y medición de conversación: pendientes. No se sustituyen por respuestas de muestra.
 - Vencimiento de EMP-004 y demostración específica de corrección V1 → V2 con el mismo caso_id: pendientes del proyecto general.
 
 ## Actualizar los indicadores
@@ -45,6 +46,8 @@ Unidad de observación: un folio único. Todos los filtros afectan simultáneame
 La gráfica de barras horizontales compara el número de casos por estado, desde cero. Etiquetas y cifras acompañan al color. No se supone ahorro de tiempo ni mejora de productividad sin medición. Un resumen sin exportación muestra guiones; una exportación válida vacía puede mostrar conteos cero.
 
 ## Actions y Pages
+
+Evidencia real: [publicación exitosa](https://github.com/JorgeValba/RH-Vacaciones-BYD-Jorge-Valencia/actions/runs/41396256574), [dato inválido que bloqueó la publicación](https://github.com/JorgeValba/RH-Vacaciones-BYD-Jorge-Valencia/actions/runs/41396056569) y [sitio público verificado](https://jorgevalba.github.io/RH-Vacaciones-BYD-Jorge-Valencia/). El sitio se publicó con el estado vacío documentado y la conexión de registros marcada como pendiente.
 
 El workflow pages.yml valida skills, consultas, esquema público y cálculos; sube solo web como artefacto. Un push ejecuta la validación. Para publicar, habilitar Pages con origen GitHub Actions y ejecutar el workflow manual marcando publicar. No marcar prueba_bloqueo en esa ejecución.
 
