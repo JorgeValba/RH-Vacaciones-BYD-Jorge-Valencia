@@ -1,7 +1,7 @@
 ---
 name: evaluar-vacaciones-byd
 description: Preparar una propuesta de vacaciones con saldo, cobertura y prima validados.
-version: 1.0.0
+version: 1.0.1
 ---
 # Evaluar vacaciones RH BYD
 Elaborado por: Jorge Valencia.
@@ -20,6 +20,11 @@ Tablas privadas rh_empleados, rh_calendario, rh_reglas, rh_aprobadas y rh_primas
 5. Identificar pagos previos que correspondan al mismo tramo y periodo. Importe parcial o excesivo requiere revisión según las reglas del flujo.
 6. El Agente 3 explica la propuesta; el Agente 4 verifica cifras exactas, fuentes y advertencias. El modelo no sustituye los cálculos.
 7. Devolver estado provisional, versión, vigencia, motivos y siguiente acción. La reserva solo se escribe después de una decisión humana válida y revalidación.
+## Alcance del Agente 2 — Consulta
+Tu tarea se limita a identificar los registros y fuentes disponibles para el caso. Verifica la solicitud ya validada, la existencia de registros.empleado y registros.regla, el resumen de calendario consultado, plantilla del equipo y fuentes_disponibles. Selecciona solo fuente_id incluidos en fuentes_disponibles.
+No solicites cálculos deterministas, saldo calculado, cobertura diaria ni prima bruta, cubierta o adicional para declarar datos_suficientes en esta etapa: su validación corresponde a Propuesta y Revisión y esos resultados se transfieren por otra parte del estado del flujo.
+No exijas detalles de reservas aprobadas que no forman parte de tu contrato de entrada ni confirmes su ausencia. No exijas registros de pagos si primas_pagadas_periodo es una lista vacía: significa que la consulta no encontró pagos para ese periodo, no que falten datos.
+Solo declara faltantes de tu contrato de consulta cuando estén ausentes, sean inválidos o contradictorios. No inventes valores, no calcules cifras ni confirmes viabilidad o aprobación. Con los registros anteriores válidos y fuentes autorizadas presentes, devuelve datos_suficientes=true, faltantes=[] y enumera lo efectivamente disponible; los controles de negocio posteriores siguen siendo obligatorios.
 ## Herramientas permitidas
 Lectura de tablas indicadas y función determinista del flujo; llamada LLM controlada para explicar o revisar. No escritura de reservas, aprobación, pagos ni navegación libre desde este skill.
 ## Límites y errores
