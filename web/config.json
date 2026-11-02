@@ -1,7 +1,7 @@
 {
   "autor": "Jorge Valencia",
   "agent_id": "agent_5201m5nm2h0zf9pat9j1whqzv691",
-  "conexion_registros_verificada": false,
+  "conexion_registros_verificada": true,
   "telegram_url": "https://t.me/HR_BYD_bot",
   "stale_hours": 24
 }
