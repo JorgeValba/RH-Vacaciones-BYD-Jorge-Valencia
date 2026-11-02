@@ -63,7 +63,7 @@ $('start-voice').addEventListener('click',async()=>{
   let script=document.querySelector('script[data-voice]');
   if(!script){script=document.createElement('script');script.dataset.voice='true';script.src='https://unpkg.com/@elevenlabs/convai-widget-embed';script.async=true;document.body.append(script);}
   await Promise.race([customElements.whenDefined('elevenlabs-convai'),new Promise((_,reject)=>setTimeout(()=>reject(Error('Tiempo agotado')),20000))]);
-  if(!$('voice-mount').children.length){const widget=document.createElement('elevenlabs-convai');widget.setAttribute('agent-id',config.agent_id);widget.setAttribute('dynamic-variables',JSON.stringify({company_name:'BYD México — escenario ficticio'}));widget.setAttribute('action-text','Hablar con F.R.I.D.A.Y');widget.setAttribute('start-call-text','Iniciar conversación');widget.setAttribute('end-call-text','Finalizar');widget.setAttribute('language','es');$('voice-mount').append(widget);}
+  if(!$('voice-mount').children.length){const widget=document.createElement('elevenlabs-convai');widget.setAttribute('agent-id',config.agent_id);widget.setAttribute('dynamic-variables',JSON.stringify({company_name:'BYD México — escenario ficticio'}));widget.setAttribute('action-text','Hablar con HR assistant BYD');widget.setAttribute('start-call-text','Iniciar conversación');widget.setAttribute('end-call-text','Finalizar');widget.setAttribute('language','es');$('voice-mount').append(widget);}
   if(!denied)set('voice-status','Asistente habilitado. Pulsa su botón de conversación para comenzar.');button.textContent='Asistente habilitado';
  }catch(e){set('voice-status','No fue posible cargar ElevenLabs. Intenta de nuevo o utiliza Telegram.');button.disabled=false;button.textContent='Reintentar asistente';}
 });
