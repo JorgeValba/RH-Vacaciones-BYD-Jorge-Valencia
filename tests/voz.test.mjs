@@ -12,6 +12,15 @@ const emp={empleado_id:'EMP-005',alias_ficticio:'Persona ficticia 05',periodo_in
 const reserve={aprobacion_id:'APR-TEST',empleado_id:'EMP-005',estado:'Aprobada',fecha_inicio:'2026-12-21T06:00:00Z',fecha_fin:'2026-12-24T06:00:00Z',dias_reservados:4};
 const rule={version:1,modo:'SIMULADO'};
 const before=JSON.stringify([emp,reserve,rule]);assert.equal(V.saldo({empleado_id:'EMP-005'},[emp],[reserve],[rule],Date.now()).saldo_disponible,6);assert.equal(JSON.stringify([emp,reserve,rule]),before);
+// Regresión: los periodos de calendario llegan desde n8n a medianoche UTC.
+const empUtc={...emp,periodo_inicio:'2026-10-01T00:00:00.000Z',periodo_fin:'2027-09-30T00:00:00.000Z'};
+const saldoUtc=V.saldo({empleado_id:'EMP-005'},[empUtc],[reserve],[rule],Date.now());
+assert.equal(saldoUtc.saldo_disponible,6);assert.equal(saldoUtc.periodo_inicio,'2026-10-01');assert.equal(saldoUtc.periodo_fin,'2027-09-30');
+assert.equal(V.fechaPeriodo('2026-02-30T00:00:00.000Z'),null);
+assert.equal(V.dia('2026-10-01T00:00:00.000Z'),'2026-09-30');
+assert.equal(V.fechaPeriodo('2026-10-01T06:00:00.000Z'),'2026-10-01');
+const reservaUltimoDia={...reserve,fecha_inicio:'2027-09-30T06:00:00Z',fecha_fin:'2027-09-30T06:00:00Z',dias_reservados:1};
+assert.equal(V.saldo({empleado_id:'EMP-005'},[empUtc],[reservaUltimoDia],[rule],Date.now()).saldo_disponible,9);
 assert.equal(V.saldo({empleado_id:'EMP-005'},[emp],[reserve,reserve],[rule],Date.now()).ok,false);
 assert.equal(V.saldo({empleado_id:'EMP-005'},[emp],[],[rule,rule],Date.now()).ok,false);
 assert.equal(V.saldo({empleado_id:'EMP-005'},[{...emp,alias_ficticio:'Nombre real'}],[],[rule],Date.now()).ok,false);
