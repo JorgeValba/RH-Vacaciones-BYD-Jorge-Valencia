@@ -39,7 +39,7 @@ jobs:
         with:
           path: web
   publicar:
-    if: ${{ github.event_name == 'workflow_dispatch' && inputs.publicar == true }}
+    if: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && inputs.publicar == true) }}
     needs: validar
     runs-on: ubuntu-latest
     permissions:
