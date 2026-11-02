@@ -1,10 +1,22 @@
-// Elaborado por: Jorge Valencia. No contiene credenciales ni llama directamente a n8n.
+// Elaborado por: Jorge Valencia. Solo consulta el resumen público permitido de n8n.
 'use strict';
 const $=id=>document.getElementById(id);
-let snapshot=null,config=null;
+let snapshot=null,config=null,loading=false,lastLive=false;
 const date=t=>new Intl.DateTimeFormat('es-MX',{dateStyle:'medium',timeStyle:'short',timeZone:'America/Mexico_City'}).format(new Date(t));
 function set(id,text){$(id).textContent=text;}
-async function get(url){const response=await fetch(url,{cache:'no-store'});if(!response.ok)throw Error('Recurso no disponible');return response.json();}
+async function get(url){const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),15000);try{const response=await fetch(url,{cache:'no-store',credentials:'omit',signal:controller.signal});if(!response.ok)throw Error('Recurso no disponible');return await response.json();}finally{clearTimeout(timer);}}
+function endpoint(){
+ const u=new URL(config?.panel_url||'');
+ if(u.href!=='https://hrbydbo7.app.n8n.cloud/webhook/rh-panel-publico-jv-v1')throw Error('Destino del panel inválido');
+ return u.href;
+}
+function describeSnapshot(){
+ if(!snapshot)return;
+ set('source',`Fuente: ${snapshot.fuente}. ${lastLive?'Consultado':'Copia guardada'}: ${date(snapshot.exportado_en)} (hora de Ciudad de México).`);
+ const dates=snapshot.casos.map(r=>Date.parse(r.creado_en));set('period',dates.length?`Periodo de creación: ${date(Math.min(...dates))} a ${date(Math.max(...dates))}.`:'Sin solicitudes registradas.');
+ const selected=$('estado').value;$('estado').replaceChildren(new Option('Todos los estados',''));for(const st of RHMetrics.states)if(snapshot.casos.some(r=>r.estado===st))$('estado').append(new Option(st,st));
+ $('estado').value=snapshot.casos.some(r=>r.estado===selected)?selected:'';draw();
+}
 function draw(){
  if(!snapshot)return;
  const all=snapshot.casos,rows=RHMetrics.filter(all,{estado:$('estado').value,equipo:$('equipo').value,folio:$('folio').value});
@@ -22,18 +34,25 @@ function draw(){
  set('action-text',!published?'El panel mostrará los datos cuando se exporten desde n8n. No se rellenan indicadores con resultados inventados.':k.pendientes?`Hay ${k.pendientes} solicitud(es) pendiente(s) en esta selección. Consulta su versión y vigencia en Telegram antes de decidir.`:'No hay solicitudes pendientes en esta selección. Consulta el registro actualizado antes de cualquier decisión.');
 }
 async function load(){
- set('data-notice','Cargando el resumen…');$('retry').hidden=true;
+ if(loading)return;
+ loading=true;$('refresh-data').disabled=true;set('data-notice','Consultando los registros de n8n…');$('retry').hidden=true;
  try{
-  snapshot=RHMetrics.validate(await get('data/panel.json'));
-  set('source',`Fuente: ${snapshot.fuente}. ${snapshot.exportado_en?'Exportado: '+date(snapshot.exportado_en)+' (hora de Ciudad de México).':'Aún no hay una exportación de los registros.'}`);
-  const dates=snapshot.casos.map(r=>Date.parse(r.creado_en));set('period',dates.length?`Periodo de creación: ${date(Math.min(...dates))} a ${date(Math.max(...dates))}.`:'Periodo: pendiente de primera exportación.');
-  const stale=snapshot.exportado_en&&Date.now()-Date.parse(snapshot.exportado_en)>(config?.stale_hours||24)*3600000;
-  set('data-notice',!snapshot.exportado_en?'Sin datos publicados. Falta exportar el resumen sanitizado desde n8n.':stale?'Datos desactualizados: han pasado más de 24 horas desde la exportación. Consulta el estado vigente por voz conectada o Telegram.':snapshot.casos.length?'Resumen cargado. La fecha de exportación indica hasta cuándo están actualizados los datos.':'Exportación válida sin solicitudes.');
-  $('data-notice').classList.toggle('warning',!!stale);
-  const selected=$('estado').value;$('estado').replaceChildren(new Option('Todos los estados',''));for(const st of RHMetrics.states)if(snapshot.casos.some(r=>r.estado===st))$('estado').append(new Option(st,st));$('estado').value=selected;draw();
- }catch(e){snapshot=null;set('data-notice','No se pudo cargar un resumen válido. Intenta de nuevo o consulta Telegram.');$('retry').hidden=false;for(const id of ['kpi-total','kpi-pendientes','kpi-dias'])set(id,'—');$('cases').replaceChildren();$('chart').replaceChildren();}
+  const next=RHMetrics.validate(await get(endpoint()));
+  if(!next.exportado_en||Math.abs(Date.now()-Date.parse(next.exportado_en))>300000)throw Error('Respuesta sin corte reciente');
+  snapshot=next;lastLive=true;describeSnapshot();
+  set('data-notice',snapshot.casos.length?'Datos consultados en n8n. Se actualizan cada 60 segundos mientras esta página esté visible.':'Consulta completada en n8n: todavía no hay solicitudes.');
+  $('data-notice').classList.remove('warning');
+ }catch(e){
+  if(!snapshot){try{const saved=RHMetrics.validate(await get('data/panel.json'));if(saved.exportado_en){snapshot=saved;lastLive=false;}}catch{ /* Sin copia válida: mostrar indisponibilidad. */ }}
+  if(snapshot){describeSnapshot();set('data-notice',`No se pudo actualizar desde n8n. Se muestra ${lastLive?'la última consulta':'una copia guardada'} del ${date(snapshot.exportado_en)}; puede haber cambios posteriores. Pulsa Actualizar datos para reintentar.`);}
+  else{set('data-notice','No se pudo consultar n8n ni cargar una copia válida. Reintenta o consulta Telegram.');for(const id of ['kpi-total','kpi-pendientes','kpi-dias'])set(id,'—');$('cases').replaceChildren();$('chart').replaceChildren();set('chart-summary','Sin datos disponibles.');set('row-count','Sin registros disponibles');}
+  $('data-notice').classList.add('warning');$('retry').hidden=false;
+ }finally{loading=false;$('refresh-data').disabled=false;}
 }
 $('filters').addEventListener('submit',e=>e.preventDefault());$('filters').addEventListener('input',draw);$('filters').addEventListener('reset',()=>setTimeout(draw,0));$('retry').addEventListener('click',load);
+$('refresh-data').addEventListener('click',load);
+setInterval(()=>{if(!document.hidden)load();},60000);
+document.addEventListener('visibilitychange',()=>{if(!document.hidden)load();});
 $('consent').addEventListener('change',()=>{$('start-voice').disabled=!$('consent').checked||!config;});
 $('start-voice').addEventListener('click',async()=>{
  if(!$('consent').checked||!config)return;

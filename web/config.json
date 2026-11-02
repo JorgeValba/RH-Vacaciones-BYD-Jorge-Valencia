@@ -3,5 +3,6 @@
   "agent_id": "agent_5201m5nm2h0zf9pat9j1whqzv691",
   "conexion_registros_verificada": true,
   "telegram_url": "https://t.me/HR_BYD_bot",
-  "stale_hours": 24
+  "stale_hours": 24,
+  "panel_url": "https://hrbydbo7.app.n8n.cloud/webhook/rh-panel-publico-jv-v1"
 }

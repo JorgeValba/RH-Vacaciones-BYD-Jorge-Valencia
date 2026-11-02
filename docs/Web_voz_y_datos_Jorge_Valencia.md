@@ -1,6 +1,8 @@
 # HTML, voz y registro compartido
 Elaborado por: Jorge Valencia.
 
+> Actualización del 2 de noviembre de 2026: Jorge confirmó la consulta desde HTML y se publicaron 13 casos sanitizados. El panel ahora está preparado para consultar n8n directamente; falta importar y publicar el receptor nuevo. El procedimiento vigente, los controles y sus límites están en [Panel actualizado](Panel_actualizado_Jorge_Valencia.md). Las referencias a exportación manual de este documento describen la versión anterior y la copia de respaldo.
+
 ## Requisitos contrastados con la guía
 
 Páginas 2 y 5: el agente de voz debe consultar o crear un caso del registro de n8n, conservando el caso_id. No basta incrustar el enlace de una conversación sobre la LFT. Se implementa la ruta de consulta: estado de un folio existente y una segunda interacción de negocio para saldo de un empleado ficticio.

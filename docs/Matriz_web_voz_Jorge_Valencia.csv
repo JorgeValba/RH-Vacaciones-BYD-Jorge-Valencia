@@ -6,8 +6,10 @@ WEB04,Jorge Valencia,Esquema y cálculos del panel,verificada_localmente,node te
 WEB05,Jorge Valencia,Validación que rechaza dato deliberadamente inválido,verificada_en_Actions,https://github.com/JorgeValba/RH-Vacaciones-BYD-Jorge-Valencia/actions/runs/41396056569
 VOZ01,Jorge Valencia,Estado y saldo deterministas sin revelar campos privados,verificada_localmente,node tests/voz.test.mjs
 VOZ02,Jorge Valencia,Credencial válida e inválida en n8n,pendiente,Importar y configurar credencial
-VOZ03,Jorge Valencia,Consulta de folio desde HTML publicado,pendiente,Registrar conversación herramienta traza y caso_id
+VOZ03,Jorge Valencia,Consulta desde HTML publicado,confirmada_por_Jorge,Confirmación del usuario en la conversación después de probar Pages
 VOZ04,Jorge Valencia,Micrófono denegado y alternativa textual,pendiente,Probar desde página publicada
 VOZ05,Jorge Valencia,Servicio caído y folio inexistente,pendiente_integrada,No sustituir con éxito prefijado
-DAT01,Jorge Valencia,Primera exportación real sanitizada,pendiente,Ejecutar workflow manual de exportación
+DAT01,Jorge Valencia,Primera exportación sanitizada de pruebas reales,verificada_en_Pages,13 casos exportados de n8n; 2 pendientes y 14 días aprobados
+DAT02,Jorge Valencia,Consulta actualizada del panel,pendiente_integrada,Importar y publicar el receptor RH Panel actualizado; comprobar aviso Datos consultados en n8n
+DAT03,Jorge Valencia,Privacidad y recuperación del panel actualizado,verificada_localmente,node tests/panel_actualizado.test.mjs; sin sustituir prueba integrada
 PUB01,Jorge Valencia,Publicación real Pages tras controles,verificada_en_Actions_y_navegador,https://github.com/JorgeValba/RH-Vacaciones-BYD-Jorge-Valencia/actions/runs/41396256574

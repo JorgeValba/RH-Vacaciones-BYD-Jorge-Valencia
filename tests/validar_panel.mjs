@@ -2,6 +2,7 @@
 import fs from 'node:fs';
 import assert from 'node:assert/strict';
 import '../web/metrics.js';
+await import('./panel_actualizado.test.mjs');
 const d=JSON.parse(fs.readFileSync(new URL('../web/data/panel.json',import.meta.url),'utf8'));
 if(process.argv.includes('--forzar-fallo'))d.modo='REAL';
 RHMetrics.validate(d);
