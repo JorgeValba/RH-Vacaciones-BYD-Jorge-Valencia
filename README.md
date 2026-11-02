@@ -14,3 +14,14 @@ La prueba comprueba lectura de ambos skills, reutilización con dos identificado
 
 ## Controles
 Operación SIMULADA, autorización en servidor, aprobación vinculada a folio/versión, deduplicación, control de escritura, límites de gasto y trazabilidad. Las exportaciones completas y credenciales permanecen privadas. No incorporar tokens, claves, listas de usuarios/chats ni conversaciones al repositorio.
+
+
+## Panel web y voz
+
+Se añadió `web/` con tres indicadores, barras por estado, filtros, historial sanitizado y consentimiento antes del widget de ElevenLabs. El resumen comienza vacío hasta exportar datos reales de prueba desde n8n.
+
+La ruta de consulta de estado y saldo está preparada en dos workflows privados de n8n, pendiente de importar, configurar la credencial y probar desde ElevenLabs. No se afirma conexión ni despliegue por la sola presencia del código. Ver [integración y estado de las pruebas](docs/Web_voz_y_datos_Jorge_Valencia.md).
+
+Pruebas adicionales: `node tests/voz.test.mjs` y `node tests/validar_panel.mjs`. El workflow de Actions valida en cada push; permite publicar manualmente después de habilitar Pages. La opción `prueba_bloqueo` provoca una falla verificable que impide desplegar.
+
+Elaborado por: Jorge Valencia.
