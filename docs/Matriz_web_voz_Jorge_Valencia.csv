@@ -1,0 +1,13 @@
+id,autor,prueba,estado,evidencia
+WEB01,Jorge Valencia,Revisión visual estado vacío 390 px,verificada_localmente,Inspección de navegador local; sin desbordamiento horizontal
+WEB02,Jorge Valencia,Revisión visual estado vacío 1366 px,verificada_localmente,Inspección de navegador local; sin desbordamiento horizontal
+WEB03,Jorge Valencia,Sin consentimiento botón de voz deshabilitado,verificada_localmente,DOM y captura de navegador local
+WEB04,Jorge Valencia,Esquema y cálculos del panel,verificada_localmente,node tests/validar_panel.mjs
+WEB05,Jorge Valencia,Validación que rechaza dato deliberadamente inválido,pendiente_ejecucion_en_Actions,node tests/validar_panel.mjs --forzar-fallo
+VOZ01,Jorge Valencia,Estado y saldo deterministas sin revelar campos privados,verificada_localmente,node tests/voz.test.mjs
+VOZ02,Jorge Valencia,Credencial válida e inválida en n8n,pendiente,Importar y configurar credencial
+VOZ03,Jorge Valencia,Consulta de folio desde HTML publicado,pendiente,Registrar conversación herramienta traza y caso_id
+VOZ04,Jorge Valencia,Micrófono denegado y alternativa textual,pendiente,Probar desde página publicada
+VOZ05,Jorge Valencia,Servicio caído y folio inexistente,pendiente_integrada,No sustituir con éxito prefijado
+DAT01,Jorge Valencia,Primera exportación real sanitizada,pendiente,Ejecutar workflow manual de exportación
+PUB01,Jorge Valencia,Publicación real Pages tras controles,pendiente,Conservar enlace Actions y URL pública
