@@ -6,6 +6,14 @@ function dia(v){
  const d=new Date(v);if(!Number.isFinite(+d))return null;
  const p=Object.fromEntries(new Intl.DateTimeFormat('en-CA',{timeZone:'America/Mexico_City',year:'numeric',month:'2-digit',day:'2-digit'}).formatToParts(d).map(x=>[x.type,x.value]));return `${p.year}-${p.month}-${p.day}`;
 }
+// Los periodos son fechas de calendario. n8n los serializa a medianoche UTC.
+// No convertir ese formato de almacenamiento a la fecha local del día anterior.
+// Las reservas mantienen su conversión de instante a America/Mexico_City.
+function fechaPeriodo(v){
+ if(typeof v!=='string')return null;
+ if(/^\d{4}-\d{2}-\d{2}T00:00:00(?:\.0{1,9})?(?:Z|\+00:00)$/i.test(v))return dia(v.slice(0,10));
+ return dia(v);
+}
 function empleadoPrueba(id){return typeof id==='string'&&/^EMP-\d{3}$/.test(id)&&Number(id.slice(4))>=1&&Number(id.slice(4))<=15;}
 function numero(v){return typeof v!=='boolean'&&v!==null&&v!==undefined&&v!==''&&Number.isFinite(Number(v))?Number(v):null;}
 function normalizar(body,habilitado){
@@ -43,7 +51,7 @@ function saldo(req,empleados,reservas,reglas,now){
  const e=es[0];if(!empleadoPrueba(e.empleado_id)||!/^Persona ficticia \d{2}$/.test(e.alias_ficticio||''))return fail('La ficha no está habilitada para el canal de prueba.');
  const rr=reglas.filter(r=>numero(r.version)!==null).sort((a,b)=>Number(b.version)-Number(a.version));
  if(!rr.length||rr.filter(r=>Number(r.version)===Number(rr[0].version)).length!==1||rr[0].modo!=='SIMULADO')return fail('No existe una regla de prueba única y válida.');
- const pi=dia(e.periodo_inicio),pf=dia(e.periodo_fin),gen=numero(e.dias_generados),usados=numero(e.dias_usados_corte);
+ const pi=fechaPeriodo(e.periodo_inicio),pf=fechaPeriodo(e.periodo_fin),gen=numero(e.dias_generados),usados=numero(e.dias_usados_corte);
  if(!pi||!pf||pi>pf||gen===null||usados===null||!Number.isInteger(gen)||!Number.isInteger(usados)||usados<0||gen<usados)return fail('La ficha contiene un periodo o saldo incoherente.');
  const rows=reservas.filter(r=>r.empleado_id===req.empleado_id&&/aprob/i.test(String(r.estado||'')));
  const ids=new Set();let total=0;
@@ -57,4 +65,4 @@ function saldo(req,empleados,reservas,reglas,now){
  if(disponible<0)return fail('El saldo calculado es negativo; RH debe conciliar las reservas.');
  return {ok:true,modo:'SIMULADO',empleado_id:e.empleado_id,periodo_inicio:pi,periodo_fin:pf,dias_generados:gen,dias_usados_corte:usados,dias_reservados:total,saldo_disponible:disponible,unidad:'días laborables',consultado_en:new Date(now).toISOString(),fuente:'rh_empleados y rh_aprobadas',regla:'Saldo = días generados − usados al corte − reservas aprobadas del periodo, conforme al modelo de datos actual.',mensaje:'Resultado simulado. Las reservas están separadas de los días usados al corte; no se modifica el saldo.'};
 }
-return {dia,numero,empleadoPrueba,normalizar,estado,saldo};
+return {dia,fechaPeriodo,numero,empleadoPrueba,normalizar,estado,saldo};
