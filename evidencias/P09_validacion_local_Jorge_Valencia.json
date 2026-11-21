@@ -1,0 +1,67 @@
+{
+  "autor": "Jorge Valencia",
+  "origen": "Ejecución local Node; no n8n Cloud",
+  "resultado": {
+    "autor": "Jorge Valencia",
+    "prueba": "P09",
+    "resultado": "TRES_CONTROLES_APROBADOS",
+    "ejecucion_n8n": "LOCAL-NO-N8N",
+    "registrado_en": "2026-11-05T00:28:52.873Z",
+    "alcance": "Código real del control con entradas sintéticas; sin HTTP, credenciales, bot ni escrituras. No prueba persistencia productiva ni consumo completo.",
+    "resultados": [
+      {
+        "autor": "Jorge Valencia",
+        "prueba": "P09",
+        "escenario": "PRESUPUESTO",
+        "resultado": "APROBADO",
+        "datos_sinteticos": true,
+        "permitido": false,
+        "motivos": [
+          "Presupuesto insuficiente: contabilizado 0 + reservas pendientes 0 + nueva reserva 0.01625 = 0.01625 USD > TOPE_USD_CASO 0.001"
+        ],
+        "reserva_calculada_usd": 0.01625,
+        "contador_previo": 0,
+        "fila_reserva_propuesta": false,
+        "generacion_real_ejecutada": false,
+        "alcance": "Control aislado; no ensayo integral de API ni persistencia en tablas.",
+        "sha256_codigo_original": "d1303138fca97eab1403841a0ff350f168d8978474283d5a70e02310d4b57baf",
+        "ejecucion_n8n": "LOCAL-NO-N8N"
+      },
+      {
+        "autor": "Jorge Valencia",
+        "prueba": "P09",
+        "escenario": "LLAMADAS",
+        "resultado": "APROBADO",
+        "datos_sinteticos": true,
+        "permitido": false,
+        "motivos": [
+          "MAX_LLAMADAS alcanzado (6 intentos de generación de 6)"
+        ],
+        "reserva_calculada_usd": 0.01625,
+        "contador_previo": 6,
+        "fila_reserva_propuesta": false,
+        "generacion_real_ejecutada": false,
+        "alcance": "Control aislado; no ensayo integral de API ni persistencia en tablas.",
+        "sha256_codigo_original": "d1303138fca97eab1403841a0ff350f168d8978474283d5a70e02310d4b57baf",
+        "ejecucion_n8n": "LOCAL-NO-N8N"
+      },
+      {
+        "autor": "Jorge Valencia",
+        "prueba": "P09",
+        "escenario": "DENTRO_DE_LIMITES",
+        "resultado": "APROBADO",
+        "datos_sinteticos": true,
+        "permitido": true,
+        "motivos": [],
+        "reserva_calculada_usd": 0.01625,
+        "contador_previo": 0,
+        "fila_reserva_propuesta": true,
+        "generacion_real_ejecutada": false,
+        "alcance": "Control aislado; no ensayo integral de API ni persistencia en tablas.",
+        "sha256_codigo_original": "d1303138fca97eab1403841a0ff350f168d8978474283d5a70e02310d4b57baf",
+        "ejecucion_n8n": "LOCAL-NO-N8N"
+      }
+    ]
+  },
+  "pendiente": "Importar y ejecutar manualmente en n8n; no registrar como prueba remota completada"
+}

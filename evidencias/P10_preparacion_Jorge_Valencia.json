@@ -1,0 +1,14 @@
+{
+  "autor": "Jorge Valencia",
+  "estado": "Preparada; ejecución n8n pendiente",
+  "evento_id": "tg-844548491-65",
+  "caso_id": "VAC-20261102-YTLSBKE8E",
+  "nodos": 7,
+  "consulta_y_condicion_identicas_al_export": true,
+  "fuente": "rh_solicitudes (1).csv + export principal V2.4",
+  "parametros_sha256": {
+    "Buscar evento duplicado": "42351c17c33cd19fbd9715a9a6d854e64812549fc98e11ebe4e645152d43de5e",
+    "¿Evento nuevo?": "2bb1f8b7a05d76010382cbdaf63fe74d1a0ec1b7694272f919d91f3168683bbc"
+  },
+  "alcance": "Solo lectura; control secuencial con evento histórico. No prueba concurrente ni webhook real."
+}

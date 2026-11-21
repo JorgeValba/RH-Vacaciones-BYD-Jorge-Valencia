@@ -1,0 +1,131 @@
+{
+  "autor": "Jorge Valencia",
+  "recuperado_el": "2026-11-04",
+  "metodo": "Lectura retrospectiva de una sesión existente, sin iniciarla ni generar respuesta.",
+  "conversation_id": "conv_0401m6jmbw18f9g9hvbekqwqecsk",
+  "version_id": "agtvrsn_2301m6dsx4jve6vrzjwt70nvs0ye",
+  "inicio_unix": 1793774186,
+  "text_only": true,
+  "origen": "widget",
+  "status": "done",
+  "consulta_folio_y_saldo": [
+    {
+      "herramienta": "consultar_estado_rh",
+      "is_error": false,
+      "is_blocked": false,
+      "latencia_seg": 2.624068974982947,
+      "resultado": {
+        "ok": true,
+        "modo": "SIMULADO",
+        "caso_id": "VAC-20261102-YTLSBKE8E",
+        "empleado_id": "EMP-005",
+        "estado": "Aprobada",
+        "version": 1,
+        "fecha_inicio": "2026-12-21",
+        "fecha_fin": "2026-12-24",
+        "dias_solicitados": 4,
+        "consultado_en": "2026-11-04T06:36:30.443Z",
+        "fuente": "registro privado rh_solicitudes",
+        "consulta_id": "VOZ-188"
+      }
+    },
+    {
+      "herramienta": "consultar_saldo_rh",
+      "is_error": false,
+      "is_blocked": false,
+      "latencia_seg": 2.5507892458699644,
+      "resultado": {
+        "ok": true,
+        "modo": "SIMULADO",
+        "empleado_id": "EMP-005",
+        "periodo_inicio": "2026-10-01",
+        "periodo_fin": "2027-09-30",
+        "dias_generados": 22,
+        "dias_usados_corte": 12,
+        "dias_reservados": 4,
+        "saldo_disponible": 6,
+        "unidad": "días laborables",
+        "consultado_en": "2026-11-04T06:37:56.565Z",
+        "fuente": "rh_empleados y rh_aprobadas",
+        "regla": "Saldo = días generados − usados al corte − reservas aprobadas del periodo, conforme al modelo de datos actual.",
+        "consulta_id": "VOZ-191"
+      }
+    }
+  ],
+  "consumo": {
+    "plan": "free",
+    "creditos": 88,
+    "cost_fiat": 0.00881365,
+    "moneda": "No explícita en el payload recuperado; pendiente de conciliar.",
+    "llm_price": 0.0028136499999999996,
+    "platform_price": 0.006,
+    "platform_usage": {
+      "category_usage": {
+        "text_message": {
+          "credits": 60,
+          "price": 0.006,
+          "quantity": 2
+        }
+      }
+    },
+    "llm_usage": {
+      "model_usage": {
+        "gpt-5-mini": {
+          "input": {
+            "tokens": 8869,
+            "price": 0.0022172499999999996
+          },
+          "input_cache_read": {
+            "tokens": 7936,
+            "price": 0.0001984
+          },
+          "input_cache_write": {
+            "tokens": 0,
+            "price": 0
+          },
+          "output_total": {
+            "tokens": 199,
+            "price": 0.000398
+          }
+        }
+      },
+      "detailed_model_usage": [
+        {
+          "config": {
+            "model": "gpt-5-mini",
+            "service_tier": "standard"
+          },
+          "usage": {
+            "input": {
+              "tokens": 8869,
+              "price": 0.0022172499999999996
+            },
+            "input_cache_read": {
+              "tokens": 7936,
+              "price": 0.0001984
+            },
+            "input_cache_write": {
+              "tokens": 0,
+              "price": 0
+            },
+            "output_total": {
+              "tokens": 199,
+              "price": 0.000398
+            }
+          }
+        }
+      ]
+    },
+    "tts_segundos": 0,
+    "asr_segundos": 0,
+    "duracion_sesion_seg": 601,
+    "terminacion": "Conversation has exceeded maximum duration"
+  },
+  "limites": [
+    "Interacción por texto, no nueva prueba hablada.",
+    "La duración de sesión no equivale a segundos hablados; audio TTS/ASR reportado cero.",
+    "No sumar initiated_generation e irreversible_generation como dos consumos.",
+    "No sumar el LLM o la plataforma otra vez al total cost_fiat.",
+    "Los consulta_id VOZ-188/VOZ-191 son posteriores al CSV de trazas recibido; no se inventan filas de ese corte."
+  ]
+}

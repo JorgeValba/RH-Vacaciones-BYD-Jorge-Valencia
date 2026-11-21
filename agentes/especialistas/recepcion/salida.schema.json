@@ -1,0 +1,43 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "empleado_id",
+    "fecha_inicio",
+    "fecha_fin",
+    "campos_faltantes",
+    "observaciones"
+  ],
+  "properties": {
+    "empleado_id": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "fecha_inicio": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "fecha_fin": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "campos_faltantes": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "observaciones": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  }
+}

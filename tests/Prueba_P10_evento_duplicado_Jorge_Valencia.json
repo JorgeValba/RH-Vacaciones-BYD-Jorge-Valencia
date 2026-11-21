@@ -1,0 +1,219 @@
+{
+  "name": "RH — Prueba P10 evento duplicado — Jorge Valencia",
+  "active": false,
+  "nodes": [
+    {
+      "id": "f0ef62f3-4deb-419e-b0ae-8f45dcfca974",
+      "name": "Inicio manual",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "parameters": {}
+    },
+    {
+      "id": "c14387d7-b5e3-43c6-8be7-d99d177f8ea1",
+      "name": "Evento de prueba",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        240,
+        0
+      ],
+      "parameters": {
+        "jsCode": "// Elaborado por: Jorge Valencia. Evento tomado del CSV de un caso ya persistido.\n// Se reproduce solo el identificador, sin datos personales, token ni chat ID.\nreturn [{json:{autor:'Jorge Valencia',prueba:'P10',evento:{evento_id:'tg-844548491-65'},caso_esperado:'VAC-20261102-YTLSBKE8E'}}];\n",
+        "mode": "runOnceForAllItems"
+      }
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "dataTableId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "REEMPLAZAR_TABLA_RH_SOLICITUDES"
+        },
+        "matchType": "allConditions",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "evento_id",
+              "keyValue": "={{ $json.evento.evento_id }}"
+            }
+          ]
+        },
+        "limit": 1
+      },
+      "id": "7a613dc5-1ce6-43fb-9af2-eb837607cfc1",
+      "name": "Buscar evento duplicado",
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        480,
+        0
+      ],
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "combinator": "and",
+          "conditions": [
+            {
+              "leftValue": "={{ !$json.caso_id }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "fae415f5-dd1d-48a4-b009-638e3d6048b8",
+      "name": "¿Evento nuevo?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        720,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "dataTableId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "REEMPLAZAR_TABLA_RH_SOLICITUDES"
+        },
+        "matchType": "allConditions",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "evento_id",
+              "keyValue": "={{ $(\"Evento de prueba\").first().json.evento.evento_id }}"
+            }
+          ]
+        },
+        "limit": 100
+      },
+      "id": "4cf48518-93d2-4c84-8e19-b2c89ee3ae38",
+      "name": "Contar filas del mismo evento",
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        960,
+        0
+      ],
+      "alwaysOutputData": true
+    },
+    {
+      "id": "28b52b90-dfed-4916-95df-53fa0c8eb017",
+      "name": "Resumen de evidencia",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1200,
+        0
+      ],
+      "parameters": {
+        "jsCode": "// Elaborado por: Jorge Valencia.\nconst config=$('Evento de prueba').first().json;\nconst encontrado=$('Buscar evento duplicado').first().json;\nconst filas=$input.all().map(i=>i.json);\nif(filas.some(r=>r.error))throw new Error('No se pudo comprobar la tabla: '+JSON.stringify(filas));\nconst registros=filas.filter(r=>r.caso_id&&r.evento_id===config.evento.evento_id);\nif(encontrado.caso_id!==config.caso_esperado)throw new Error('El evento apunta a un folio diferente del esperado.');\nif(registros.length!==1)throw new Error('Se esperaba exactamente una fila para el evento; se encontraron '+registros.length);\nreturn [{json:{autor:'Jorge Valencia',prueba:'P10',resultado:'EVENTO_DUPLICADO_BLOQUEADO',ejecucion_n8n:$execution.id,registrado_en:new Date().toISOString(),evento_id:config.evento.evento_id,caso_id:encontrado.caso_id,eventos_en_tabla:registros.length,rama_observada:'false: evento ya registrado',abrir_otro_caso:false,operaciones_escritura_en_ensayo:0,llamadas_modelo_en_ensayo:0,alcance:'Consulta e IF del export aplicados a un evento histórico persistido; reproducción aislada y secuencial, no reenvío real del webhook de Telegram ni prueba de concurrencia.',siguiente_comprobacion:'Ejecutar de nuevo este workflow y comparar mismo evento, mismo folio y una sola fila.'}}];\n",
+        "mode": "runOnceForAllItems"
+      }
+    },
+    {
+      "id": "64b8ff1e-a03e-4bcb-bd97-b98dce76610a",
+      "name": "Detener si no encuentra el evento",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1440,
+        -220
+      ],
+      "parameters": {
+        "jsCode": "throw new Error('P10 no acreditada: no se encontró el evento esperado. Revisar tabla/proyecto. Esta prueba no crea casos.');",
+        "mode": "runOnceForAllItems"
+      }
+    }
+  ],
+  "connections": {
+    "Inicio manual": {
+      "main": [
+        [
+          {
+            "node": "Evento de prueba",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Evento de prueba": {
+      "main": [
+        [
+          {
+            "node": "Buscar evento duplicado",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Buscar evento duplicado": {
+      "main": [
+        [
+          {
+            "node": "¿Evento nuevo?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "¿Evento nuevo?": {
+      "main": [
+        [
+          {
+            "node": "Detener si no encuentra el evento",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Contar filas del mismo evento",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Contar filas del mismo evento": {
+      "main": [
+        [
+          {
+            "node": "Resumen de evidencia",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "pinData": {},
+  "tags": []
+}

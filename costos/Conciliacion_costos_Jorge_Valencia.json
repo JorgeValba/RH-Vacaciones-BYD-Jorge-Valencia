@@ -1,0 +1,145 @@
+{
+  "autor": "Jorge Valencia",
+  "fecha_revision": "2026-11-04",
+  "alcance": "Costos históricos calculados con uso y tarifas del CSV; no factura ni gasto total del ecosistema.",
+  "fuente": "rh_costos (2).csv",
+  "sha256": "485db6fc7c3660cd2b474f1479ffd698cc1548113c4ec9dd9404e20eecafcfbc",
+  "filas": 135,
+  "tipos": {
+    "conteo_auxiliar": 48,
+    "generacion": 48,
+    "evento_sin_modelo": 38,
+    "loop": 1
+  },
+  "duplicados_llamada_id": [],
+  "problemas_recalculo": [],
+  "costos_sin_traza": [],
+  "trazas_llamada_sin_costo": [],
+  "total_generaciones_usd": "0.13586950",
+  "tokens": {
+    "tokens_entrada": "53918",
+    "tokens_salida": "7092",
+    "tokens_cache": "2176",
+    "tokens_razonamiento": "0"
+  },
+  "tarifas_registradas": [
+    {
+      "modelo": "gpt-5",
+      "modalidad": "standard",
+      "moneda": "USD",
+      "entrada_millon": "1.25",
+      "cache_millon": "0.125",
+      "salida_millon": "10",
+      "fecha": "2026-11-01",
+      "url": "https://developers.openai.com/api/docs/pricing"
+    }
+  ],
+  "casos": [
+    {
+      "caso_id": "VAC-20261102-YTLRG1G9I",
+      "estado": "Error controlado",
+      "generaciones": 0,
+      "costo_generacion_usd": null
+    },
+    {
+      "caso_id": "VAC-20261102-YTLROJXNQ",
+      "estado": "Pendiente de aprobación",
+      "generaciones": 4,
+      "costo_generacion_usd": "0.01102250"
+    },
+    {
+      "caso_id": "VAC-20261102-YTLRPRHT2",
+      "estado": "Pendiente de aprobación",
+      "generaciones": 4,
+      "costo_generacion_usd": "0.01149625"
+    },
+    {
+      "caso_id": "VAC-20261102-YTLRQ48J9",
+      "estado": "Requiere ajuste por cobertura",
+      "generaciones": 4,
+      "costo_generacion_usd": "0.01039750"
+    },
+    {
+      "caso_id": "VAC-20261102-YTLRR4J18",
+      "estado": "Saldo insuficiente",
+      "generaciones": 4,
+      "costo_generacion_usd": "0.01134125"
+    },
+    {
+      "caso_id": "VAC-20261102-YTLRU36UE",
+      "estado": "Pendiente de aprobación",
+      "generaciones": 4,
+      "costo_generacion_usd": "0.00986125"
+    },
+    {
+      "caso_id": "VAC-20261102-YTLRX08S4",
+      "estado": "Aprobada",
+      "generaciones": 4,
+      "costo_generacion_usd": "0.01100750"
+    },
+    {
+      "caso_id": "VAC-20261102-YTLS2ZE8C",
+      "estado": "Aprobada",
+      "generaciones": 4,
+      "costo_generacion_usd": "0.01113875"
+    },
+    {
+      "caso_id": "VAC-20261102-YTLS6SW04",
+      "estado": "Rechazada",
+      "generaciones": 6,
+      "costo_generacion_usd": "0.01680325"
+    },
+    {
+      "caso_id": "VAC-20261102-YTLS9EZY9",
+      "estado": "Pendiente de aprobación",
+      "generaciones": 4,
+      "costo_generacion_usd": "0.01107125"
+    },
+    {
+      "caso_id": "VAC-20261102-YTLSAI66N",
+      "estado": "Requiere aclaración",
+      "generaciones": 2,
+      "costo_generacion_usd": "0.0062275"
+    },
+    {
+      "caso_id": "VAC-20261102-YTLSBKE8E",
+      "estado": "Aprobada",
+      "generaciones": 4,
+      "costo_generacion_usd": "0.01313250"
+    },
+    {
+      "caso_id": "VAC-20261102-YTLSEX4SR",
+      "estado": "Expirada",
+      "generaciones": 4,
+      "costo_generacion_usd": "0.01237000"
+    }
+  ],
+  "loop": {
+    "caso_id": "VAC-20261102-YTLS6SW04",
+    "primeras_cuatro_usd": "0.01283625",
+    "correccion_dos_llamadas_usd": "0.00396700",
+    "total_usd": "0.01680325"
+  },
+  "comparacion_corte_anterior": {
+    "filas_anteriores": 133,
+    "filas_nuevas": [
+      "VOZ-105-EV",
+      "VOZ-114-EV"
+    ],
+    "filas_cambiadas": [],
+    "filas_eliminadas": []
+  },
+  "exclusiones": {
+    "reservas_presupuesto_no_sumar_usd": "0.78739750",
+    "duracion_voz_registrada_filas": 0,
+    "filas_elevenlabs": 0,
+    "subtotal_no_generaciones_con_importe": []
+  },
+  "pendientes": [
+    "Consolidar conversaciones/consumo ElevenLabs con su desglose, no solo eventos n8n de voz.",
+    "Separar desarrollo/pruebas y operación: grupo_costo=operacion no convierte pruebas históricas en operación productiva.",
+    "Documentar construcción con IA y cargos/condiciones de plataformas.",
+    "Completar escenarios base/mayor consumo y comparación costo/calidad.",
+    "No inferir costo cero para filas/casos con consumo no informado."
+  ]
+}

@@ -1,0 +1,9 @@
+{
+  "autor": "Jorge Valencia",
+  "fecha": "2026-11-04",
+  "salidas_historicas_comprobadas": 48,
+  "campos_comprobados": "Tipos, requeridos, propiedades adicionales y arrays del subconjunto usado; no validador general de JSON Schema.",
+  "errores": [],
+  "skills_con_sha256_coincidente": 2,
+  "limite": "Conformidad estructural no prueba semántica ni nueva instalación."
+}

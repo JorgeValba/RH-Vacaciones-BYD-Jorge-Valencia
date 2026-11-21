@@ -1,0 +1,47 @@
+{
+  "autor": "Jorge Valencia",
+  "origen": "Extracción del workflow principal V2.4 recibido; no modificación del runtime.",
+  "caso_id": "Viaja en el sobre de entrada/llamada/traza, no se añade al JSON estricto del especialista.",
+  "especialistas": [
+    {
+      "rol": "recepcion",
+      "nodo_preparacion": "Orquestador: Recepción",
+      "nodo_llamada": "Agente 1 - Recepción",
+      "nodo_validacion": "Validar Recepción",
+      "instrucciones_base": "especialistas/recepcion/instrucciones_base.txt",
+      "salida_schema": "especialistas/recepcion/salida.schema.json",
+      "entrada_template": "especialistas/recepcion/entrada_template.js",
+      "instrucciones_completas": "Base + reglas por rol de los skills cargados; ver skills/Snapshots_n8n_Jorge_Valencia.json."
+    },
+    {
+      "rol": "consulta",
+      "nodo_preparacion": "Orquestador: Consulta",
+      "nodo_llamada": "Agente 2 - Consulta",
+      "nodo_validacion": "Validar Consulta",
+      "instrucciones_base": "especialistas/consulta/instrucciones_base.txt",
+      "salida_schema": "especialistas/consulta/salida.schema.json",
+      "entrada_template": "especialistas/consulta/entrada_template.js",
+      "instrucciones_completas": "Base + reglas por rol de los skills cargados; ver skills/Snapshots_n8n_Jorge_Valencia.json."
+    },
+    {
+      "rol": "propuesta",
+      "nodo_preparacion": "Orquestador: Propuesta",
+      "nodo_llamada": "Agente 3 - Propuesta",
+      "nodo_validacion": "Validar Propuesta",
+      "instrucciones_base": "especialistas/propuesta/instrucciones_base.txt",
+      "salida_schema": "especialistas/propuesta/salida.schema.json",
+      "entrada_template": "especialistas/propuesta/entrada_template.js",
+      "instrucciones_completas": "Base + reglas por rol de los skills cargados; ver skills/Snapshots_n8n_Jorge_Valencia.json."
+    },
+    {
+      "rol": "revision",
+      "nodo_preparacion": "Orquestador: Revisión",
+      "nodo_llamada": "Agente 4 - Revisión",
+      "nodo_validacion": "Validar Revisión",
+      "instrucciones_base": "especialistas/revision/instrucciones_base.txt",
+      "salida_schema": "especialistas/revision/salida.schema.json",
+      "entrada_template": "especialistas/revision/entrada_template.js",
+      "instrucciones_completas": "Base + reglas por rol de los skills cargados; ver skills/Snapshots_n8n_Jorge_Valencia.json."
+    }
+  ]
+}

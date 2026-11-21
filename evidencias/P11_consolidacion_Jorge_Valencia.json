@@ -1,0 +1,21 @@
+{
+  "autor": "Jorge Valencia",
+  "fecha_revision": "2026-11-04",
+  "carga_dos_skills_por_caso": [
+    "VAC-20261102-YTLSBKE8E",
+    "VAC-20261102-YTLSEX4SR"
+  ],
+  "hashes_snapshots_coinciden": true,
+  "revision_V1_validado": false,
+  "revision_V2_validado": true,
+  "caso_correccion": "VAC-20261102-YTLS6SW04",
+  "totales_autoevaluacion_propuesta": [
+    19,
+    18,
+    19,
+    18
+  ],
+  "naturaleza_puntuacion": "Valoración cualitativa asistida por IA, propuesta para revisión de Jorge; no calificación docente ni métrica empírica.",
+  "documento": "docs/P11_Skills_loops_Jorge_Valencia.md",
+  "limitacion": "Corrección histórica y carga/reutilización posterior corresponden a ejecuciones distintas; no atribuirles la misma integración."
+}

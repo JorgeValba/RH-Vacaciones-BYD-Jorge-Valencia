@@ -1,0 +1,319 @@
+{
+  "autor": "Jorge Valencia",
+  "recuperado_el": "2026-11-04",
+  "metodo": "Lectura de API GitHub y log existente; sin nueva ejecución, publicación ni cambio remoto.",
+  "runs": [
+    {
+      "id": 41396056569,
+      "name": "Validar y publicar RH Vacaciones",
+      "event": "workflow_dispatch",
+      "status": "completed",
+      "conclusion": "failure",
+      "head_sha": "5b4878b22289fe3461791e83a967130fced93da6",
+      "head_branch": "main",
+      "created_at": "2026-11-02T05:47:26Z",
+      "updated_at": "2026-11-02T05:47:36Z",
+      "html_url": "https://github.com/JorgeValba/RH-Vacaciones-BYD-Jorge-Valencia/actions/runs/41396056569",
+      "jobs": [
+        {
+          "id": 125117513151,
+          "name": "validar",
+          "conclusion": "failure",
+          "html_url": "https://github.com/JorgeValba/RH-Vacaciones-BYD-Jorge-Valencia/actions/runs/41396056569/job/125117513151",
+          "started_at": "2026-11-02T05:47:30Z",
+          "completed_at": "2026-11-02T05:47:35Z",
+          "steps": [
+            {
+              "name": "Set up job",
+              "conclusion": "success",
+              "number": 1
+            },
+            {
+              "name": "Run actions/checkout@v6",
+              "conclusion": "success",
+              "number": 2
+            },
+            {
+              "name": "Run actions/setup-node@v4",
+              "conclusion": "success",
+              "number": 3
+            },
+            {
+              "name": "Comprobar skills reutilizables",
+              "conclusion": "success",
+              "number": 4
+            },
+            {
+              "name": "Comprobar consultas de voz",
+              "conclusion": "success",
+              "number": 5
+            },
+            {
+              "name": "Validar datos, cálculos y privacidad",
+              "conclusion": "success",
+              "number": 6
+            },
+            {
+              "name": "Falla deliberada de la puerta de publicación",
+              "conclusion": "failure",
+              "number": 7
+            },
+            {
+              "name": "Run actions/upload-pages-artifact@v4",
+              "conclusion": "skipped",
+              "number": 8
+            },
+            {
+              "name": "Post Run actions/setup-node@v4",
+              "conclusion": "skipped",
+              "number": 15
+            },
+            {
+              "name": "Post Run actions/checkout@v6",
+              "conclusion": "success",
+              "number": 16
+            },
+            {
+              "name": "Complete job",
+              "conclusion": "success",
+              "number": 17
+            }
+          ]
+        },
+        {
+          "id": 125117552253,
+          "name": "publicar",
+          "conclusion": "skipped",
+          "html_url": "https://github.com/JorgeValba/RH-Vacaciones-BYD-Jorge-Valencia/actions/runs/41396056569/job/125117552253",
+          "started_at": "2026-11-02T05:47:35Z",
+          "completed_at": "2026-11-02T05:47:35Z",
+          "steps": []
+        }
+      ]
+    },
+    {
+      "id": 41396256574,
+      "name": "Validar y publicar RH Vacaciones",
+      "event": "workflow_dispatch",
+      "status": "completed",
+      "conclusion": "success",
+      "head_sha": "5b4878b22289fe3461791e83a967130fced93da6",
+      "head_branch": "main",
+      "created_at": "2026-11-02T05:49:34Z",
+      "updated_at": "2026-11-02T05:50:01Z",
+      "html_url": "https://github.com/JorgeValba/RH-Vacaciones-BYD-Jorge-Valencia/actions/runs/41396256574",
+      "jobs": [
+        {
+          "id": 125118123984,
+          "name": "validar",
+          "conclusion": "success",
+          "html_url": "https://github.com/JorgeValba/RH-Vacaciones-BYD-Jorge-Valencia/actions/runs/41396256574/job/125118123984",
+          "started_at": "2026-11-02T05:49:39Z",
+          "completed_at": "2026-11-02T05:49:47Z",
+          "steps": [
+            {
+              "name": "Set up job",
+              "conclusion": "success",
+              "number": 1
+            },
+            {
+              "name": "Run actions/checkout@v6",
+              "conclusion": "success",
+              "number": 2
+            },
+            {
+              "name": "Run actions/setup-node@v4",
+              "conclusion": "success",
+              "number": 3
+            },
+            {
+              "name": "Comprobar skills reutilizables",
+              "conclusion": "success",
+              "number": 4
+            },
+            {
+              "name": "Comprobar consultas de voz",
+              "conclusion": "success",
+              "number": 5
+            },
+            {
+              "name": "Validar datos, cálculos y privacidad",
+              "conclusion": "success",
+              "number": 6
+            },
+            {
+              "name": "Falla deliberada de la puerta de publicación",
+              "conclusion": "skipped",
+              "number": 7
+            },
+            {
+              "name": "Run actions/upload-pages-artifact@v4",
+              "conclusion": "success",
+              "number": 8
+            },
+            {
+              "name": "Post Run actions/setup-node@v4",
+              "conclusion": "success",
+              "number": 15
+            },
+            {
+              "name": "Post Run actions/checkout@v6",
+              "conclusion": "success",
+              "number": 16
+            },
+            {
+              "name": "Complete job",
+              "conclusion": "success",
+              "number": 17
+            }
+          ]
+        },
+        {
+          "id": 125118175976,
+          "name": "publicar",
+          "conclusion": "success",
+          "html_url": "https://github.com/JorgeValba/RH-Vacaciones-BYD-Jorge-Valencia/actions/runs/41396256574/job/125118175976",
+          "started_at": "2026-11-02T05:49:51Z",
+          "completed_at": "2026-11-02T05:50:00Z",
+          "steps": [
+            {
+              "name": "Set up job",
+              "conclusion": "success",
+              "number": 1
+            },
+            {
+              "name": "Preparar Pages",
+              "conclusion": "success",
+              "number": 2
+            },
+            {
+              "name": "Publicar únicamente el artefacto validado",
+              "conclusion": "success",
+              "number": 3
+            },
+            {
+              "name": "Complete job",
+              "conclusion": "success",
+              "number": 4
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 41422841647,
+      "name": "Validar y publicar RH Vacaciones",
+      "event": "push",
+      "status": "completed",
+      "conclusion": "success",
+      "head_sha": "79697893d19d9d2142dc28af2e2b5987411018ee",
+      "head_branch": "main",
+      "created_at": "2026-11-02T09:42:24Z",
+      "updated_at": "2026-11-02T09:42:53Z",
+      "html_url": "https://github.com/JorgeValba/RH-Vacaciones-BYD-Jorge-Valencia/actions/runs/41422841647",
+      "jobs": [
+        {
+          "id": 125202280915,
+          "name": "validar",
+          "conclusion": "success",
+          "html_url": "https://github.com/JorgeValba/RH-Vacaciones-BYD-Jorge-Valencia/actions/runs/41422841647/job/125202280915",
+          "started_at": "2026-11-02T09:42:28Z",
+          "completed_at": "2026-11-02T09:42:34Z",
+          "steps": [
+            {
+              "name": "Set up job",
+              "conclusion": "success",
+              "number": 1
+            },
+            {
+              "name": "Run actions/checkout@v6",
+              "conclusion": "success",
+              "number": 2
+            },
+            {
+              "name": "Run actions/setup-node@v4",
+              "conclusion": "success",
+              "number": 3
+            },
+            {
+              "name": "Comprobar skills reutilizables",
+              "conclusion": "success",
+              "number": 4
+            },
+            {
+              "name": "Comprobar consultas de voz",
+              "conclusion": "success",
+              "number": 5
+            },
+            {
+              "name": "Validar datos, cálculos y privacidad",
+              "conclusion": "success",
+              "number": 6
+            },
+            {
+              "name": "Falla deliberada de la puerta de publicación",
+              "conclusion": "skipped",
+              "number": 7
+            },
+            {
+              "name": "Run actions/upload-pages-artifact@v4",
+              "conclusion": "success",
+              "number": 8
+            },
+            {
+              "name": "Post Run actions/setup-node@v4",
+              "conclusion": "success",
+              "number": 15
+            },
+            {
+              "name": "Post Run actions/checkout@v6",
+              "conclusion": "success",
+              "number": 16
+            },
+            {
+              "name": "Complete job",
+              "conclusion": "success",
+              "number": 17
+            }
+          ]
+        },
+        {
+          "id": 125202349031,
+          "name": "publicar",
+          "conclusion": "success",
+          "html_url": "https://github.com/JorgeValba/RH-Vacaciones-BYD-Jorge-Valencia/actions/runs/41422841647/job/125202349031",
+          "started_at": "2026-11-02T09:42:39Z",
+          "completed_at": "2026-11-02T09:42:52Z",
+          "steps": [
+            {
+              "name": "Set up job",
+              "conclusion": "success",
+              "number": 1
+            },
+            {
+              "name": "Preparar Pages",
+              "conclusion": "success",
+              "number": 2
+            },
+            {
+              "name": "Publicar únicamente el artefacto validado",
+              "conclusion": "success",
+              "number": 3
+            },
+            {
+              "name": "Complete job",
+              "conclusion": "success",
+              "number": 4
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "extracto_log_fallo": [
+    "Run node tests/validar_panel.mjs --forzar-fallo",
+    "Error: Resumen inválido.",
+    "Process completed with exit code 1."
+  ],
+  "limite": "El fallo y recuperación comparten commit: prueba deliberada de datos inválidos y posterior ejecución válida; no evidencia una modificación de código entre ambas."
+}

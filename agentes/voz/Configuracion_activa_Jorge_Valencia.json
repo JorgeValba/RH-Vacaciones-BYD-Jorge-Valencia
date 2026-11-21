@@ -1,0 +1,280 @@
+{
+  "autor": "Jorge Valencia",
+  "recuperado_el": "2026-11-04",
+  "agent_id": "agent_5201m5nm2h0zf9pat9j1whqzv691",
+  "branch_id": "agtbrch_0701m5nm2jdefggr8sg77vkbp1es",
+  "version_id": "agtvrsn_2301m6dsx4jve6vrzjwt70nvs0ye",
+  "nombre": "HR assistant BYD",
+  "idioma": "es",
+  "saludo": "Hola, soy HR assistant BYD, tu asistente de inteligencia artificial para consultas de Recursos Humanos. ¿En qué puedo ayudarte hoy?",
+  "prompt_path": "prompt_activo.txt",
+  "llm": "gpt-5-mini",
+  "reasoning_effort": "minimal",
+  "max_tokens": -1,
+  "backup_llm_config": {
+    "preference": "override",
+    "order": [
+      "gemini-2.5-flash",
+      "gpt-4o",
+      "gemini-2.5-flash-lite",
+      "claude-sonnet-4-5"
+    ]
+  },
+  "knowledge_base": [
+    {
+      "type": "file",
+      "name": "1044_Ley_Federal_del_Trabajo.pdf",
+      "id": "DtA8N6uItRk6dn6S3qvo",
+      "usage_mode": "auto"
+    }
+  ],
+  "rag": {
+    "enabled": true,
+    "embedding_model": "e5_mistral_7b_instruct",
+    "optional_rag_enabled": false,
+    "max_vector_distance": 0.6,
+    "max_documents_length": 50000,
+    "max_retrieved_rag_chunks_count": 20,
+    "knowledge_base_tool_info": {
+      "enabled_strategies": [
+        "cat",
+        "keyword",
+        "semantic",
+        "ls"
+      ]
+    },
+    "include_source_urls": false
+  },
+  "tts": {
+    "model_id": "eleven_v3_conversational",
+    "voice_id": "1CeqBeXMOqCleeQjfYfO",
+    "supported_voices": [],
+    "expressive_mode": true,
+    "suggested_audio_tags": [],
+    "agent_output_audio_format": "pcm_16000",
+    "optimize_streaming_latency": 3,
+    "stability": 0.5,
+    "speed": 1,
+    "similarity_boost": 0.8,
+    "clone_strength": 0,
+    "text_normalisation_type": "system_prompt",
+    "pronunciation_dictionary_locators": [],
+    "enable_phoneme_tags": true
+  },
+  "widget": {
+    "variant": "full",
+    "placement": "bottom-right",
+    "expandable": "never",
+    "avatar": {
+      "type": "orb",
+      "color_1": "#E60012",
+      "color_2": "#F7B5BB"
+    },
+    "feedback_mode": "none",
+    "end_feedback": {
+      "type": "rating"
+    },
+    "bg_color": "#FFFFFF",
+    "text_color": "#252728",
+    "btn_color": "#E60012",
+    "btn_text_color": "#FFFFFF",
+    "border_color": "#DCDDDE",
+    "focus_color": "#B5000F",
+    "action_text": "Hablar con HR assistant BYD",
+    "shareable_page_show_terms": true,
+    "show_avatar_when_collapsed": false,
+    "disable_banner": false,
+    "markdown_link_allowed_hosts": [],
+    "markdown_link_include_www": true,
+    "markdown_link_allow_http": true,
+    "mic_muting_enabled": true,
+    "transcript_enabled": true,
+    "text_input_enabled": true,
+    "conversation_mode_toggle_enabled": false,
+    "default_expanded": false,
+    "always_expanded": false,
+    "dismissible": false,
+    "show_agent_status": false,
+    "show_conversation_id": true,
+    "strip_audio_tags": true,
+    "text_contents": {},
+    "styles": {},
+    "show_resize_button": true,
+    "end_confirmation_enabled": false,
+    "mobile_fullscreen": true,
+    "transcript_speech_sync_enabled": true,
+    "language_selector": false,
+    "supports_text_only": true,
+    "language_presets": {},
+    "first_message_quick_replies": []
+  },
+  "auth": {
+    "enable_auth": false,
+    "allowlist": [],
+    "require_origin_header": false
+  },
+  "herramientas_sanitizadas": [
+    {
+      "type": "webhook",
+      "name": "consultar_estado_rh",
+      "description": "Consulta el estado real de un folio VAC del registro ficticio en n8n. Úsala antes de afirmar estado, fechas o días de una solicitud. No aprueba ni modifica.",
+      "response_timeout_secs": 20,
+      "disable_interruptions": false,
+      "interruption_mode": "allow",
+      "force_pre_tool_speech": false,
+      "pre_tool_speech": "auto",
+      "assignments": [],
+      "tool_call_sound_behavior": "auto",
+      "tool_error_handling_mode": "auto",
+      "dynamic_variables": {
+        "dynamic_variable_placeholders": {}
+      },
+      "execution_mode": "immediate",
+      "api_schema": {
+        "request_headers": {
+          "Content-Type": "application/json",
+          "X-RH-Voz-Key": {
+            "secret_id": "CONFIGURAR_SECRETO_EN_ELEVENLABS"
+          }
+        },
+        "kind": "webhook",
+        "url": "https://CONFIGURAR_INSTANCIA_N8N/webhook/rh-voz-consultas-jv-v1",
+        "method": "POST",
+        "path_params_schema": {},
+        "request_body_schema": {
+          "description": "",
+          "dynamic_variable": "",
+          "is_omitted": false,
+          "type": "object",
+          "required": [
+            "operacion",
+            "folio",
+            "conversacion_id"
+          ],
+          "properties": {
+            "operacion": {
+              "type": "string",
+              "description": "",
+              "is_system_provided": false,
+              "dynamic_variable": "",
+              "allowed_values_dynamic_variable": "",
+              "constant_value": "consultar_estado",
+              "is_omitted": false
+            },
+            "folio": {
+              "type": "string",
+              "description": "El folio VAC completo indicado por el usuario, sin inventar ni corregir caracteres.",
+              "is_system_provided": false,
+              "dynamic_variable": "",
+              "allowed_values_dynamic_variable": "",
+              "constant_value": "",
+              "is_omitted": false
+            },
+            "conversacion_id": {
+              "type": "string",
+              "description": "",
+              "is_system_provided": false,
+              "dynamic_variable": "system__conversation_id",
+              "allowed_values_dynamic_variable": "",
+              "constant_value": "",
+              "is_omitted": false
+            }
+          }
+        },
+        "content_type": "application/json",
+        "auth_resolved_params": []
+      },
+      "follow_redirects": false,
+      "follow_redirects_allowed_domains": []
+    },
+    {
+      "type": "webhook",
+      "name": "consultar_saldo_rh",
+      "description": "Consulta el saldo disponible de EMP-001 a EMP-015 en la base ficticia de n8n. Úsala antes de afirmar cuántos días quedan. No calcula con memoria ni modifica saldos.",
+      "response_timeout_secs": 20,
+      "disable_interruptions": false,
+      "interruption_mode": "allow",
+      "force_pre_tool_speech": false,
+      "pre_tool_speech": "auto",
+      "assignments": [],
+      "tool_call_sound_behavior": "auto",
+      "tool_error_handling_mode": "auto",
+      "dynamic_variables": {
+        "dynamic_variable_placeholders": {}
+      },
+      "execution_mode": "immediate",
+      "api_schema": {
+        "request_headers": {
+          "Content-Type": "application/json",
+          "X-RH-Voz-Key": {
+            "secret_id": "CONFIGURAR_SECRETO_EN_ELEVENLABS"
+          }
+        },
+        "kind": "webhook",
+        "url": "https://CONFIGURAR_INSTANCIA_N8N/webhook/rh-voz-consultas-jv-v1",
+        "method": "POST",
+        "path_params_schema": {},
+        "request_body_schema": {
+          "description": "",
+          "dynamic_variable": "",
+          "is_omitted": false,
+          "type": "object",
+          "required": [
+            "operacion",
+            "empleado_id",
+            "conversacion_id"
+          ],
+          "properties": {
+            "operacion": {
+              "type": "string",
+              "description": "",
+              "is_system_provided": false,
+              "dynamic_variable": "",
+              "allowed_values_dynamic_variable": "",
+              "constant_value": "consultar_saldo",
+              "is_omitted": false
+            },
+            "empleado_id": {
+              "type": "string",
+              "description": "Identificador ficticio EMP-001 a EMP-015 proporcionado por el usuario.",
+              "is_system_provided": false,
+              "dynamic_variable": "",
+              "allowed_values_dynamic_variable": "",
+              "constant_value": "",
+              "is_omitted": false
+            },
+            "conversacion_id": {
+              "type": "string",
+              "description": "",
+              "is_system_provided": false,
+              "dynamic_variable": "system__conversation_id",
+              "allowed_values_dynamic_variable": "",
+              "constant_value": "",
+              "is_omitted": false
+            }
+          }
+        },
+        "content_type": "application/json",
+        "auth_resolved_params": []
+      },
+      "follow_redirects": false,
+      "follow_redirects_allowed_domains": []
+    }
+  ],
+  "nota": "Valores observados; no configuración ideal ni despliegue nuevo. IDs de referencia de secretos sustituidos; sin valores de secretos.",
+  "actualizacion_parcial_verificada": {
+    "fecha": "2026-11-04",
+    "version_id": "agtvrsn_8601m6me8xxrekrt4txf7f0zq6h9",
+    "max_tokens": 1500,
+    "auth": {
+      "enable_auth": false,
+      "allowlist": [
+        {
+          "hostname": "jorgevalba.github.io"
+        }
+      ],
+      "require_origin_header": false
+    },
+    "nota": "Solo estos campos se releyeron tras el cambio. El resto del snapshot corresponde al corte anterior."
+  }
+}

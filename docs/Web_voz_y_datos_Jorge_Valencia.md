@@ -1,3 +1,5 @@
+> Nota de preparación, 4 de noviembre de 2026 — Jorge Valencia: este documento contiene instrucciones y estados históricos. Para estado actual y límites de evidencia consultar Estado_entrega_Jorge_Valencia.md. Sus pendientes antiguos no se interpretan como prueba de ausencia actual de integración.
+
 # HTML, voz y registro compartido
 Elaborado por: Jorge Valencia.
 

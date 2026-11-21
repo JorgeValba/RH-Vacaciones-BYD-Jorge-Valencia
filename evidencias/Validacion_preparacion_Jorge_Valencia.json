@@ -1,0 +1,25 @@
+{
+  "autor": "Jorge Valencia",
+  "fecha": "2026-11-04",
+  "alcance": "Pruebas locales sin red ni consumo API; no prueba disponibilidad remota",
+  "comprobaciones": [
+    {
+      "prueba": "skills.test.mjs",
+      "resultado": "correcto"
+    },
+    {
+      "prueba": "voz.test.mjs",
+      "resultado": "correcto"
+    },
+    {
+      "prueba": "validar_panel.mjs",
+      "resultado": "correcto"
+    },
+    {
+      "prueba": "panel_actualizado.test.mjs",
+      "resultado": "correcto"
+    }
+  ],
+  "escaneo_ids_personales_conocidos_y_patrones_claves": [],
+  "limite": "No sustituye revisión de capturas ni búsqueda contextual de todo tipo de secreto."
+}

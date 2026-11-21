@@ -1,0 +1,9 @@
+# Elaborado por: Jorge Valencia
+.env
+.env.*
+!.env.example
+node_modules/
+PRIVADO*
+**/PRIVADO*
+revision_privada/
+*.log

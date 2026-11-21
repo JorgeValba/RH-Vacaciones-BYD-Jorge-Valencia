@@ -1,0 +1,295 @@
+{
+  "autor": "Jorge Valencia",
+  "vinculaciones": [
+    {
+      "workflow": "01_principal_Jorge_Valencia.json",
+      "nodo": "Buscar folio",
+      "tabla_o_expresion": "CONFIGURAR_TABLA_RH_SOLICITUDES"
+    },
+    {
+      "workflow": "01_principal_Jorge_Valencia.json",
+      "nodo": "Buscar evento LFT",
+      "tabla_o_expresion": "CONFIGURAR_TABLA_RH_TRAZAS"
+    },
+    {
+      "workflow": "01_principal_Jorge_Valencia.json",
+      "nodo": "Registrar recepción LFT",
+      "tabla_o_expresion": "CONFIGURAR_TABLA_RH_TRAZAS"
+    },
+    {
+      "workflow": "01_principal_Jorge_Valencia.json",
+      "nodo": "Consulta legal LFT",
+      "subworkflow": "CONFIGURAR_WORKFLOW_02_LLM"
+    },
+    {
+      "workflow": "01_principal_Jorge_Valencia.json",
+      "nodo": "Guardar traza LFT",
+      "tabla_o_expresion": "CONFIGURAR_TABLA_RH_TRAZAS"
+    },
+    {
+      "workflow": "01_principal_Jorge_Valencia.json",
+      "nodo": "Buscar evento duplicado",
+      "tabla_o_expresion": "CONFIGURAR_TABLA_RH_SOLICITUDES"
+    },
+    {
+      "workflow": "01_principal_Jorge_Valencia.json",
+      "nodo": "Registrar caso abierto",
+      "tabla_o_expresion": "CONFIGURAR_TABLA_RH_SOLICITUDES"
+    },
+    {
+      "workflow": "01_principal_Jorge_Valencia.json",
+      "nodo": "Consultar empleado",
+      "tabla_o_expresion": "CONFIGURAR_TABLA_RH_EMPLEADOS"
+    },
+    {
+      "workflow": "01_principal_Jorge_Valencia.json",
+      "nodo": "Consultar plantilla del equipo",
+      "tabla_o_expresion": "CONFIGURAR_TABLA_RH_EMPLEADOS"
+    },
+    {
+      "workflow": "01_principal_Jorge_Valencia.json",
+      "nodo": "Consultar aprobadas del equipo",
+      "tabla_o_expresion": "CONFIGURAR_TABLA_RH_APROBADAS"
+    },
+    {
+      "workflow": "01_principal_Jorge_Valencia.json",
+      "nodo": "Consultar aprobadas del empleado",
+      "tabla_o_expresion": "CONFIGURAR_TABLA_RH_APROBADAS"
+    },
+    {
+      "workflow": "01_principal_Jorge_Valencia.json",
+      "nodo": "Consultar calendario",
+      "tabla_o_expresion": "CONFIGURAR_TABLA_RH_CALENDARIO"
+    },
+    {
+      "workflow": "01_principal_Jorge_Valencia.json",
+      "nodo": "Consultar reglas",
+      "tabla_o_expresion": "CONFIGURAR_TABLA_RH_REGLAS"
+    },
+    {
+      "workflow": "01_principal_Jorge_Valencia.json",
+      "nodo": "Consultar fuentes LFT",
+      "tabla_o_expresion": "CONFIGURAR_TABLA_RH_FUENTES_LFT"
+    },
+    {
+      "workflow": "01_principal_Jorge_Valencia.json",
+      "nodo": "Consultar primas pagadas",
+      "tabla_o_expresion": "CONFIGURAR_TABLA_RH_PRIMAS_PAGADAS"
+    },
+    {
+      "workflow": "01_principal_Jorge_Valencia.json",
+      "nodo": "Agente 1 - Recepción",
+      "subworkflow": "CONFIGURAR_WORKFLOW_02_LLM"
+    },
+    {
+      "workflow": "01_principal_Jorge_Valencia.json",
+      "nodo": "Agente 2 - Consulta",
+      "subworkflow": "CONFIGURAR_WORKFLOW_02_LLM"
+    },
+    {
+      "workflow": "01_principal_Jorge_Valencia.json",
+      "nodo": "Agente 3 - Propuesta",
+      "subworkflow": "CONFIGURAR_WORKFLOW_02_LLM"
+    },
+    {
+      "workflow": "01_principal_Jorge_Valencia.json",
+      "nodo": "Agente 4 - Revisión",
+      "subworkflow": "CONFIGURAR_WORKFLOW_02_LLM"
+    },
+    {
+      "workflow": "01_principal_Jorge_Valencia.json",
+      "nodo": "Guardar estado provisional",
+      "tabla_o_expresion": "CONFIGURAR_TABLA_RH_SOLICITUDES"
+    },
+    {
+      "workflow": "01_principal_Jorge_Valencia.json",
+      "nodo": "Guardar trazas",
+      "tabla_o_expresion": "CONFIGURAR_TABLA_RH_TRAZAS"
+    },
+    {
+      "workflow": "01_principal_Jorge_Valencia.json",
+      "nodo": "Guardar costos",
+      "tabla_o_expresion": "CONFIGURAR_TABLA_RH_COSTOS"
+    },
+    {
+      "workflow": "01_principal_Jorge_Valencia.json",
+      "nodo": "Decisión: leer control",
+      "tabla_o_expresion": "={{ $(\"Configuración\").first().json.ID_TABLA_CONTROL }}"
+    },
+    {
+      "workflow": "01_principal_Jorge_Valencia.json",
+      "nodo": "Decisión: tomar control",
+      "tabla_o_expresion": "={{ $(\"Configuración\").first().json.ID_TABLA_CONTROL }}"
+    },
+    {
+      "workflow": "01_principal_Jorge_Valencia.json",
+      "nodo": "Decisión: verificar propietario",
+      "tabla_o_expresion": "={{ $(\"Configuración\").first().json.ID_TABLA_CONTROL }}"
+    },
+    {
+      "workflow": "01_principal_Jorge_Valencia.json",
+      "nodo": "Control: intentar revisión antigua",
+      "tabla_o_expresion": "={{ $(\"Configuración\").first().json.ID_TABLA_CONTROL }}"
+    },
+    {
+      "workflow": "01_principal_Jorge_Valencia.json",
+      "nodo": "Control: leer resultado de prueba",
+      "tabla_o_expresion": "={{ $(\"Configuración\").first().json.ID_TABLA_CONTROL }}"
+    },
+    {
+      "workflow": "01_principal_Jorge_Valencia.json",
+      "nodo": "Decisión: leer caso",
+      "tabla_o_expresion": "CONFIGURAR_TABLA_RH_SOLICITUDES"
+    },
+    {
+      "workflow": "01_principal_Jorge_Valencia.json",
+      "nodo": "Decisión: consultar empleado",
+      "tabla_o_expresion": "CONFIGURAR_TABLA_RH_EMPLEADOS"
+    },
+    {
+      "workflow": "01_principal_Jorge_Valencia.json",
+      "nodo": "Decisión: consultar plantilla del equipo",
+      "tabla_o_expresion": "CONFIGURAR_TABLA_RH_EMPLEADOS"
+    },
+    {
+      "workflow": "01_principal_Jorge_Valencia.json",
+      "nodo": "Decisión: consultar aprobadas del equipo",
+      "tabla_o_expresion": "CONFIGURAR_TABLA_RH_APROBADAS"
+    },
+    {
+      "workflow": "01_principal_Jorge_Valencia.json",
+      "nodo": "Decisión: consultar aprobadas del empleado",
+      "tabla_o_expresion": "CONFIGURAR_TABLA_RH_APROBADAS"
+    },
+    {
+      "workflow": "01_principal_Jorge_Valencia.json",
+      "nodo": "Decisión: consultar calendario",
+      "tabla_o_expresion": "CONFIGURAR_TABLA_RH_CALENDARIO"
+    },
+    {
+      "workflow": "01_principal_Jorge_Valencia.json",
+      "nodo": "Decisión: consultar reglas",
+      "tabla_o_expresion": "CONFIGURAR_TABLA_RH_REGLAS"
+    },
+    {
+      "workflow": "01_principal_Jorge_Valencia.json",
+      "nodo": "Decisión: consultar fuentes lft",
+      "tabla_o_expresion": "CONFIGURAR_TABLA_RH_FUENTES_LFT"
+    },
+    {
+      "workflow": "01_principal_Jorge_Valencia.json",
+      "nodo": "Decisión: consultar primas pagadas",
+      "tabla_o_expresion": "CONFIGURAR_TABLA_RH_PRIMAS_PAGADAS"
+    },
+    {
+      "workflow": "01_principal_Jorge_Valencia.json",
+      "nodo": "Decisión: guardar transición",
+      "tabla_o_expresion": "CONFIGURAR_TABLA_RH_SOLICITUDES"
+    },
+    {
+      "workflow": "01_principal_Jorge_Valencia.json",
+      "nodo": "Decisión: insertar reserva",
+      "tabla_o_expresion": "CONFIGURAR_TABLA_RH_APROBADAS"
+    },
+    {
+      "workflow": "01_principal_Jorge_Valencia.json",
+      "nodo": "Decisión: leer reserva registrada",
+      "tabla_o_expresion": "CONFIGURAR_TABLA_RH_APROBADAS"
+    },
+    {
+      "workflow": "01_principal_Jorge_Valencia.json",
+      "nodo": "Decisión: finalizar aprobación",
+      "tabla_o_expresion": "CONFIGURAR_TABLA_RH_SOLICITUDES"
+    },
+    {
+      "workflow": "01_principal_Jorge_Valencia.json",
+      "nodo": "Decisión: guardar auditoría",
+      "tabla_o_expresion": "CONFIGURAR_TABLA_RH_TRAZAS"
+    },
+    {
+      "workflow": "01_principal_Jorge_Valencia.json",
+      "nodo": "Decisión: guardar evento sin IA",
+      "tabla_o_expresion": "CONFIGURAR_TABLA_RH_COSTOS"
+    },
+    {
+      "workflow": "01_principal_Jorge_Valencia.json",
+      "nodo": "Decisión: liberar control",
+      "tabla_o_expresion": "={{ $(\"Configuración\").first().json.ID_TABLA_CONTROL }}"
+    },
+    {
+      "workflow": "01_principal_Jorge_Valencia.json",
+      "nodo": "Acceso: leer pases",
+      "tabla_o_expresion": "={{ $(\"Configuración\").first().json.ID_TABLA_ACCESOS }}"
+    },
+    {
+      "workflow": "01_principal_Jorge_Valencia.json",
+      "nodo": "Acceso: reclamar una vez",
+      "tabla_o_expresion": "={{ $(\"Configuración\").first().json.ID_TABLA_ACCESOS }}"
+    },
+    {
+      "workflow": "01_principal_Jorge_Valencia.json",
+      "nodo": "Acceso: releer canje",
+      "tabla_o_expresion": "={{ $(\"Configuración\").first().json.ID_TABLA_ACCESOS }}"
+    },
+    {
+      "workflow": "02_llm_Jorge_Valencia.json",
+      "nodo": "Leer costos del caso",
+      "tabla_o_expresion": "CONFIGURAR_TABLA_RH_COSTOS"
+    },
+    {
+      "workflow": "02_llm_Jorge_Valencia.json",
+      "nodo": "Registrar conteo auxiliar",
+      "tabla_o_expresion": "CONFIGURAR_TABLA_RH_COSTOS"
+    },
+    {
+      "workflow": "02_llm_Jorge_Valencia.json",
+      "nodo": "Reservar llamada",
+      "tabla_o_expresion": "CONFIGURAR_TABLA_RH_COSTOS"
+    },
+    {
+      "workflow": "02_llm_Jorge_Valencia.json",
+      "nodo": "Persistir resultado",
+      "tabla_o_expresion": "CONFIGURAR_TABLA_RH_COSTOS"
+    },
+    {
+      "workflow": "02_llm_Jorge_Valencia.json",
+      "nodo": "Guardar traza de llamada",
+      "tabla_o_expresion": "CONFIGURAR_TABLA_RH_TRAZAS"
+    },
+    {
+      "workflow": "03_voz_Jorge_Valencia.json",
+      "nodo": "Voz: leer caso",
+      "tabla_o_expresion": "CONFIGURAR_TABLA_RH_SOLICITUDES"
+    },
+    {
+      "workflow": "03_voz_Jorge_Valencia.json",
+      "nodo": "Voz: leer empleado",
+      "tabla_o_expresion": "CONFIGURAR_TABLA_RH_EMPLEADOS"
+    },
+    {
+      "workflow": "03_voz_Jorge_Valencia.json",
+      "nodo": "Voz: leer reservas",
+      "tabla_o_expresion": "CONFIGURAR_TABLA_RH_APROBADAS"
+    },
+    {
+      "workflow": "03_voz_Jorge_Valencia.json",
+      "nodo": "Voz: leer reglas",
+      "tabla_o_expresion": "CONFIGURAR_TABLA_RH_REGLAS"
+    },
+    {
+      "workflow": "03_voz_Jorge_Valencia.json",
+      "nodo": "Voz: guardar traza",
+      "tabla_o_expresion": "CONFIGURAR_TABLA_RH_TRAZAS"
+    },
+    {
+      "workflow": "03_voz_Jorge_Valencia.json",
+      "nodo": "Voz: guardar evento",
+      "tabla_o_expresion": "CONFIGURAR_TABLA_RH_COSTOS"
+    },
+    {
+      "workflow": "04_panel_Jorge_Valencia.json",
+      "nodo": "Panel: leer solicitudes",
+      "tabla_o_expresion": "CONFIGURAR_TABLA_RH_SOLICITUDES"
+    }
+  ]
+}

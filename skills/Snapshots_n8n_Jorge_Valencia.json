@@ -1,0 +1,21 @@
+{
+  "autor": "Jorge Valencia",
+  "modo_carga": "snapshot_compilado",
+  "regla": "No editar el archivo sin recompilar el nodo y su huella; un commit no actualiza por sí solo n8n.",
+  "skills": [
+    {
+      "ruta": "skills/evaluar_vacaciones/SKILL.md",
+      "skill_id": "evaluar-vacaciones-byd",
+      "version": "1.0.1",
+      "sha256_fuente": "eb5d5e3500d2af5353a7b419e300c8c9b9a86750c2095807531d29a005bb01d9",
+      "integridad_fnv1a": "6aa582e7"
+    },
+    {
+      "ruta": "skills/seguridad_y_costo/SKILL.md",
+      "skill_id": "proteger-operacion-rh-byd",
+      "version": "1.0.0",
+      "sha256_fuente": "cf909ff2792108eb68618237ed7f5fa36f17f1d0a3adaf29af9179d8dcc26582",
+      "integridad_fnv1a": "94102e28"
+    }
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "autor": "Jorge Valencia",
+  "fecha": "2026-11-04",
+  "filas_unicas": 144,
+  "escenarios": 6,
+  "total_ledger_usd": "0.2775702557108233042",
+  "validaciones": [
+    "Suma del ledger coincide con resumen",
+    "No hay identificadores de registro duplicados",
+    "Seis escenarios y minutos dentro del plan ilustrativo",
+    "Ejecuciones incluyen Telegram, voz/texto y panel",
+    "Matriz conserva catorce pruebas"
+  ],
+  "alcance": "Validación local de archivos y aritmética; no ejecución remota ni prueba de carga."
+}

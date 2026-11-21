@@ -1,0 +1,26 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "validado",
+    "correcciones",
+    "observaciones"
+  ],
+  "properties": {
+    "validado": {
+      "type": "boolean"
+    },
+    "correcciones": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "observaciones": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  }
+}

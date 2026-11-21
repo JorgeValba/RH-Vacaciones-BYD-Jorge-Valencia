@@ -1,0 +1,83 @@
+{
+  "autor": "Jorge Valencia",
+  "fecha_revision": "2026-11-04",
+  "fuente": "rh_trazas (1).csv",
+  "sha256": "52b4b1ed2edd18a07448b74d5b82ef24d3a3f61c7fbc868fcf33d95721ca1588",
+  "filas": 168,
+  "traza_id_duplicados": [],
+  "json_invalidos": [],
+  "etapas": {
+    "calculo_determinista": 13,
+    "orquestador": 2,
+    "cierre": 13,
+    "recepcion": 24,
+    "consulta": 24,
+    "propuesta": 24,
+    "revision": 24,
+    "decision_humana": 7,
+    "recuperacion_formato_fecha": 1,
+    "carga_skill": 6,
+    "loop_seguridad": 20,
+    "loop_calidad": 4,
+    "voz_consulta": 6
+  },
+  "llamadas_distintas_referidas": 48,
+  "casos_aprobados": [
+    {
+      "caso_id": "VAC-20261102-YTLRX08S4",
+      "etapas_generativas": [
+        "consulta",
+        "propuesta",
+        "recepcion",
+        "revision"
+      ],
+      "cuatro_especialistas": true,
+      "llamadas_distintas": 4,
+      "decisiones_observadas": [
+        "revision_manual"
+      ],
+      "recuperacion_fecha": true
+    },
+    {
+      "caso_id": "VAC-20261102-YTLS2ZE8C",
+      "etapas_generativas": [
+        "consulta",
+        "propuesta",
+        "recepcion",
+        "revision"
+      ],
+      "cuatro_especialistas": true,
+      "llamadas_distintas": 4,
+      "decisiones_observadas": [
+        "aprobar",
+        "ninguna"
+      ],
+      "recuperacion_fecha": false
+    },
+    {
+      "caso_id": "VAC-20261102-YTLSBKE8E",
+      "etapas_generativas": [
+        "consulta",
+        "propuesta",
+        "recepcion",
+        "revision"
+      ],
+      "cuatro_especialistas": true,
+      "llamadas_distintas": 4,
+      "decisiones_observadas": [
+        "aprobar"
+      ],
+      "recuperacion_fecha": false
+    }
+  ],
+  "casos_con_carga_skill": [
+    "VAC-20261102-YTLSAI66N",
+    "VAC-20261102-YTLSBKE8E",
+    "VAC-20261102-YTLSEX4SR"
+  ],
+  "filas_carga_skill": 6,
+  "filas_voz_consulta": 6,
+  "caso_correccion": "VAC-20261102-YTLS6SW04",
+  "correccion_con_carga_skill_mismo_caso": false,
+  "alcance": "Inspección del CSV; filas agregadas y filas por llamada no se contabilizan como llamadas distintas. La traza no acredita por sí sola origen desde Pages ni costes."
+}

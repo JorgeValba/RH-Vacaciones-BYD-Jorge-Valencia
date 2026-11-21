@@ -1,0 +1,40 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "datos_suficientes",
+    "datos_disponibles",
+    "faltantes",
+    "fuentes_seleccionadas",
+    "observaciones"
+  ],
+  "properties": {
+    "datos_suficientes": {
+      "type": "boolean"
+    },
+    "datos_disponibles": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "faltantes": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "fuentes_seleccionadas": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "observaciones": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  }
+}

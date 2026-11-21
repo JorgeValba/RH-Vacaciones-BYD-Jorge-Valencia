@@ -1,0 +1,510 @@
+{
+  "autor": "Jorge Valencia",
+  "fuente_sha256": "52b4b1ed2edd18a07448b74d5b82ef24d3a3f61c7fbc868fcf33d95721ca1588",
+  "casos_aprobados": [
+    {
+      "caso_id": "VAC-20261102-YTLRX08S4",
+      "etapas_generativas": [
+        "consulta",
+        "propuesta",
+        "recepcion",
+        "revision"
+      ],
+      "cuatro_especialistas": true,
+      "llamadas_distintas": 4,
+      "decisiones_observadas": [
+        "revision_manual"
+      ],
+      "recuperacion_fecha": true
+    },
+    {
+      "caso_id": "VAC-20261102-YTLS2ZE8C",
+      "etapas_generativas": [
+        "consulta",
+        "propuesta",
+        "recepcion",
+        "revision"
+      ],
+      "cuatro_especialistas": true,
+      "llamadas_distintas": 4,
+      "decisiones_observadas": [
+        "aprobar",
+        "ninguna"
+      ],
+      "recuperacion_fecha": false
+    },
+    {
+      "caso_id": "VAC-20261102-YTLSBKE8E",
+      "etapas_generativas": [
+        "consulta",
+        "propuesta",
+        "recepcion",
+        "revision"
+      ],
+      "cuatro_especialistas": true,
+      "llamadas_distintas": 4,
+      "decisiones_observadas": [
+        "aprobar"
+      ],
+      "recuperacion_fecha": false
+    }
+  ],
+  "correccion_V1_V2": [
+    {
+      "traza_id": "VAC-20261102-YTLS6SW04-L3-T",
+      "caso_id": "VAC-20261102-YTLS6SW04",
+      "etapa": "propuesta",
+      "agente": "Agente 3 - Propuesta",
+      "estado": "completada",
+      "version_propuesta": "1",
+      "creado_en": "2026-11-02T04:15:34.005Z",
+      "llamada_id": "VAC-20261102-YTLS6SW04-L3",
+      "resultado_observable": {
+        "resumen": "Resultado simulado. Solicita 5 días; saldo actual 10 y saldo proyectado 5. Prima vacacional: bruta MXN 875 y adicional MXN 875. Cobertura operativa sin conflicto. No equivale a una aprobación. Acción: continuar con el flujo interno de validación y calendarización según políticas del ejercicio.",
+        "dias_solicitados": 5,
+        "saldo_actual": 10,
+        "saldo_proyectado": 5,
+        "prima_bruta_mxn": 875,
+        "prima_adicional_mxn": 875,
+        "cobertura_ok": true,
+        "alertas": [],
+        "fuentes_citadas": [
+          "LFT-076",
+          "LFT-078",
+          "LFT-080",
+          "LFT-081"
+        ]
+      }
+    },
+    {
+      "traza_id": "VAC-20261102-YTLS6SW04-L4-T",
+      "caso_id": "VAC-20261102-YTLS6SW04",
+      "etapa": "revision",
+      "agente": "Agente 4 - Revisión",
+      "estado": "completada",
+      "version_propuesta": "1",
+      "creado_en": "2026-11-02T04:15:38.693Z",
+      "llamada_id": "VAC-20261102-YTLS6SW04-L4",
+      "resultado_observable": {
+        "validado": false,
+        "correcciones": [
+          "propuesta.prima_adicional_mxn: La propuesta indica 875, pero con prima_cubierta_mxn=0 y prima_bruta_mxn=875, la adicional debe ser 875 solo si la bruta corresponde a 5 días de salario base; falta concordancia explícita con el salario base. Ajuste: incluir o referenciar el salario base usado o clarificar que la prima_bruta es calculada y consistente con tasa_prima 0.25 y base salarial.",
+          "propuesta.resumen: Menciona 'Acción: continuar con el flujo interno de validación y calendarización', lo cual puede interpretarse como instrucción operativa. Ajuste: mantener carácter informativo sin sugerir acciones operativas.",
+          "propuesta.fuentes_citadas: Correctas, pero falta verificar trazabilidad con fuentes_seleccionadas respecto a la prima (art. 80) incluyendo la base salarial usada. Ajuste: añadir nota de que el cálculo se basa en salario diario simulado y tasa 25%, sin afirmar montos definitivos."
+        ],
+        "observaciones": [
+          "Identidad y fechas no forman parte del esquema de la propuesta; no se contrastan aquí.",
+          "Cifras internas de días, saldo y cobertura son consistentes entre cálculos y propuesta.",
+          "No se detectan alertas ni derivaciones en calculos; propuesta refleja esto correctamente.",
+          "El resumen identifica simulación y no afirma aprobación."
+        ]
+      }
+    },
+    {
+      "traza_id": "VAC-20261102-YTLS6SW04-L5-T",
+      "caso_id": "VAC-20261102-YTLS6SW04",
+      "etapa": "propuesta",
+      "agente": "Agente 3 - Propuesta",
+      "estado": "completada",
+      "version_propuesta": "2",
+      "creado_en": "2026-11-02T04:15:41.512Z",
+      "llamada_id": "VAC-20261102-YTLS6SW04-L5",
+      "resultado_observable": {
+        "resumen": "Resultado simulado. Solicita 5 días; saldo actual 10, quedaría 5. Cobertura operativa sin conflicto. Prima vacacional bruta MXN 875 y prima adicional MXN 875 (tasa 25% sobre salario diario simulado). No equivale a una aprobación. Carácter informativo; RH debe considerar que el monto depende del salario base simulado y su verificación interna.",
+        "dias_solicitados": 5,
+        "saldo_actual": 10,
+        "saldo_proyectado": 5,
+        "prima_bruta_mxn": 875,
+        "prima_adicional_mxn": 875,
+        "cobertura_ok": true,
+        "alertas": [],
+        "fuentes_citadas": [
+          "LFT-076",
+          "LFT-078",
+          "LFT-080",
+          "LFT-081"
+        ]
+      }
+    },
+    {
+      "traza_id": "VAC-20261102-YTLS6SW04-L6-T",
+      "caso_id": "VAC-20261102-YTLS6SW04",
+      "etapa": "revision",
+      "agente": "Agente 4 - Revisión",
+      "estado": "completada",
+      "version_propuesta": "2",
+      "creado_en": "2026-11-02T04:15:44.415Z",
+      "llamada_id": "VAC-20261102-YTLS6SW04-L6",
+      "resultado_observable": {
+        "validado": true,
+        "correcciones": [],
+        "observaciones": [
+          "Cifras consistentes: 5 días solicitados; saldo 10→5; cobertura_ok true sin conflictos; prima bruta/adicional MXN 875 con tasa 25% y salario simulado.",
+          "Alertas y derivar_rh vacíos: coherente con calculos.",
+          "fuentes_citadas coinciden con fuentes_seleccionadas.",
+          "Resumen indica simulación y no afirma aprobación."
+        ]
+      }
+    }
+  ],
+  "carga_skills": [
+    {
+      "caso_id": "VAC-20261102-YTLSAI66N",
+      "estado": "cargado",
+      "entrada": {
+        "ruta": "skills/evaluar_vacaciones/SKILL.md",
+        "version": "1.0.0"
+      },
+      "salida": {
+        "skill_id": "evaluar-vacaciones-byd",
+        "sha256_fuente": "5b9f117a50aac4a9c63835d92e626b8a65873d3f3174217b96b472c8d7567e28",
+        "modo_carga": "snapshot_compilado",
+        "proyeccion": "reglas_por_rol_v1"
+      }
+    },
+    {
+      "caso_id": "VAC-20261102-YTLSAI66N",
+      "estado": "cargado",
+      "entrada": {
+        "ruta": "skills/seguridad_y_costo/SKILL.md",
+        "version": "1.0.0"
+      },
+      "salida": {
+        "skill_id": "proteger-operacion-rh-byd",
+        "sha256_fuente": "cf909ff2792108eb68618237ed7f5fa36f17f1d0a3adaf29af9179d8dcc26582",
+        "modo_carga": "snapshot_compilado",
+        "proyeccion": "reglas_por_rol_v1"
+      }
+    },
+    {
+      "caso_id": "VAC-20261102-YTLSBKE8E",
+      "estado": "cargado",
+      "entrada": {
+        "ruta": "skills/evaluar_vacaciones/SKILL.md",
+        "version": "1.0.1"
+      },
+      "salida": {
+        "skill_id": "evaluar-vacaciones-byd",
+        "sha256_fuente": "eb5d5e3500d2af5353a7b419e300c8c9b9a86750c2095807531d29a005bb01d9",
+        "modo_carga": "snapshot_compilado",
+        "proyeccion": "reglas_por_rol_v1_1"
+      }
+    },
+    {
+      "caso_id": "VAC-20261102-YTLSBKE8E",
+      "estado": "cargado",
+      "entrada": {
+        "ruta": "skills/seguridad_y_costo/SKILL.md",
+        "version": "1.0.0"
+      },
+      "salida": {
+        "skill_id": "proteger-operacion-rh-byd",
+        "sha256_fuente": "cf909ff2792108eb68618237ed7f5fa36f17f1d0a3adaf29af9179d8dcc26582",
+        "modo_carga": "snapshot_compilado",
+        "proyeccion": "reglas_por_rol_v1_1"
+      }
+    },
+    {
+      "caso_id": "VAC-20261102-YTLSEX4SR",
+      "estado": "cargado",
+      "entrada": {
+        "ruta": "skills/evaluar_vacaciones/SKILL.md",
+        "version": "1.0.1"
+      },
+      "salida": {
+        "skill_id": "evaluar-vacaciones-byd",
+        "sha256_fuente": "eb5d5e3500d2af5353a7b419e300c8c9b9a86750c2095807531d29a005bb01d9",
+        "modo_carga": "snapshot_compilado",
+        "proyeccion": "reglas_por_rol_v1_1"
+      }
+    },
+    {
+      "caso_id": "VAC-20261102-YTLSEX4SR",
+      "estado": "cargado",
+      "entrada": {
+        "ruta": "skills/seguridad_y_costo/SKILL.md",
+        "version": "1.0.0"
+      },
+      "salida": {
+        "skill_id": "proteger-operacion-rh-byd",
+        "sha256_fuente": "cf909ff2792108eb68618237ed7f5fa36f17f1d0a3adaf29af9179d8dcc26582",
+        "modo_carga": "snapshot_compilado",
+        "proyeccion": "reglas_por_rol_v1_1"
+      }
+    }
+  ],
+  "controles_loops": [
+    {
+      "caso_id": "VAC-20261102-YTLSAI66N",
+      "traza_id": "VAC-20261102-YTLSAI66N-T4",
+      "etapa": "loop_seguridad",
+      "estado": "control_previo_superado",
+      "llamada_id": "",
+      "version_propuesta": "0"
+    },
+    {
+      "caso_id": "VAC-20261102-YTLSAI66N",
+      "traza_id": "VAC-20261102-YTLSAI66N-T6",
+      "etapa": "loop_seguridad",
+      "estado": "paso_verificado",
+      "llamada_id": "VAC-20261102-YTLSAI66N-L1",
+      "version_propuesta": "0"
+    },
+    {
+      "caso_id": "VAC-20261102-YTLSAI66N",
+      "traza_id": "VAC-20261102-YTLSAI66N-T7",
+      "etapa": "loop_seguridad",
+      "estado": "control_previo_superado",
+      "llamada_id": "",
+      "version_propuesta": "0"
+    },
+    {
+      "caso_id": "VAC-20261102-YTLSAI66N",
+      "traza_id": "VAC-20261102-YTLSAI66N-T9",
+      "etapa": "loop_seguridad",
+      "estado": "detenido",
+      "llamada_id": "VAC-20261102-YTLSAI66N-L2",
+      "version_propuesta": "0"
+    },
+    {
+      "caso_id": "VAC-20261102-YTLSBKE8E",
+      "traza_id": "VAC-20261102-YTLSBKE8E-T4",
+      "etapa": "loop_seguridad",
+      "estado": "control_previo_superado",
+      "llamada_id": "",
+      "version_propuesta": "1"
+    },
+    {
+      "caso_id": "VAC-20261102-YTLSBKE8E",
+      "traza_id": "VAC-20261102-YTLSBKE8E-T6",
+      "etapa": "loop_seguridad",
+      "estado": "paso_verificado",
+      "llamada_id": "VAC-20261102-YTLSBKE8E-L1",
+      "version_propuesta": "1"
+    },
+    {
+      "caso_id": "VAC-20261102-YTLSBKE8E",
+      "traza_id": "VAC-20261102-YTLSBKE8E-T7",
+      "etapa": "loop_seguridad",
+      "estado": "control_previo_superado",
+      "llamada_id": "",
+      "version_propuesta": "1"
+    },
+    {
+      "caso_id": "VAC-20261102-YTLSBKE8E",
+      "traza_id": "VAC-20261102-YTLSBKE8E-T9",
+      "etapa": "loop_seguridad",
+      "estado": "paso_verificado",
+      "llamada_id": "VAC-20261102-YTLSBKE8E-L2",
+      "version_propuesta": "1"
+    },
+    {
+      "caso_id": "VAC-20261102-YTLSBKE8E",
+      "traza_id": "VAC-20261102-YTLSBKE8E-T10",
+      "etapa": "loop_seguridad",
+      "estado": "control_previo_superado",
+      "llamada_id": "",
+      "version_propuesta": "1"
+    },
+    {
+      "caso_id": "VAC-20261102-YTLSBKE8E",
+      "traza_id": "VAC-20261102-YTLSBKE8E-T12",
+      "etapa": "loop_seguridad",
+      "estado": "paso_verificado",
+      "llamada_id": "VAC-20261102-YTLSBKE8E-L3",
+      "version_propuesta": "1"
+    },
+    {
+      "caso_id": "VAC-20261102-YTLSBKE8E",
+      "traza_id": "VAC-20261102-YTLSBKE8E-T13",
+      "etapa": "loop_calidad",
+      "estado": "etapa_validada",
+      "llamada_id": "VAC-20261102-YTLSBKE8E-L3",
+      "version_propuesta": "1"
+    },
+    {
+      "caso_id": "VAC-20261102-YTLSBKE8E",
+      "traza_id": "VAC-20261102-YTLSBKE8E-T14",
+      "etapa": "loop_seguridad",
+      "estado": "control_previo_superado",
+      "llamada_id": "",
+      "version_propuesta": "1"
+    },
+    {
+      "caso_id": "VAC-20261102-YTLSBKE8E",
+      "traza_id": "VAC-20261102-YTLSBKE8E-T16",
+      "etapa": "loop_seguridad",
+      "estado": "paso_verificado",
+      "llamada_id": "VAC-20261102-YTLSBKE8E-L4",
+      "version_propuesta": "1"
+    },
+    {
+      "caso_id": "VAC-20261102-YTLSBKE8E",
+      "traza_id": "VAC-20261102-YTLSBKE8E-T17",
+      "etapa": "loop_calidad",
+      "estado": "etapa_validada",
+      "llamada_id": "VAC-20261102-YTLSBKE8E-L4",
+      "version_propuesta": "1"
+    },
+    {
+      "caso_id": "VAC-20261102-YTLSEX4SR",
+      "traza_id": "VAC-20261102-YTLSEX4SR-T4",
+      "etapa": "loop_seguridad",
+      "estado": "control_previo_superado",
+      "llamada_id": "",
+      "version_propuesta": "1"
+    },
+    {
+      "caso_id": "VAC-20261102-YTLSEX4SR",
+      "traza_id": "VAC-20261102-YTLSEX4SR-T6",
+      "etapa": "loop_seguridad",
+      "estado": "paso_verificado",
+      "llamada_id": "VAC-20261102-YTLSEX4SR-L1",
+      "version_propuesta": "1"
+    },
+    {
+      "caso_id": "VAC-20261102-YTLSEX4SR",
+      "traza_id": "VAC-20261102-YTLSEX4SR-T7",
+      "etapa": "loop_seguridad",
+      "estado": "control_previo_superado",
+      "llamada_id": "",
+      "version_propuesta": "1"
+    },
+    {
+      "caso_id": "VAC-20261102-YTLSEX4SR",
+      "traza_id": "VAC-20261102-YTLSEX4SR-T9",
+      "etapa": "loop_seguridad",
+      "estado": "paso_verificado",
+      "llamada_id": "VAC-20261102-YTLSEX4SR-L2",
+      "version_propuesta": "1"
+    },
+    {
+      "caso_id": "VAC-20261102-YTLSEX4SR",
+      "traza_id": "VAC-20261102-YTLSEX4SR-T10",
+      "etapa": "loop_seguridad",
+      "estado": "control_previo_superado",
+      "llamada_id": "",
+      "version_propuesta": "1"
+    },
+    {
+      "caso_id": "VAC-20261102-YTLSEX4SR",
+      "traza_id": "VAC-20261102-YTLSEX4SR-T12",
+      "etapa": "loop_seguridad",
+      "estado": "paso_verificado",
+      "llamada_id": "VAC-20261102-YTLSEX4SR-L3",
+      "version_propuesta": "1"
+    },
+    {
+      "caso_id": "VAC-20261102-YTLSEX4SR",
+      "traza_id": "VAC-20261102-YTLSEX4SR-T13",
+      "etapa": "loop_calidad",
+      "estado": "etapa_validada",
+      "llamada_id": "VAC-20261102-YTLSEX4SR-L3",
+      "version_propuesta": "1"
+    },
+    {
+      "caso_id": "VAC-20261102-YTLSEX4SR",
+      "traza_id": "VAC-20261102-YTLSEX4SR-T14",
+      "etapa": "loop_seguridad",
+      "estado": "control_previo_superado",
+      "llamada_id": "",
+      "version_propuesta": "1"
+    },
+    {
+      "caso_id": "VAC-20261102-YTLSEX4SR",
+      "traza_id": "VAC-20261102-YTLSEX4SR-T16",
+      "etapa": "loop_seguridad",
+      "estado": "paso_verificado",
+      "llamada_id": "VAC-20261102-YTLSEX4SR-L4",
+      "version_propuesta": "1"
+    },
+    {
+      "caso_id": "VAC-20261102-YTLSEX4SR",
+      "traza_id": "VAC-20261102-YTLSEX4SR-T17",
+      "etapa": "loop_calidad",
+      "estado": "etapa_validada",
+      "llamada_id": "VAC-20261102-YTLSEX4SR-L4",
+      "version_propuesta": "1"
+    }
+  ],
+  "consultas_voz_sanitizadas": [
+    {
+      "caso_id_registro": "VAC-20261102-YTLSBKE8E",
+      "estado_traza": "consultado",
+      "creado_en": "2026-11-02T06:41:25.430Z",
+      "resultado": {
+        "ok": true,
+        "modo": "SIMULADO",
+        "caso_id": "VAC-20261102-YTLSBKE8E",
+        "estado": "Aprobada",
+        "version": 1
+      }
+    },
+    {
+      "caso_id_registro": "VOZ-89",
+      "estado_traza": "consultado",
+      "creado_en": "2026-11-02T06:42:40.845Z",
+      "resultado": {
+        "ok": true,
+        "modo": "SIMULADO",
+        "saldo_disponible": 6,
+        "unidad": "días laborables",
+        "periodo_inicio": "2026-09-30",
+        "periodo_fin": "2027-09-29"
+      }
+    },
+    {
+      "caso_id_registro": "VOZ-90",
+      "estado_traza": "consultado",
+      "creado_en": "2026-11-02T06:52:37.268Z",
+      "resultado": {
+        "ok": true,
+        "modo": "SIMULADO",
+        "saldo_disponible": 6,
+        "unidad": "días laborables",
+        "periodo_inicio": "2026-10-01",
+        "periodo_fin": "2027-09-30"
+      }
+    },
+    {
+      "caso_id_registro": "VOZ-91",
+      "estado_traza": "consultado",
+      "creado_en": "2026-11-02T07:13:40.311Z",
+      "resultado": {
+        "ok": true,
+        "modo": "SIMULADO",
+        "saldo_disponible": 6,
+        "unidad": "días laborables",
+        "periodo_inicio": "2026-10-01",
+        "periodo_fin": "2027-09-30"
+      }
+    },
+    {
+      "caso_id_registro": "VOZ-105",
+      "estado_traza": "consultado",
+      "creado_en": "2026-11-02T08:18:27.678Z",
+      "resultado": {
+        "ok": true,
+        "modo": "SIMULADO",
+        "saldo_disponible": 6,
+        "unidad": "días laborables",
+        "periodo_inicio": "2026-10-01",
+        "periodo_fin": "2027-09-30"
+      }
+    },
+    {
+      "caso_id_registro": "VOZ-114",
+      "estado_traza": "consultado",
+      "creado_en": "2026-11-02T09:29:59.248Z",
+      "resultado": {
+        "ok": true,
+        "modo": "SIMULADO",
+        "saldo_disponible": 6,
+        "unidad": "días laborables",
+        "periodo_inicio": "2026-10-01",
+        "periodo_fin": "2027-09-30"
+      }
+    }
+  ],
+  "nota": "Se omiten entradas originales, IDs personales, eventos de acceso, conversaciones y datos salariales. Los resultados seleccionados de propuesta son ficticios. Costos pendientes de cruce con rh_costos actualizado."
+}

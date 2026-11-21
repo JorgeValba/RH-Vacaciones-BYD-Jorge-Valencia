@@ -1,0 +1,30 @@
+{
+  "autor": "Jorge Valencia",
+  "fecha_revision": "2026-11-04",
+  "metodo": "Lectura de configuración; no conversación ni prueba adversaria.",
+  "agent_id": "agent_5201m5nm2h0zf9pat9j1whqzv691",
+  "branch_id": "agtbrch_0701m5nm2jdefggr8sg77vkbp1es",
+  "version_id": "agtvrsn_2001m6mdtrtzfw1sdch1yzxbsnxq",
+  "config": {
+    "name": "HR assistant BYD",
+    "conversation_config.agent.prompt.max_tokens": 1500,
+    "conversation_config.agent.prompt.llm": "gpt-5-mini",
+    "platform_settings.auth": {
+      "enable_auth": false,
+      "allowlist": [],
+      "require_origin_header": false
+    }
+  },
+  "guardrails_captura": {
+    "manipulation": "Active",
+    "content": "5 Active",
+    "focus": "Not enabled",
+    "custom": "Not enabled",
+    "fuente": "Captura aportada por Jorge; no ejecución de prueba."
+  },
+  "resultado": {
+    "limite_salida_verificado": 1500,
+    "dominio_pages_en_allowlist": false,
+    "pendiente": "Añadir jorgevalba.github.io a los dominios permitidos y publicar."
+  }
+}

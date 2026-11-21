@@ -1,0 +1,18 @@
+{
+  "autor": "Jorge Valencia",
+  "origen_evidencia": "Salida JSON de n8n compartida por Jorge; sin lectura directa de API",
+  "prueba": "P10",
+  "resultado": "EVENTO_DUPLICADO_BLOQUEADO",
+  "ejecucion_n8n": "248",
+  "registrado_en": "2026-11-05T00:46:52.215Z",
+  "evento_id": "tg-844548491-65",
+  "caso_id": "VAC-20261102-YTLSBKE8E",
+  "eventos_en_tabla": 1,
+  "rama_observada": "false: evento ya registrado",
+  "abrir_otro_caso": false,
+  "operaciones_escritura_en_ensayo": 0,
+  "llamadas_modelo_en_ensayo": 0,
+  "alcance": "Consulta e IF del export aplicados a un evento histórico persistido; reproducción aislada y secuencial, no reenvío real del webhook de Telegram ni prueba de concurrencia.",
+  "siguiente_comprobacion": "Ejecutar de nuevo este workflow y comparar mismo evento, mismo folio y una sola fila.",
+  "estado_evidencia": "Primera reproducción aislada documentada; segunda ejecución pendiente."
+}

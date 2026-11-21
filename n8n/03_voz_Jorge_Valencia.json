@@ -1,0 +1,1290 @@
+{
+  "name": "RH Voz — Consultas autenticadas V1 — Jorge Valencia",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "rh-voz-consultas-jv-v1",
+        "authentication": "headerAuth",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "4375c121-f3d3-4a2f-ac2f-81b1bd27de2d",
+      "name": "Webhook voz autenticado",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        0,
+        400
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "c039ce99-faf5-4047-8282-6472a1339bb8",
+              "name": "CONSULTAS_FICTICIAS_HABILITADAS",
+              "type": "boolean",
+              "value": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "b4c261b0-d65d-49b7-9a4b-900c9d9f5e9e",
+      "name": "Configuración voz",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        240,
+        400
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const V=(function(){\n// Elaborado por: Jorge Valencia. Funciones sin red para consultas de datos ficticios.\nfunction dia(v){\n if(typeof v!=='string')return null;\n if(/^\\d{4}-\\d{2}-\\d{2}$/.test(v)){const d=new Date(v+'T00:00:00Z');return Number.isFinite(+d)&&d.toISOString().slice(0,10)===v?v:null;}\n if(!/T.*(?:Z|[+-]\\d{2}:\\d{2})$/i.test(v))return null;\n const d=new Date(v);if(!Number.isFinite(+d))return null;\n const p=Object.fromEntries(new Intl.DateTimeFormat('en-CA',{timeZone:'America/Mexico_City',year:'numeric',month:'2-digit',day:'2-digit'}).formatToParts(d).map(x=>[x.type,x.value]));return `${p.year}-${p.month}-${p.day}`;\n}\nfunction empleadoPrueba(id){return typeof id==='string'&&/^EMP-\\d{3}$/.test(id)&&Number(id.slice(4))>=1&&Number(id.slice(4))<=15;}\nfunction numero(v){return typeof v!=='boolean'&&v!==null&&v!==undefined&&v!==''&&Number.isFinite(Number(v))?Number(v):null;}\nfunction normalizar(body,habilitado){\n const fail=mensaje=>({ok:false,codigo:'ENTRADA_INVALIDA',mensaje});\n if(habilitado!==true)return {ok:false,codigo:'SERVICIO_NO_HABILITADO',mensaje:'La conexión de consultas todavía no está habilitada.'};\n if(!body||typeof body!=='object'||Array.isArray(body)||JSON.stringify(body).length>1500)return fail('Envía una consulta breve y estructurada.');\n if(!['consultar_estado','consultar_saldo'].includes(body.operacion))return fail('Solo se permite consultar estado o saldo.');\n const keys=body.operacion==='consultar_estado'?['operacion','folio','conversacion_id']:['operacion','empleado_id','conversacion_id'];\n if(Object.keys(body).some(k=>!keys.includes(k)))return fail('La consulta contiene campos no permitidos.');\n if(typeof body.conversacion_id!=='string'||!/^[-A-Za-z0-9_]{1,100}$/.test(body.conversacion_id))return fail('Falta una referencia válida de conversación.');\n if(body.operacion==='consultar_estado'&&(typeof body.folio!=='string'||!/^VAC-[A-Z0-9-]{4,80}$/.test(body.folio)))return fail('Indica el folio completo de la solicitud, sin instrucciones adicionales.');\n if(body.operacion==='consultar_saldo'&&!empleadoPrueba(body.empleado_id))return fail('Indica un empleado ficticio de EMP-001 a EMP-015.');\n return {ok:true,...body};\n}\nfunction estado(req,rows,now){\n const found=rows.filter(r=>r&&r.caso_id===req.folio&&!r.error);\n if(rows.some(r=>r&&r.error))return {ok:false,codigo:'SERVICIO_NO_DISPONIBLE',mensaje:'No fue posible consultar el registro. Intenta desde Telegram.'};\n if(found.length!==1)return {ok:false,codigo:'NO_DISPONIBLE',mensaje:'No encontré un registro único disponible para esa consulta.'};\n const r=found[0];let p;try{p=JSON.parse(r.propuesta_json);}catch{return {ok:false,codigo:'REGISTRO_NO_VALIDO',mensaje:'El registro requiere revisión de RH.'};}\n if(p?.modo!=='SIMULADO'||!empleadoPrueba(r.empleado_id))return {ok:false,codigo:'FUERA_DE_ALCANCE',mensaje:'Este canal solo consulta registros ficticios de prueba.'};\n let st=r.estado;\n const permitidos=['Aprobada','Rechazada','Pendiente de aprobación','Expirada','Requiere aclaración','Requiere ajuste por cobertura','Saldo insuficiente','Requiere ajuste por saldo','Error controlado','Procesando aprobación','En proceso'];\n if(!permitidos.includes(st))return {ok:false,codigo:'REVISION_RH',mensaje:'El estado requiere consulta directa con RH.'};\n if(st==='Pendiente de aprobación'){\n  const limite=Date.parse(p.control_decision?.vence_en);\n  if(!Number.isFinite(limite))return {ok:false,codigo:'REGISTRO_NO_VALIDO',mensaje:'La vigencia requiere revisión de RH.'};\n  if(now>=limite)st='Expirada por vigencia';\n }\n return {ok:true,modo:'SIMULADO',caso_id:r.caso_id,empleado_id:r.empleado_id,estado:st,version:Number.isInteger(Number(r.version_propuesta))?Number(r.version_propuesta):null,fecha_inicio:dia(r.fecha_inicio),fecha_fin:dia(r.fecha_fin),dias_solicitados:numero(r.dias_solicitados),consultado_en:new Date(now).toISOString(),fuente:'registro privado rh_solicitudes',mensaje:'Resultado simulado. La consulta de voz no modifica reservas ni autoriza vacaciones.'};\n}\nfunction saldo(req,empleados,reservas,reglas,now){\n const fail=mensaje=>({ok:false,codigo:'REVISION_RH',mensaje});\n if([...empleados,...reservas,...reglas].some(r=>r?.error))return fail('No fue posible consultar el saldo. Intenta desde Telegram.');\n const es=empleados.filter(e=>e.empleado_id===req.empleado_id);if(es.length!==1)return fail('No encontré una ficha única para el empleado ficticio.');\n const e=es[0];if(!empleadoPrueba(e.empleado_id)||!/^Persona ficticia \\d{2}$/.test(e.alias_ficticio||''))return fail('La ficha no está habilitada para el canal de prueba.');\n const rr=reglas.filter(r=>numero(r.version)!==null).sort((a,b)=>Number(b.version)-Number(a.version));\n if(!rr.length||rr.filter(r=>Number(r.version)===Number(rr[0].version)).length!==1||rr[0].modo!=='SIMULADO')return fail('No existe una regla de prueba única y válida.');\n const pi=dia(e.periodo_inicio),pf=dia(e.periodo_fin),gen=numero(e.dias_generados),usados=numero(e.dias_usados_corte);\n if(!pi||!pf||pi>pf||gen===null||usados===null||!Number.isInteger(gen)||!Number.isInteger(usados)||usados<0||gen<usados)return fail('La ficha contiene un periodo o saldo incoherente.');\n const rows=reservas.filter(r=>r.empleado_id===req.empleado_id&&/aprob/i.test(String(r.estado||'')));\n const ids=new Set();let total=0;\n for(const r of rows){\n  const fi=dia(r.fecha_inicio),ff=dia(r.fecha_fin),dias=numero(r.dias_reservados);\n  if(!r.aprobacion_id||ids.has(r.aprobacion_id)||!fi||!ff||fi>ff||dias===null||!Number.isInteger(dias)||dias<=0)return fail('Las reservas requieren conciliación; no se estima un saldo.');\n  ids.add(r.aprobacion_id);\n  if(fi>=pi&&fi<=pf){if(ff>pf)return fail('Existe una reserva que cruza periodos; RH debe revisar el saldo.');total+=dias;}\n }\n const disponible=gen-usados-total;\n if(disponible<0)return fail('El saldo calculado es negativo; RH debe conciliar las reservas.');\n return {ok:true,modo:'SIMULADO',empleado_id:e.empleado_id,periodo_inicio:pi,periodo_fin:pf,dias_generados:gen,dias_usados_corte:usados,dias_reservados:total,saldo_disponible:disponible,unidad:'días laborables',consultado_en:new Date(now).toISOString(),fuente:'rh_empleados y rh_aprobadas',regla:'Saldo = días generados − usados al corte − reservas aprobadas del periodo, conforme al modelo de datos actual.',mensaje:'Resultado simulado. Las reservas están separadas de los días usados al corte; no se modifica el saldo.'};\n}\nreturn {dia,numero,empleadoPrueba,normalizar,estado,saldo};\n\n})();\nconst cfg=$input.first().json;const body=$('Webhook voz autenticado').first().json.body;const r=V.normalizar(body,cfg.CONSULTAS_FICTICIAS_HABILITADAS);return [{json:r}];"
+      },
+      "id": "a79a9a3e-498e-475c-936d-62725809772d",
+      "name": "Validar consulta de voz",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        464,
+        400
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "leftValue": "={{ $json.ok === true }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "8a669424-dfe0-4246-bdd5-92077c970cf8",
+      "name": "¿Consulta válida?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        704,
+        400
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "leftValue": "={{ $json.operacion === 'consultar_estado' }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "cc8fa426-d89b-42d7-b52e-5b7da7986dc6",
+      "name": "¿Consultar folio?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        928,
+        400
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "dataTableId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "CONFIGURAR_TABLA_RH_SOLICITUDES",
+          "cachedResultName": "rh_solicitudes"
+        },
+        "matchType": "allConditions",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "caso_id",
+              "keyValue": "={{ $(\"Validar consulta de voz\").first().json.folio }}"
+            }
+          ]
+        },
+        "returnAll": true
+      },
+      "id": "4d1818cb-a16a-4fa6-b360-8aa4579569b8",
+      "name": "Voz: leer caso",
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        1152,
+        208
+      ],
+      "alwaysOutputData": true,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "jsCode": "const V=(function(){\n// Elaborado por: Jorge Valencia. Funciones sin red para consultas de datos ficticios.\nfunction dia(v){\n if(typeof v!=='string')return null;\n if(/^\\d{4}-\\d{2}-\\d{2}$/.test(v)){const d=new Date(v+'T00:00:00Z');return Number.isFinite(+d)&&d.toISOString().slice(0,10)===v?v:null;}\n if(!/T.*(?:Z|[+-]\\d{2}:\\d{2})$/i.test(v))return null;\n const d=new Date(v);if(!Number.isFinite(+d))return null;\n const p=Object.fromEntries(new Intl.DateTimeFormat('en-CA',{timeZone:'America/Mexico_City',year:'numeric',month:'2-digit',day:'2-digit'}).formatToParts(d).map(x=>[x.type,x.value]));return `${p.year}-${p.month}-${p.day}`;\n}\nfunction empleadoPrueba(id){return typeof id==='string'&&/^EMP-\\d{3}$/.test(id)&&Number(id.slice(4))>=1&&Number(id.slice(4))<=15;}\nfunction numero(v){return typeof v!=='boolean'&&v!==null&&v!==undefined&&v!==''&&Number.isFinite(Number(v))?Number(v):null;}\nfunction normalizar(body,habilitado){\n const fail=mensaje=>({ok:false,codigo:'ENTRADA_INVALIDA',mensaje});\n if(habilitado!==true)return {ok:false,codigo:'SERVICIO_NO_HABILITADO',mensaje:'La conexión de consultas todavía no está habilitada.'};\n if(!body||typeof body!=='object'||Array.isArray(body)||JSON.stringify(body).length>1500)return fail('Envía una consulta breve y estructurada.');\n if(!['consultar_estado','consultar_saldo'].includes(body.operacion))return fail('Solo se permite consultar estado o saldo.');\n const keys=body.operacion==='consultar_estado'?['operacion','folio','conversacion_id']:['operacion','empleado_id','conversacion_id'];\n if(Object.keys(body).some(k=>!keys.includes(k)))return fail('La consulta contiene campos no permitidos.');\n if(typeof body.conversacion_id!=='string'||!/^[-A-Za-z0-9_]{1,100}$/.test(body.conversacion_id))return fail('Falta una referencia válida de conversación.');\n if(body.operacion==='consultar_estado'&&(typeof body.folio!=='string'||!/^VAC-[A-Z0-9-]{4,80}$/.test(body.folio)))return fail('Indica el folio completo de la solicitud, sin instrucciones adicionales.');\n if(body.operacion==='consultar_saldo'&&!empleadoPrueba(body.empleado_id))return fail('Indica un empleado ficticio de EMP-001 a EMP-015.');\n return {ok:true,...body};\n}\nfunction estado(req,rows,now){\n const found=rows.filter(r=>r&&r.caso_id===req.folio&&!r.error);\n if(rows.some(r=>r&&r.error))return {ok:false,codigo:'SERVICIO_NO_DISPONIBLE',mensaje:'No fue posible consultar el registro. Intenta desde Telegram.'};\n if(found.length!==1)return {ok:false,codigo:'NO_DISPONIBLE',mensaje:'No encontré un registro único disponible para esa consulta.'};\n const r=found[0];let p;try{p=JSON.parse(r.propuesta_json);}catch{return {ok:false,codigo:'REGISTRO_NO_VALIDO',mensaje:'El registro requiere revisión de RH.'};}\n if(p?.modo!=='SIMULADO'||!empleadoPrueba(r.empleado_id))return {ok:false,codigo:'FUERA_DE_ALCANCE',mensaje:'Este canal solo consulta registros ficticios de prueba.'};\n let st=r.estado;\n const permitidos=['Aprobada','Rechazada','Pendiente de aprobación','Expirada','Requiere aclaración','Requiere ajuste por cobertura','Saldo insuficiente','Requiere ajuste por saldo','Error controlado','Procesando aprobación','En proceso'];\n if(!permitidos.includes(st))return {ok:false,codigo:'REVISION_RH',mensaje:'El estado requiere consulta directa con RH.'};\n if(st==='Pendiente de aprobación'){\n  const limite=Date.parse(p.control_decision?.vence_en);\n  if(!Number.isFinite(limite))return {ok:false,codigo:'REGISTRO_NO_VALIDO',mensaje:'La vigencia requiere revisión de RH.'};\n  if(now>=limite)st='Expirada por vigencia';\n }\n return {ok:true,modo:'SIMULADO',caso_id:r.caso_id,empleado_id:r.empleado_id,estado:st,version:Number.isInteger(Number(r.version_propuesta))?Number(r.version_propuesta):null,fecha_inicio:dia(r.fecha_inicio),fecha_fin:dia(r.fecha_fin),dias_solicitados:numero(r.dias_solicitados),consultado_en:new Date(now).toISOString(),fuente:'registro privado rh_solicitudes',mensaje:'Resultado simulado. La consulta de voz no modifica reservas ni autoriza vacaciones.'};\n}\nfunction saldo(req,empleados,reservas,reglas,now){\n const fail=mensaje=>({ok:false,codigo:'REVISION_RH',mensaje});\n if([...empleados,...reservas,...reglas].some(r=>r?.error))return fail('No fue posible consultar el saldo. Intenta desde Telegram.');\n const es=empleados.filter(e=>e.empleado_id===req.empleado_id);if(es.length!==1)return fail('No encontré una ficha única para el empleado ficticio.');\n const e=es[0];if(!empleadoPrueba(e.empleado_id)||!/^Persona ficticia \\d{2}$/.test(e.alias_ficticio||''))return fail('La ficha no está habilitada para el canal de prueba.');\n const rr=reglas.filter(r=>numero(r.version)!==null).sort((a,b)=>Number(b.version)-Number(a.version));\n if(!rr.length||rr.filter(r=>Number(r.version)===Number(rr[0].version)).length!==1||rr[0].modo!=='SIMULADO')return fail('No existe una regla de prueba única y válida.');\n const pi=dia(e.periodo_inicio),pf=dia(e.periodo_fin),gen=numero(e.dias_generados),usados=numero(e.dias_usados_corte);\n if(!pi||!pf||pi>pf||gen===null||usados===null||!Number.isInteger(gen)||!Number.isInteger(usados)||usados<0||gen<usados)return fail('La ficha contiene un periodo o saldo incoherente.');\n const rows=reservas.filter(r=>r.empleado_id===req.empleado_id&&/aprob/i.test(String(r.estado||'')));\n const ids=new Set();let total=0;\n for(const r of rows){\n  const fi=dia(r.fecha_inicio),ff=dia(r.fecha_fin),dias=numero(r.dias_reservados);\n  if(!r.aprobacion_id||ids.has(r.aprobacion_id)||!fi||!ff||fi>ff||dias===null||!Number.isInteger(dias)||dias<=0)return fail('Las reservas requieren conciliación; no se estima un saldo.');\n  ids.add(r.aprobacion_id);\n  if(fi>=pi&&fi<=pf){if(ff>pf)return fail('Existe una reserva que cruza periodos; RH debe revisar el saldo.');total+=dias;}\n }\n const disponible=gen-usados-total;\n if(disponible<0)return fail('El saldo calculado es negativo; RH debe conciliar las reservas.');\n return {ok:true,modo:'SIMULADO',empleado_id:e.empleado_id,periodo_inicio:pi,periodo_fin:pf,dias_generados:gen,dias_usados_corte:usados,dias_reservados:total,saldo_disponible:disponible,unidad:'días laborables',consultado_en:new Date(now).toISOString(),fuente:'rh_empleados y rh_aprobadas',regla:'Saldo = días generados − usados al corte − reservas aprobadas del periodo, conforme al modelo de datos actual.',mensaje:'Resultado simulado. Las reservas están separadas de los días usados al corte; no se modifica el saldo.'};\n}\nreturn {dia,numero,empleadoPrueba,normalizar,estado,saldo};\n\n})();\nconst req=$('Validar consulta de voz').first().json;return [{json:V.estado(req,$input.all().map(i=>i.json),Date.now())}];"
+      },
+      "id": "88100da3-a498-45ea-ba1f-d7822559909e",
+      "name": "Voz: preparar estado",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1392,
+        208
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "dataTableId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "CONFIGURAR_TABLA_RH_EMPLEADOS",
+          "cachedResultName": "rh empleados"
+        },
+        "matchType": "allConditions",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "empleado_id",
+              "keyValue": "={{ $(\"Validar consulta de voz\").first().json.empleado_id }}"
+            }
+          ]
+        },
+        "returnAll": true
+      },
+      "id": "e64936ce-84fa-4dba-81b9-aff53776f868",
+      "name": "Voz: leer empleado",
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        1152,
+        608
+      ],
+      "alwaysOutputData": true,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "dataTableId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "CONFIGURAR_TABLA_RH_APROBADAS",
+          "cachedResultName": "rh aprobadas"
+        },
+        "matchType": "allConditions",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "empleado_id",
+              "keyValue": "={{ $(\"Validar consulta de voz\").first().json.empleado_id }}"
+            }
+          ]
+        },
+        "returnAll": true
+      },
+      "id": "5e6c6d06-7497-4e61-95dc-75958cdb19af",
+      "name": "Voz: leer reservas",
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        1392,
+        608
+      ],
+      "alwaysOutputData": true,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "dataTableId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "CONFIGURAR_TABLA_RH_REGLAS",
+          "cachedResultName": "rh reglas"
+        },
+        "matchType": "allConditions",
+        "filters": {
+          "conditions": []
+        },
+        "returnAll": true
+      },
+      "id": "417ef4f4-2ae1-45ab-8e02-1d6e7f0d99e8",
+      "name": "Voz: leer reglas",
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        1616,
+        608
+      ],
+      "alwaysOutputData": true,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Corrección V1.1: fechas de periodo. Elaborado por: Jorge Valencia.\nconst V=(function(){\n// Elaborado por: Jorge Valencia. Funciones sin red para consultas de datos ficticios.\nfunction dia(v){\n if(typeof v!=='string')return null;\n if(/^\\d{4}-\\d{2}-\\d{2}$/.test(v)){const d=new Date(v+'T00:00:00Z');return Number.isFinite(+d)&&d.toISOString().slice(0,10)===v?v:null;}\n if(!/T.*(?:Z|[+-]\\d{2}:\\d{2})$/i.test(v))return null;\n const d=new Date(v);if(!Number.isFinite(+d))return null;\n const p=Object.fromEntries(new Intl.DateTimeFormat('en-CA',{timeZone:'America/Mexico_City',year:'numeric',month:'2-digit',day:'2-digit'}).formatToParts(d).map(x=>[x.type,x.value]));return `${p.year}-${p.month}-${p.day}`;\n}\n// Los periodos son fechas de calendario. n8n los serializa a medianoche UTC.\n// No convertir ese formato de almacenamiento a la fecha local del día anterior.\n// Las reservas mantienen su conversión de instante a America/Mexico_City.\nfunction fechaPeriodo(v){\n if(typeof v!=='string')return null;\n if(/^\\d{4}-\\d{2}-\\d{2}T00:00:00(?:\\.0{1,9})?(?:Z|\\+00:00)$/i.test(v))return dia(v.slice(0,10));\n return dia(v);\n}\nfunction empleadoPrueba(id){return typeof id==='string'&&/^EMP-\\d{3}$/.test(id)&&Number(id.slice(4))>=1&&Number(id.slice(4))<=15;}\nfunction numero(v){return typeof v!=='boolean'&&v!==null&&v!==undefined&&v!==''&&Number.isFinite(Number(v))?Number(v):null;}\nfunction normalizar(body,habilitado){\n const fail=mensaje=>({ok:false,codigo:'ENTRADA_INVALIDA',mensaje});\n if(habilitado!==true)return {ok:false,codigo:'SERVICIO_NO_HABILITADO',mensaje:'La conexión de consultas todavía no está habilitada.'};\n if(!body||typeof body!=='object'||Array.isArray(body)||JSON.stringify(body).length>1500)return fail('Envía una consulta breve y estructurada.');\n if(!['consultar_estado','consultar_saldo'].includes(body.operacion))return fail('Solo se permite consultar estado o saldo.');\n const keys=body.operacion==='consultar_estado'?['operacion','folio','conversacion_id']:['operacion','empleado_id','conversacion_id'];\n if(Object.keys(body).some(k=>!keys.includes(k)))return fail('La consulta contiene campos no permitidos.');\n if(typeof body.conversacion_id!=='string'||!/^[-A-Za-z0-9_]{1,100}$/.test(body.conversacion_id))return fail('Falta una referencia válida de conversación.');\n if(body.operacion==='consultar_estado'&&(typeof body.folio!=='string'||!/^VAC-[A-Z0-9-]{4,80}$/.test(body.folio)))return fail('Indica el folio completo de la solicitud, sin instrucciones adicionales.');\n if(body.operacion==='consultar_saldo'&&!empleadoPrueba(body.empleado_id))return fail('Indica un empleado ficticio de EMP-001 a EMP-015.');\n return {ok:true,...body};\n}\nfunction estado(req,rows,now){\n const found=rows.filter(r=>r&&r.caso_id===req.folio&&!r.error);\n if(rows.some(r=>r&&r.error))return {ok:false,codigo:'SERVICIO_NO_DISPONIBLE',mensaje:'No fue posible consultar el registro. Intenta desde Telegram.'};\n if(found.length!==1)return {ok:false,codigo:'NO_DISPONIBLE',mensaje:'No encontré un registro único disponible para esa consulta.'};\n const r=found[0];let p;try{p=JSON.parse(r.propuesta_json);}catch{return {ok:false,codigo:'REGISTRO_NO_VALIDO',mensaje:'El registro requiere revisión de RH.'};}\n if(p?.modo!=='SIMULADO'||!empleadoPrueba(r.empleado_id))return {ok:false,codigo:'FUERA_DE_ALCANCE',mensaje:'Este canal solo consulta registros ficticios de prueba.'};\n let st=r.estado;\n const permitidos=['Aprobada','Rechazada','Pendiente de aprobación','Expirada','Requiere aclaración','Requiere ajuste por cobertura','Saldo insuficiente','Requiere ajuste por saldo','Error controlado','Procesando aprobación','En proceso'];\n if(!permitidos.includes(st))return {ok:false,codigo:'REVISION_RH',mensaje:'El estado requiere consulta directa con RH.'};\n if(st==='Pendiente de aprobación'){\n  const limite=Date.parse(p.control_decision?.vence_en);\n  if(!Number.isFinite(limite))return {ok:false,codigo:'REGISTRO_NO_VALIDO',mensaje:'La vigencia requiere revisión de RH.'};\n  if(now>=limite)st='Expirada por vigencia';\n }\n return {ok:true,modo:'SIMULADO',caso_id:r.caso_id,empleado_id:r.empleado_id,estado:st,version:Number.isInteger(Number(r.version_propuesta))?Number(r.version_propuesta):null,fecha_inicio:dia(r.fecha_inicio),fecha_fin:dia(r.fecha_fin),dias_solicitados:numero(r.dias_solicitados),consultado_en:new Date(now).toISOString(),fuente:'registro privado rh_solicitudes',mensaje:'Resultado simulado. La consulta de voz no modifica reservas ni autoriza vacaciones.'};\n}\nfunction saldo(req,empleados,reservas,reglas,now){\n const fail=mensaje=>({ok:false,codigo:'REVISION_RH',mensaje});\n if([...empleados,...reservas,...reglas].some(r=>r?.error))return fail('No fue posible consultar el saldo. Intenta desde Telegram.');\n const es=empleados.filter(e=>e.empleado_id===req.empleado_id);if(es.length!==1)return fail('No encontré una ficha única para el empleado ficticio.');\n const e=es[0];if(!empleadoPrueba(e.empleado_id)||!/^Persona ficticia \\d{2}$/.test(e.alias_ficticio||''))return fail('La ficha no está habilitada para el canal de prueba.');\n const rr=reglas.filter(r=>numero(r.version)!==null).sort((a,b)=>Number(b.version)-Number(a.version));\n if(!rr.length||rr.filter(r=>Number(r.version)===Number(rr[0].version)).length!==1||rr[0].modo!=='SIMULADO')return fail('No existe una regla de prueba única y válida.');\n const pi=fechaPeriodo(e.periodo_inicio),pf=fechaPeriodo(e.periodo_fin),gen=numero(e.dias_generados),usados=numero(e.dias_usados_corte);\n if(!pi||!pf||pi>pf||gen===null||usados===null||!Number.isInteger(gen)||!Number.isInteger(usados)||usados<0||gen<usados)return fail('La ficha contiene un periodo o saldo incoherente.');\n const rows=reservas.filter(r=>r.empleado_id===req.empleado_id&&/aprob/i.test(String(r.estado||'')));\n const ids=new Set();let total=0;\n for(const r of rows){\n  const fi=dia(r.fecha_inicio),ff=dia(r.fecha_fin),dias=numero(r.dias_reservados);\n  if(!r.aprobacion_id||ids.has(r.aprobacion_id)||!fi||!ff||fi>ff||dias===null||!Number.isInteger(dias)||dias<=0)return fail('Las reservas requieren conciliación; no se estima un saldo.');\n  ids.add(r.aprobacion_id);\n  if(fi>=pi&&fi<=pf){if(ff>pf)return fail('Existe una reserva que cruza periodos; RH debe revisar el saldo.');total+=dias;}\n }\n const disponible=gen-usados-total;\n if(disponible<0)return fail('El saldo calculado es negativo; RH debe conciliar las reservas.');\n return {ok:true,modo:'SIMULADO',empleado_id:e.empleado_id,periodo_inicio:pi,periodo_fin:pf,dias_generados:gen,dias_usados_corte:usados,dias_reservados:total,saldo_disponible:disponible,unidad:'días laborables',consultado_en:new Date(now).toISOString(),fuente:'rh_empleados y rh_aprobadas',regla:'Saldo = días generados − usados al corte − reservas aprobadas del periodo, conforme al modelo de datos actual.',mensaje:'Resultado simulado. Las reservas están separadas de los días usados al corte; no se modifica el saldo.'};\n}\nreturn {dia,fechaPeriodo,numero,empleadoPrueba,normalizar,estado,saldo};\n\n})();\n\nconst rows=n=>$(n).all().map(i=>i.json);const req=$('Validar consulta de voz').first().json;return [{json:V.saldo(req,rows('Voz: leer empleado'),rows('Voz: leer reservas'),rows('Voz: leer reglas'),Date.now())}];"
+      },
+      "id": "96ae0355-23fe-4c94-a7ed-7eb7e0303c76",
+      "name": "Voz: preparar saldo",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1840,
+        608
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const V=(function(){\n// Elaborado por: Jorge Valencia. Funciones sin red para consultas de datos ficticios.\nfunction dia(v){\n if(typeof v!=='string')return null;\n if(/^\\d{4}-\\d{2}-\\d{2}$/.test(v)){const d=new Date(v+'T00:00:00Z');return Number.isFinite(+d)&&d.toISOString().slice(0,10)===v?v:null;}\n if(!/T.*(?:Z|[+-]\\d{2}:\\d{2})$/i.test(v))return null;\n const d=new Date(v);if(!Number.isFinite(+d))return null;\n const p=Object.fromEntries(new Intl.DateTimeFormat('en-CA',{timeZone:'America/Mexico_City',year:'numeric',month:'2-digit',day:'2-digit'}).formatToParts(d).map(x=>[x.type,x.value]));return `${p.year}-${p.month}-${p.day}`;\n}\nfunction empleadoPrueba(id){return typeof id==='string'&&/^EMP-\\d{3}$/.test(id)&&Number(id.slice(4))>=1&&Number(id.slice(4))<=15;}\nfunction numero(v){return typeof v!=='boolean'&&v!==null&&v!==undefined&&v!==''&&Number.isFinite(Number(v))?Number(v):null;}\nfunction normalizar(body,habilitado){\n const fail=mensaje=>({ok:false,codigo:'ENTRADA_INVALIDA',mensaje});\n if(habilitado!==true)return {ok:false,codigo:'SERVICIO_NO_HABILITADO',mensaje:'La conexión de consultas todavía no está habilitada.'};\n if(!body||typeof body!=='object'||Array.isArray(body)||JSON.stringify(body).length>1500)return fail('Envía una consulta breve y estructurada.');\n if(!['consultar_estado','consultar_saldo'].includes(body.operacion))return fail('Solo se permite consultar estado o saldo.');\n const keys=body.operacion==='consultar_estado'?['operacion','folio','conversacion_id']:['operacion','empleado_id','conversacion_id'];\n if(Object.keys(body).some(k=>!keys.includes(k)))return fail('La consulta contiene campos no permitidos.');\n if(typeof body.conversacion_id!=='string'||!/^[-A-Za-z0-9_]{1,100}$/.test(body.conversacion_id))return fail('Falta una referencia válida de conversación.');\n if(body.operacion==='consultar_estado'&&(typeof body.folio!=='string'||!/^VAC-[A-Z0-9-]{4,80}$/.test(body.folio)))return fail('Indica el folio completo de la solicitud, sin instrucciones adicionales.');\n if(body.operacion==='consultar_saldo'&&!empleadoPrueba(body.empleado_id))return fail('Indica un empleado ficticio de EMP-001 a EMP-015.');\n return {ok:true,...body};\n}\nfunction estado(req,rows,now){\n const found=rows.filter(r=>r&&r.caso_id===req.folio&&!r.error);\n if(rows.some(r=>r&&r.error))return {ok:false,codigo:'SERVICIO_NO_DISPONIBLE',mensaje:'No fue posible consultar el registro. Intenta desde Telegram.'};\n if(found.length!==1)return {ok:false,codigo:'NO_DISPONIBLE',mensaje:'No encontré un registro único disponible para esa consulta.'};\n const r=found[0];let p;try{p=JSON.parse(r.propuesta_json);}catch{return {ok:false,codigo:'REGISTRO_NO_VALIDO',mensaje:'El registro requiere revisión de RH.'};}\n if(p?.modo!=='SIMULADO'||!empleadoPrueba(r.empleado_id))return {ok:false,codigo:'FUERA_DE_ALCANCE',mensaje:'Este canal solo consulta registros ficticios de prueba.'};\n let st=r.estado;\n const permitidos=['Aprobada','Rechazada','Pendiente de aprobación','Expirada','Requiere aclaración','Requiere ajuste por cobertura','Saldo insuficiente','Requiere ajuste por saldo','Error controlado','Procesando aprobación','En proceso'];\n if(!permitidos.includes(st))return {ok:false,codigo:'REVISION_RH',mensaje:'El estado requiere consulta directa con RH.'};\n if(st==='Pendiente de aprobación'){\n  const limite=Date.parse(p.control_decision?.vence_en);\n  if(!Number.isFinite(limite))return {ok:false,codigo:'REGISTRO_NO_VALIDO',mensaje:'La vigencia requiere revisión de RH.'};\n  if(now>=limite)st='Expirada por vigencia';\n }\n return {ok:true,modo:'SIMULADO',caso_id:r.caso_id,empleado_id:r.empleado_id,estado:st,version:Number.isInteger(Number(r.version_propuesta))?Number(r.version_propuesta):null,fecha_inicio:dia(r.fecha_inicio),fecha_fin:dia(r.fecha_fin),dias_solicitados:numero(r.dias_solicitados),consultado_en:new Date(now).toISOString(),fuente:'registro privado rh_solicitudes',mensaje:'Resultado simulado. La consulta de voz no modifica reservas ni autoriza vacaciones.'};\n}\nfunction saldo(req,empleados,reservas,reglas,now){\n const fail=mensaje=>({ok:false,codigo:'REVISION_RH',mensaje});\n if([...empleados,...reservas,...reglas].some(r=>r?.error))return fail('No fue posible consultar el saldo. Intenta desde Telegram.');\n const es=empleados.filter(e=>e.empleado_id===req.empleado_id);if(es.length!==1)return fail('No encontré una ficha única para el empleado ficticio.');\n const e=es[0];if(!empleadoPrueba(e.empleado_id)||!/^Persona ficticia \\d{2}$/.test(e.alias_ficticio||''))return fail('La ficha no está habilitada para el canal de prueba.');\n const rr=reglas.filter(r=>numero(r.version)!==null).sort((a,b)=>Number(b.version)-Number(a.version));\n if(!rr.length||rr.filter(r=>Number(r.version)===Number(rr[0].version)).length!==1||rr[0].modo!=='SIMULADO')return fail('No existe una regla de prueba única y válida.');\n const pi=dia(e.periodo_inicio),pf=dia(e.periodo_fin),gen=numero(e.dias_generados),usados=numero(e.dias_usados_corte);\n if(!pi||!pf||pi>pf||gen===null||usados===null||!Number.isInteger(gen)||!Number.isInteger(usados)||usados<0||gen<usados)return fail('La ficha contiene un periodo o saldo incoherente.');\n const rows=reservas.filter(r=>r.empleado_id===req.empleado_id&&/aprob/i.test(String(r.estado||'')));\n const ids=new Set();let total=0;\n for(const r of rows){\n  const fi=dia(r.fecha_inicio),ff=dia(r.fecha_fin),dias=numero(r.dias_reservados);\n  if(!r.aprobacion_id||ids.has(r.aprobacion_id)||!fi||!ff||fi>ff||dias===null||!Number.isInteger(dias)||dias<=0)return fail('Las reservas requieren conciliación; no se estima un saldo.');\n  ids.add(r.aprobacion_id);\n  if(fi>=pi&&fi<=pf){if(ff>pf)return fail('Existe una reserva que cruza periodos; RH debe revisar el saldo.');total+=dias;}\n }\n const disponible=gen-usados-total;\n if(disponible<0)return fail('El saldo calculado es negativo; RH debe conciliar las reservas.');\n return {ok:true,modo:'SIMULADO',empleado_id:e.empleado_id,periodo_inicio:pi,periodo_fin:pf,dias_generados:gen,dias_usados_corte:usados,dias_reservados:total,saldo_disponible:disponible,unidad:'días laborables',consultado_en:new Date(now).toISOString(),fuente:'rh_empleados y rh_aprobadas',regla:'Saldo = días generados − usados al corte − reservas aprobadas del periodo, conforme al modelo de datos actual.',mensaje:'Resultado simulado. Las reservas están separadas de los días usados al corte; no se modifica el saldo.'};\n}\nreturn {dia,numero,empleadoPrueba,normalizar,estado,saldo};\n\n})();\n\nconst respuesta=$input.first().json,req=$('Validar consulta de voz').first().json;\nconst consulta_id='VOZ-'+$execution.id;\nconst caso_id=respuesta.caso_id||consulta_id;\nconst traza={traza_id:consulta_id+'-T',caso_id,evento_id:consulta_id,etapa:'voz_consulta',agente:'Interfaz ElevenLabs y consulta determinista',estado:respuesta.ok?'consultado':'detenido',entrada_json:JSON.stringify({operacion:req.operacion,folio:req.folio||null,empleado_id:req.empleado_id||null,conversacion_id:req.conversacion_id}),salida_json:JSON.stringify(respuesta),fuentes_json:JSON.stringify([respuesta.fuente||'registro privado']),advertencias_json:JSON.stringify(['Datos ficticios. Sin escritura empresarial ni llamada adicional a OpenAI.']),creado_en:new Date().toISOString(),version_propuesta:respuesta.version||null,duracion_ms:null,llamada_id:null,ejecucion_id:String($execution.id)};\nreturn [{json:{respuesta:{...respuesta,consulta_id},traza}}];\n"
+      },
+      "id": "aee02f60-d49a-4f8d-85f7-857214c05031",
+      "name": "Voz: preparar auditoría",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2080,
+        400
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "upsert",
+        "dataTableId": {
+          "__rl": true,
+          "value": "CONFIGURAR_TABLA_RH_TRAZAS",
+          "mode": "id"
+        },
+        "matchType": "allConditions",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "traza_id",
+              "keyValue": "={{ $json.traza.traza_id }}"
+            }
+          ]
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "traza_id": "={{ $json.traza.traza_id }}",
+            "caso_id": "={{ $json.traza.caso_id }}",
+            "evento_id": "={{ $json.traza.evento_id }}",
+            "etapa": "={{ $json.traza.etapa }}",
+            "agente": "={{ $json.traza.agente }}",
+            "estado": "={{ $json.traza.estado }}",
+            "entrada_json": "={{ $json.traza.entrada_json }}",
+            "salida_json": "={{ $json.traza.salida_json }}",
+            "fuentes_json": "={{ $json.traza.fuentes_json }}",
+            "advertencias_json": "={{ $json.traza.advertencias_json }}",
+            "creado_en": "={{ $json.traza.creado_en }}",
+            "version_propuesta": "={{ $json.traza.version_propuesta }}",
+            "duracion_ms": "={{ $json.traza.duracion_ms }}",
+            "llamada_id": "={{ $json.traza.llamada_id }}",
+            "ejecucion_id": "={{ $json.traza.ejecucion_id }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "traza_id",
+              "displayName": "traza_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "caso_id",
+              "displayName": "caso_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "evento_id",
+              "displayName": "evento_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "etapa",
+              "displayName": "etapa",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "agente",
+              "displayName": "agente",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "estado",
+              "displayName": "estado",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "entrada_json",
+              "displayName": "entrada_json",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "salida_json",
+              "displayName": "salida_json",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "fuentes_json",
+              "displayName": "fuentes_json",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "advertencias_json",
+              "displayName": "advertencias_json",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "creado_en",
+              "displayName": "creado_en",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "version_propuesta",
+              "displayName": "version_propuesta",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "duracion_ms",
+              "displayName": "duracion_ms",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "llamada_id",
+              "displayName": "llamada_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "ejecucion_id",
+              "displayName": "ejecucion_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "id": "055a6a69-21f0-4b5c-a679-a9fd6030f2a7",
+      "name": "Voz: guardar traza",
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        2304,
+        400
+      ],
+      "alwaysOutputData": true,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "jsCode": "const V=(function(){\n// Elaborado por: Jorge Valencia. Funciones sin red para consultas de datos ficticios.\nfunction dia(v){\n if(typeof v!=='string')return null;\n if(/^\\d{4}-\\d{2}-\\d{2}$/.test(v)){const d=new Date(v+'T00:00:00Z');return Number.isFinite(+d)&&d.toISOString().slice(0,10)===v?v:null;}\n if(!/T.*(?:Z|[+-]\\d{2}:\\d{2})$/i.test(v))return null;\n const d=new Date(v);if(!Number.isFinite(+d))return null;\n const p=Object.fromEntries(new Intl.DateTimeFormat('en-CA',{timeZone:'America/Mexico_City',year:'numeric',month:'2-digit',day:'2-digit'}).formatToParts(d).map(x=>[x.type,x.value]));return `${p.year}-${p.month}-${p.day}`;\n}\nfunction empleadoPrueba(id){return typeof id==='string'&&/^EMP-\\d{3}$/.test(id)&&Number(id.slice(4))>=1&&Number(id.slice(4))<=15;}\nfunction numero(v){return typeof v!=='boolean'&&v!==null&&v!==undefined&&v!==''&&Number.isFinite(Number(v))?Number(v):null;}\nfunction normalizar(body,habilitado){\n const fail=mensaje=>({ok:false,codigo:'ENTRADA_INVALIDA',mensaje});\n if(habilitado!==true)return {ok:false,codigo:'SERVICIO_NO_HABILITADO',mensaje:'La conexión de consultas todavía no está habilitada.'};\n if(!body||typeof body!=='object'||Array.isArray(body)||JSON.stringify(body).length>1500)return fail('Envía una consulta breve y estructurada.');\n if(!['consultar_estado','consultar_saldo'].includes(body.operacion))return fail('Solo se permite consultar estado o saldo.');\n const keys=body.operacion==='consultar_estado'?['operacion','folio','conversacion_id']:['operacion','empleado_id','conversacion_id'];\n if(Object.keys(body).some(k=>!keys.includes(k)))return fail('La consulta contiene campos no permitidos.');\n if(typeof body.conversacion_id!=='string'||!/^[-A-Za-z0-9_]{1,100}$/.test(body.conversacion_id))return fail('Falta una referencia válida de conversación.');\n if(body.operacion==='consultar_estado'&&(typeof body.folio!=='string'||!/^VAC-[A-Z0-9-]{4,80}$/.test(body.folio)))return fail('Indica el folio completo de la solicitud, sin instrucciones adicionales.');\n if(body.operacion==='consultar_saldo'&&!empleadoPrueba(body.empleado_id))return fail('Indica un empleado ficticio de EMP-001 a EMP-015.');\n return {ok:true,...body};\n}\nfunction estado(req,rows,now){\n const found=rows.filter(r=>r&&r.caso_id===req.folio&&!r.error);\n if(rows.some(r=>r&&r.error))return {ok:false,codigo:'SERVICIO_NO_DISPONIBLE',mensaje:'No fue posible consultar el registro. Intenta desde Telegram.'};\n if(found.length!==1)return {ok:false,codigo:'NO_DISPONIBLE',mensaje:'No encontré un registro único disponible para esa consulta.'};\n const r=found[0];let p;try{p=JSON.parse(r.propuesta_json);}catch{return {ok:false,codigo:'REGISTRO_NO_VALIDO',mensaje:'El registro requiere revisión de RH.'};}\n if(p?.modo!=='SIMULADO'||!empleadoPrueba(r.empleado_id))return {ok:false,codigo:'FUERA_DE_ALCANCE',mensaje:'Este canal solo consulta registros ficticios de prueba.'};\n let st=r.estado;\n const permitidos=['Aprobada','Rechazada','Pendiente de aprobación','Expirada','Requiere aclaración','Requiere ajuste por cobertura','Saldo insuficiente','Requiere ajuste por saldo','Error controlado','Procesando aprobación','En proceso'];\n if(!permitidos.includes(st))return {ok:false,codigo:'REVISION_RH',mensaje:'El estado requiere consulta directa con RH.'};\n if(st==='Pendiente de aprobación'){\n  const limite=Date.parse(p.control_decision?.vence_en);\n  if(!Number.isFinite(limite))return {ok:false,codigo:'REGISTRO_NO_VALIDO',mensaje:'La vigencia requiere revisión de RH.'};\n  if(now>=limite)st='Expirada por vigencia';\n }\n return {ok:true,modo:'SIMULADO',caso_id:r.caso_id,empleado_id:r.empleado_id,estado:st,version:Number.isInteger(Number(r.version_propuesta))?Number(r.version_propuesta):null,fecha_inicio:dia(r.fecha_inicio),fecha_fin:dia(r.fecha_fin),dias_solicitados:numero(r.dias_solicitados),consultado_en:new Date(now).toISOString(),fuente:'registro privado rh_solicitudes',mensaje:'Resultado simulado. La consulta de voz no modifica reservas ni autoriza vacaciones.'};\n}\nfunction saldo(req,empleados,reservas,reglas,now){\n const fail=mensaje=>({ok:false,codigo:'REVISION_RH',mensaje});\n if([...empleados,...reservas,...reglas].some(r=>r?.error))return fail('No fue posible consultar el saldo. Intenta desde Telegram.');\n const es=empleados.filter(e=>e.empleado_id===req.empleado_id);if(es.length!==1)return fail('No encontré una ficha única para el empleado ficticio.');\n const e=es[0];if(!empleadoPrueba(e.empleado_id)||!/^Persona ficticia \\d{2}$/.test(e.alias_ficticio||''))return fail('La ficha no está habilitada para el canal de prueba.');\n const rr=reglas.filter(r=>numero(r.version)!==null).sort((a,b)=>Number(b.version)-Number(a.version));\n if(!rr.length||rr.filter(r=>Number(r.version)===Number(rr[0].version)).length!==1||rr[0].modo!=='SIMULADO')return fail('No existe una regla de prueba única y válida.');\n const pi=dia(e.periodo_inicio),pf=dia(e.periodo_fin),gen=numero(e.dias_generados),usados=numero(e.dias_usados_corte);\n if(!pi||!pf||pi>pf||gen===null||usados===null||!Number.isInteger(gen)||!Number.isInteger(usados)||usados<0||gen<usados)return fail('La ficha contiene un periodo o saldo incoherente.');\n const rows=reservas.filter(r=>r.empleado_id===req.empleado_id&&/aprob/i.test(String(r.estado||'')));\n const ids=new Set();let total=0;\n for(const r of rows){\n  const fi=dia(r.fecha_inicio),ff=dia(r.fecha_fin),dias=numero(r.dias_reservados);\n  if(!r.aprobacion_id||ids.has(r.aprobacion_id)||!fi||!ff||fi>ff||dias===null||!Number.isInteger(dias)||dias<=0)return fail('Las reservas requieren conciliación; no se estima un saldo.');\n  ids.add(r.aprobacion_id);\n  if(fi>=pi&&fi<=pf){if(ff>pf)return fail('Existe una reserva que cruza periodos; RH debe revisar el saldo.');total+=dias;}\n }\n const disponible=gen-usados-total;\n if(disponible<0)return fail('El saldo calculado es negativo; RH debe conciliar las reservas.');\n return {ok:true,modo:'SIMULADO',empleado_id:e.empleado_id,periodo_inicio:pi,periodo_fin:pf,dias_generados:gen,dias_usados_corte:usados,dias_reservados:total,saldo_disponible:disponible,unidad:'días laborables',consultado_en:new Date(now).toISOString(),fuente:'rh_empleados y rh_aprobadas',regla:'Saldo = días generados − usados al corte − reservas aprobadas del periodo, conforme al modelo de datos actual.',mensaje:'Resultado simulado. Las reservas están separadas de los días usados al corte; no se modifica el saldo.'};\n}\nreturn {dia,numero,empleadoPrueba,normalizar,estado,saldo};\n\n})();\n\nconst p=$('Voz: preparar auditoría').first().json;\nif(!$input.all().some(i=>i.json.traza_id===p.traza.traza_id&&!i.json.error))return [{json:{error_auditoria:true}}];\nreturn [{json:{llamada_id:p.respuesta.consulta_id+'-EV',caso_id:p.traza.caso_id,etapa:'voz_herramienta',agente:'Consulta n8n sin LLM',proveedor:'n8n',modelo:null,fecha_hora:new Date().toISOString(),moneda:'USD',estado:'registrado',origen_dato:'evento_sin_modelo',tipo_registro:'evento_sin_modelo',grupo_costo:'operacion',unidad_cobro:'ejecución n8n; tokens no aplican',cantidad_unidades:1,tokens_entrada:null,tokens_salida:null,tokens_cache:null,costo_usd:null,reintento:0,estado_conciliacion:'pendiente_precio',ejecucion_id:String($execution.id),motivo_estimacion:'La herramienta no invoca un LLM. El consumo de conversación y LLM de ElevenLabs debe conciliarse por separado usando conversacion_id de la traza. No se presume costo cero.'}}];\n"
+      },
+      "id": "f597a74f-acd0-4c23-9f7c-6c5ccd3daf4d",
+      "name": "Voz: preparar evento de plataforma",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2544,
+        400
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "leftValue": "={{ $json.error_auditoria !== true }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "ce2410f4-25b8-4e5c-878a-448b24d1ff7a",
+      "name": "¿Auditoría guardada?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        2768,
+        400
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "upsert",
+        "dataTableId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "CONFIGURAR_TABLA_RH_COSTOS",
+          "cachedResultName": "rh_costos"
+        },
+        "matchType": "allConditions",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "llamada_id",
+              "keyValue": "={{ $json.llamada_id }}"
+            }
+          ]
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "llamada_id": "={{ $json.llamada_id }}",
+            "caso_id": "={{ $json.caso_id }}",
+            "etapa": "={{ $json.etapa }}",
+            "agente": "={{ $json.agente }}",
+            "proveedor": "={{ $json.proveedor }}",
+            "modelo": "={{ $json.modelo }}",
+            "fecha_hora": "={{ $json.fecha_hora }}",
+            "moneda": "={{ $json.moneda }}",
+            "estado": "={{ $json.estado }}",
+            "origen_dato": "={{ $json.origen_dato }}",
+            "tipo_registro": "={{ $json.tipo_registro }}",
+            "grupo_costo": "={{ $json.grupo_costo }}",
+            "unidad_cobro": "={{ $json.unidad_cobro }}",
+            "cantidad_unidades": "={{ $json.cantidad_unidades }}",
+            "tokens_entrada": "={{ $json.tokens_entrada }}",
+            "tokens_salida": "={{ $json.tokens_salida }}",
+            "tokens_cache": "={{ $json.tokens_cache }}",
+            "costo_usd": "={{ $json.costo_usd }}",
+            "reintento": "={{ $json.reintento }}",
+            "estado_conciliacion": "={{ $json.estado_conciliacion }}",
+            "ejecucion_id": "={{ $json.ejecucion_id }}",
+            "motivo_estimacion": "={{ $json.motivo_estimacion }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "llamada_id",
+              "displayName": "llamada_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "caso_id",
+              "displayName": "caso_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "etapa",
+              "displayName": "etapa",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "agente",
+              "displayName": "agente",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "proveedor",
+              "displayName": "proveedor",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "modelo",
+              "displayName": "modelo",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "fecha_hora",
+              "displayName": "fecha_hora",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "moneda",
+              "displayName": "moneda",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "estado",
+              "displayName": "estado",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "origen_dato",
+              "displayName": "origen_dato",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "motivo_estimacion",
+              "displayName": "motivo_estimacion",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "tokens_entrada",
+              "displayName": "tokens_entrada",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "tokens_salida",
+              "displayName": "tokens_salida",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "tokens_cache",
+              "displayName": "tokens_cache",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "duracion_ms",
+              "displayName": "duracion_ms",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "tarifa_entrada_millon",
+              "displayName": "tarifa_entrada_millon",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "tarifa_salida_millon",
+              "displayName": "tarifa_salida_millon",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "cargo_busqueda_usd",
+              "displayName": "cargo_busqueda_usd",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "costo_usd",
+              "displayName": "costo_usd",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "reintento",
+              "displayName": "reintento",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "response_id",
+              "displayName": "response_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "ejecucion_id",
+              "displayName": "ejecucion_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "tipo_registro",
+              "displayName": "tipo_registro",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "modalidad",
+              "displayName": "modalidad",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "unidad_cobro",
+              "displayName": "unidad_cobro",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "fecha_tarifa",
+              "displayName": "fecha_tarifa",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "url_tarifa",
+              "displayName": "url_tarifa",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "version_tarifas",
+              "displayName": "version_tarifas",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "grupo_costo",
+              "displayName": "grupo_costo",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "estado_conciliacion",
+              "displayName": "estado_conciliacion",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "skill_id",
+              "displayName": "skill_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "loop_id",
+              "displayName": "loop_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "tokens_razonamiento",
+              "displayName": "tokens_razonamiento",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "tarifa_cache_millon",
+              "displayName": "tarifa_cache_millon",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "costo_tokens_usd",
+              "displayName": "costo_tokens_usd",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "cantidad_busquedas",
+              "displayName": "cantidad_busquedas",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "duracion_voz_seg",
+              "displayName": "duracion_voz_seg",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "cantidad_unidades",
+              "displayName": "cantidad_unidades",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "tarifa_unitaria",
+              "displayName": "tarifa_unitaria",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "importe_incluido_usd",
+              "displayName": "importe_incluido_usd",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "cargo_adicional_usd",
+              "displayName": "cargo_adicional_usd",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "costo_reservado_usd",
+              "displayName": "costo_reservado_usd",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "tokens_entrada_conteo",
+              "displayName": "tokens_entrada_conteo",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "estimacion_contenido_usd",
+              "displayName": "estimacion_contenido_usd",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "evidencia",
+              "displayName": "evidencia",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "llamadas_ref",
+              "displayName": "llamadas_ref",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "id": "ad9862f3-e798-4f39-a530-462d6cd0eb53",
+      "name": "Voz: guardar evento",
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        2992,
+        400
+      ],
+      "alwaysOutputData": true,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "jsCode": "const V=(function(){\n// Elaborado por: Jorge Valencia. Funciones sin red para consultas de datos ficticios.\nfunction dia(v){\n if(typeof v!=='string')return null;\n if(/^\\d{4}-\\d{2}-\\d{2}$/.test(v)){const d=new Date(v+'T00:00:00Z');return Number.isFinite(+d)&&d.toISOString().slice(0,10)===v?v:null;}\n if(!/T.*(?:Z|[+-]\\d{2}:\\d{2})$/i.test(v))return null;\n const d=new Date(v);if(!Number.isFinite(+d))return null;\n const p=Object.fromEntries(new Intl.DateTimeFormat('en-CA',{timeZone:'America/Mexico_City',year:'numeric',month:'2-digit',day:'2-digit'}).formatToParts(d).map(x=>[x.type,x.value]));return `${p.year}-${p.month}-${p.day}`;\n}\nfunction empleadoPrueba(id){return typeof id==='string'&&/^EMP-\\d{3}$/.test(id)&&Number(id.slice(4))>=1&&Number(id.slice(4))<=15;}\nfunction numero(v){return typeof v!=='boolean'&&v!==null&&v!==undefined&&v!==''&&Number.isFinite(Number(v))?Number(v):null;}\nfunction normalizar(body,habilitado){\n const fail=mensaje=>({ok:false,codigo:'ENTRADA_INVALIDA',mensaje});\n if(habilitado!==true)return {ok:false,codigo:'SERVICIO_NO_HABILITADO',mensaje:'La conexión de consultas todavía no está habilitada.'};\n if(!body||typeof body!=='object'||Array.isArray(body)||JSON.stringify(body).length>1500)return fail('Envía una consulta breve y estructurada.');\n if(!['consultar_estado','consultar_saldo'].includes(body.operacion))return fail('Solo se permite consultar estado o saldo.');\n const keys=body.operacion==='consultar_estado'?['operacion','folio','conversacion_id']:['operacion','empleado_id','conversacion_id'];\n if(Object.keys(body).some(k=>!keys.includes(k)))return fail('La consulta contiene campos no permitidos.');\n if(typeof body.conversacion_id!=='string'||!/^[-A-Za-z0-9_]{1,100}$/.test(body.conversacion_id))return fail('Falta una referencia válida de conversación.');\n if(body.operacion==='consultar_estado'&&(typeof body.folio!=='string'||!/^VAC-[A-Z0-9-]{4,80}$/.test(body.folio)))return fail('Indica el folio completo de la solicitud, sin instrucciones adicionales.');\n if(body.operacion==='consultar_saldo'&&!empleadoPrueba(body.empleado_id))return fail('Indica un empleado ficticio de EMP-001 a EMP-015.');\n return {ok:true,...body};\n}\nfunction estado(req,rows,now){\n const found=rows.filter(r=>r&&r.caso_id===req.folio&&!r.error);\n if(rows.some(r=>r&&r.error))return {ok:false,codigo:'SERVICIO_NO_DISPONIBLE',mensaje:'No fue posible consultar el registro. Intenta desde Telegram.'};\n if(found.length!==1)return {ok:false,codigo:'NO_DISPONIBLE',mensaje:'No encontré un registro único disponible para esa consulta.'};\n const r=found[0];let p;try{p=JSON.parse(r.propuesta_json);}catch{return {ok:false,codigo:'REGISTRO_NO_VALIDO',mensaje:'El registro requiere revisión de RH.'};}\n if(p?.modo!=='SIMULADO'||!empleadoPrueba(r.empleado_id))return {ok:false,codigo:'FUERA_DE_ALCANCE',mensaje:'Este canal solo consulta registros ficticios de prueba.'};\n let st=r.estado;\n const permitidos=['Aprobada','Rechazada','Pendiente de aprobación','Expirada','Requiere aclaración','Requiere ajuste por cobertura','Saldo insuficiente','Requiere ajuste por saldo','Error controlado','Procesando aprobación','En proceso'];\n if(!permitidos.includes(st))return {ok:false,codigo:'REVISION_RH',mensaje:'El estado requiere consulta directa con RH.'};\n if(st==='Pendiente de aprobación'){\n  const limite=Date.parse(p.control_decision?.vence_en);\n  if(!Number.isFinite(limite))return {ok:false,codigo:'REGISTRO_NO_VALIDO',mensaje:'La vigencia requiere revisión de RH.'};\n  if(now>=limite)st='Expirada por vigencia';\n }\n return {ok:true,modo:'SIMULADO',caso_id:r.caso_id,empleado_id:r.empleado_id,estado:st,version:Number.isInteger(Number(r.version_propuesta))?Number(r.version_propuesta):null,fecha_inicio:dia(r.fecha_inicio),fecha_fin:dia(r.fecha_fin),dias_solicitados:numero(r.dias_solicitados),consultado_en:new Date(now).toISOString(),fuente:'registro privado rh_solicitudes',mensaje:'Resultado simulado. La consulta de voz no modifica reservas ni autoriza vacaciones.'};\n}\nfunction saldo(req,empleados,reservas,reglas,now){\n const fail=mensaje=>({ok:false,codigo:'REVISION_RH',mensaje});\n if([...empleados,...reservas,...reglas].some(r=>r?.error))return fail('No fue posible consultar el saldo. Intenta desde Telegram.');\n const es=empleados.filter(e=>e.empleado_id===req.empleado_id);if(es.length!==1)return fail('No encontré una ficha única para el empleado ficticio.');\n const e=es[0];if(!empleadoPrueba(e.empleado_id)||!/^Persona ficticia \\d{2}$/.test(e.alias_ficticio||''))return fail('La ficha no está habilitada para el canal de prueba.');\n const rr=reglas.filter(r=>numero(r.version)!==null).sort((a,b)=>Number(b.version)-Number(a.version));\n if(!rr.length||rr.filter(r=>Number(r.version)===Number(rr[0].version)).length!==1||rr[0].modo!=='SIMULADO')return fail('No existe una regla de prueba única y válida.');\n const pi=dia(e.periodo_inicio),pf=dia(e.periodo_fin),gen=numero(e.dias_generados),usados=numero(e.dias_usados_corte);\n if(!pi||!pf||pi>pf||gen===null||usados===null||!Number.isInteger(gen)||!Number.isInteger(usados)||usados<0||gen<usados)return fail('La ficha contiene un periodo o saldo incoherente.');\n const rows=reservas.filter(r=>r.empleado_id===req.empleado_id&&/aprob/i.test(String(r.estado||'')));\n const ids=new Set();let total=0;\n for(const r of rows){\n  const fi=dia(r.fecha_inicio),ff=dia(r.fecha_fin),dias=numero(r.dias_reservados);\n  if(!r.aprobacion_id||ids.has(r.aprobacion_id)||!fi||!ff||fi>ff||dias===null||!Number.isInteger(dias)||dias<=0)return fail('Las reservas requieren conciliación; no se estima un saldo.');\n  ids.add(r.aprobacion_id);\n  if(fi>=pi&&fi<=pf){if(ff>pf)return fail('Existe una reserva que cruza periodos; RH debe revisar el saldo.');total+=dias;}\n }\n const disponible=gen-usados-total;\n if(disponible<0)return fail('El saldo calculado es negativo; RH debe conciliar las reservas.');\n return {ok:true,modo:'SIMULADO',empleado_id:e.empleado_id,periodo_inicio:pi,periodo_fin:pf,dias_generados:gen,dias_usados_corte:usados,dias_reservados:total,saldo_disponible:disponible,unidad:'días laborables',consultado_en:new Date(now).toISOString(),fuente:'rh_empleados y rh_aprobadas',regla:'Saldo = días generados − usados al corte − reservas aprobadas del periodo, conforme al modelo de datos actual.',mensaje:'Resultado simulado. Las reservas están separadas de los días usados al corte; no se modifica el saldo.'};\n}\nreturn {dia,numero,empleadoPrueba,normalizar,estado,saldo};\n\n})();\n\nconst p=$('Voz: preparar auditoría').first().json,expected=p.respuesta.consulta_id+'-EV';\nif(!$input.all().some(i=>i.json.llamada_id===expected&&!i.json.error))return [{json:{ok:false,codigo:'AUDITORIA_NO_CONFIRMADA',mensaje:'No se pudo confirmar el registro de consulta. Intenta desde Telegram.'}}];\nreturn [{json:p.respuesta}];\n"
+      },
+      "id": "97c2ae41-04ab-4b02-9662-24983a94db4e",
+      "name": "Voz: verificar registro y responder",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3232,
+        400
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const V=(function(){\n// Elaborado por: Jorge Valencia. Funciones sin red para consultas de datos ficticios.\nfunction dia(v){\n if(typeof v!=='string')return null;\n if(/^\\d{4}-\\d{2}-\\d{2}$/.test(v)){const d=new Date(v+'T00:00:00Z');return Number.isFinite(+d)&&d.toISOString().slice(0,10)===v?v:null;}\n if(!/T.*(?:Z|[+-]\\d{2}:\\d{2})$/i.test(v))return null;\n const d=new Date(v);if(!Number.isFinite(+d))return null;\n const p=Object.fromEntries(new Intl.DateTimeFormat('en-CA',{timeZone:'America/Mexico_City',year:'numeric',month:'2-digit',day:'2-digit'}).formatToParts(d).map(x=>[x.type,x.value]));return `${p.year}-${p.month}-${p.day}`;\n}\nfunction empleadoPrueba(id){return typeof id==='string'&&/^EMP-\\d{3}$/.test(id)&&Number(id.slice(4))>=1&&Number(id.slice(4))<=15;}\nfunction numero(v){return typeof v!=='boolean'&&v!==null&&v!==undefined&&v!==''&&Number.isFinite(Number(v))?Number(v):null;}\nfunction normalizar(body,habilitado){\n const fail=mensaje=>({ok:false,codigo:'ENTRADA_INVALIDA',mensaje});\n if(habilitado!==true)return {ok:false,codigo:'SERVICIO_NO_HABILITADO',mensaje:'La conexión de consultas todavía no está habilitada.'};\n if(!body||typeof body!=='object'||Array.isArray(body)||JSON.stringify(body).length>1500)return fail('Envía una consulta breve y estructurada.');\n if(!['consultar_estado','consultar_saldo'].includes(body.operacion))return fail('Solo se permite consultar estado o saldo.');\n const keys=body.operacion==='consultar_estado'?['operacion','folio','conversacion_id']:['operacion','empleado_id','conversacion_id'];\n if(Object.keys(body).some(k=>!keys.includes(k)))return fail('La consulta contiene campos no permitidos.');\n if(typeof body.conversacion_id!=='string'||!/^[-A-Za-z0-9_]{1,100}$/.test(body.conversacion_id))return fail('Falta una referencia válida de conversación.');\n if(body.operacion==='consultar_estado'&&(typeof body.folio!=='string'||!/^VAC-[A-Z0-9-]{4,80}$/.test(body.folio)))return fail('Indica el folio completo de la solicitud, sin instrucciones adicionales.');\n if(body.operacion==='consultar_saldo'&&!empleadoPrueba(body.empleado_id))return fail('Indica un empleado ficticio de EMP-001 a EMP-015.');\n return {ok:true,...body};\n}\nfunction estado(req,rows,now){\n const found=rows.filter(r=>r&&r.caso_id===req.folio&&!r.error);\n if(rows.some(r=>r&&r.error))return {ok:false,codigo:'SERVICIO_NO_DISPONIBLE',mensaje:'No fue posible consultar el registro. Intenta desde Telegram.'};\n if(found.length!==1)return {ok:false,codigo:'NO_DISPONIBLE',mensaje:'No encontré un registro único disponible para esa consulta.'};\n const r=found[0];let p;try{p=JSON.parse(r.propuesta_json);}catch{return {ok:false,codigo:'REGISTRO_NO_VALIDO',mensaje:'El registro requiere revisión de RH.'};}\n if(p?.modo!=='SIMULADO'||!empleadoPrueba(r.empleado_id))return {ok:false,codigo:'FUERA_DE_ALCANCE',mensaje:'Este canal solo consulta registros ficticios de prueba.'};\n let st=r.estado;\n const permitidos=['Aprobada','Rechazada','Pendiente de aprobación','Expirada','Requiere aclaración','Requiere ajuste por cobertura','Saldo insuficiente','Requiere ajuste por saldo','Error controlado','Procesando aprobación','En proceso'];\n if(!permitidos.includes(st))return {ok:false,codigo:'REVISION_RH',mensaje:'El estado requiere consulta directa con RH.'};\n if(st==='Pendiente de aprobación'){\n  const limite=Date.parse(p.control_decision?.vence_en);\n  if(!Number.isFinite(limite))return {ok:false,codigo:'REGISTRO_NO_VALIDO',mensaje:'La vigencia requiere revisión de RH.'};\n  if(now>=limite)st='Expirada por vigencia';\n }\n return {ok:true,modo:'SIMULADO',caso_id:r.caso_id,empleado_id:r.empleado_id,estado:st,version:Number.isInteger(Number(r.version_propuesta))?Number(r.version_propuesta):null,fecha_inicio:dia(r.fecha_inicio),fecha_fin:dia(r.fecha_fin),dias_solicitados:numero(r.dias_solicitados),consultado_en:new Date(now).toISOString(),fuente:'registro privado rh_solicitudes',mensaje:'Resultado simulado. La consulta de voz no modifica reservas ni autoriza vacaciones.'};\n}\nfunction saldo(req,empleados,reservas,reglas,now){\n const fail=mensaje=>({ok:false,codigo:'REVISION_RH',mensaje});\n if([...empleados,...reservas,...reglas].some(r=>r?.error))return fail('No fue posible consultar el saldo. Intenta desde Telegram.');\n const es=empleados.filter(e=>e.empleado_id===req.empleado_id);if(es.length!==1)return fail('No encontré una ficha única para el empleado ficticio.');\n const e=es[0];if(!empleadoPrueba(e.empleado_id)||!/^Persona ficticia \\d{2}$/.test(e.alias_ficticio||''))return fail('La ficha no está habilitada para el canal de prueba.');\n const rr=reglas.filter(r=>numero(r.version)!==null).sort((a,b)=>Number(b.version)-Number(a.version));\n if(!rr.length||rr.filter(r=>Number(r.version)===Number(rr[0].version)).length!==1||rr[0].modo!=='SIMULADO')return fail('No existe una regla de prueba única y válida.');\n const pi=dia(e.periodo_inicio),pf=dia(e.periodo_fin),gen=numero(e.dias_generados),usados=numero(e.dias_usados_corte);\n if(!pi||!pf||pi>pf||gen===null||usados===null||!Number.isInteger(gen)||!Number.isInteger(usados)||usados<0||gen<usados)return fail('La ficha contiene un periodo o saldo incoherente.');\n const rows=reservas.filter(r=>r.empleado_id===req.empleado_id&&/aprob/i.test(String(r.estado||'')));\n const ids=new Set();let total=0;\n for(const r of rows){\n  const fi=dia(r.fecha_inicio),ff=dia(r.fecha_fin),dias=numero(r.dias_reservados);\n  if(!r.aprobacion_id||ids.has(r.aprobacion_id)||!fi||!ff||fi>ff||dias===null||!Number.isInteger(dias)||dias<=0)return fail('Las reservas requieren conciliación; no se estima un saldo.');\n  ids.add(r.aprobacion_id);\n  if(fi>=pi&&fi<=pf){if(ff>pf)return fail('Existe una reserva que cruza periodos; RH debe revisar el saldo.');total+=dias;}\n }\n const disponible=gen-usados-total;\n if(disponible<0)return fail('El saldo calculado es negativo; RH debe conciliar las reservas.');\n return {ok:true,modo:'SIMULADO',empleado_id:e.empleado_id,periodo_inicio:pi,periodo_fin:pf,dias_generados:gen,dias_usados_corte:usados,dias_reservados:total,saldo_disponible:disponible,unidad:'días laborables',consultado_en:new Date(now).toISOString(),fuente:'rh_empleados y rh_aprobadas',regla:'Saldo = días generados − usados al corte − reservas aprobadas del periodo, conforme al modelo de datos actual.',mensaje:'Resultado simulado. Las reservas están separadas de los días usados al corte; no se modifica el saldo.'};\n}\nreturn {dia,numero,empleadoPrueba,normalizar,estado,saldo};\n\n})();\nreturn [{json:{ok:false,codigo:'AUDITORIA_NO_CONFIRMADA',mensaje:'No se pudo registrar la consulta. Intenta desde Telegram.'}}];"
+      },
+      "id": "352aa33b-ebf5-4dc4-a064-13f22bdbbec6",
+      "name": "Voz: error de auditoría",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2992,
+        800
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ $json }}",
+        "options": {
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Cache-Control",
+                "value": "no-store"
+              }
+            ]
+          }
+        }
+      },
+      "id": "f3b3b37c-24f1-4089-88bf-08df82eb6705",
+      "name": "Responder voz",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        3456,
+        400
+      ]
+    },
+    {
+      "parameters": {
+        "content": "Elaborado por: Jorge Valencia.\nSolo datos ficticios. Autenticación Header Auth obligatoria, sin credencial embebida.\nSeleccionar credencial RH_VOZ_N8N y habilitar consultas ficticias tras comprobar las tablas.\nNo tiene Telegram Trigger ni modifica solicitudes, saldos o reservas.\nConservar Production URL para ElevenLabs.",
+        "height": 250,
+        "width": 650
+      },
+      "id": "22c617d5-9eaf-4875-a816-59a5b11d1c69",
+      "name": "Nota: conexión de voz",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ]
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook voz autenticado": {
+      "main": [
+        [
+          {
+            "node": "Configuración voz",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Configuración voz": {
+      "main": [
+        [
+          {
+            "node": "Validar consulta de voz",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validar consulta de voz": {
+      "main": [
+        [
+          {
+            "node": "¿Consulta válida?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Voz: leer caso": {
+      "main": [
+        [
+          {
+            "node": "Voz: preparar estado",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Voz: preparar estado": {
+      "main": [
+        [
+          {
+            "node": "Voz: preparar auditoría",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Voz: leer empleado": {
+      "main": [
+        [
+          {
+            "node": "Voz: leer reservas",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Voz: leer reservas": {
+      "main": [
+        [
+          {
+            "node": "Voz: leer reglas",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Voz: leer reglas": {
+      "main": [
+        [
+          {
+            "node": "Voz: preparar saldo",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Voz: preparar saldo": {
+      "main": [
+        [
+          {
+            "node": "Voz: preparar auditoría",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Voz: preparar auditoría": {
+      "main": [
+        [
+          {
+            "node": "Voz: guardar traza",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Voz: guardar traza": {
+      "main": [
+        [
+          {
+            "node": "Voz: preparar evento de plataforma",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Voz: preparar evento de plataforma": {
+      "main": [
+        [
+          {
+            "node": "¿Auditoría guardada?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Voz: guardar evento": {
+      "main": [
+        [
+          {
+            "node": "Voz: verificar registro y responder",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Voz: verificar registro y responder": {
+      "main": [
+        [
+          {
+            "node": "Responder voz",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Voz: error de auditoría": {
+      "main": [
+        [
+          {
+            "node": "Responder voz",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "¿Consulta válida?": {
+      "main": [
+        [
+          {
+            "node": "¿Consultar folio?",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Responder voz",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "¿Consultar folio?": {
+      "main": [
+        [
+          {
+            "node": "Voz: leer caso",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Voz: leer empleado",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "¿Auditoría guardada?": {
+      "main": [
+        [
+          {
+            "node": "Voz: guardar evento",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Voz: error de auditoría",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "timeSavedMode": "fixed",
+    "callerPolicy": "workflowsFromSameOwner",
+    "availableInMCP": false
+  }
+}

@@ -1,0 +1,72 @@
+{
+  "autor": "Jorge Valencia",
+  "origen": "Salida JSON de n8n compartida por Jorge en el chat; no lectura directa de API",
+  "resultado": {
+    "autor": "Jorge Valencia",
+    "prueba": "P09",
+    "resultado": "TRES_CONTROLES_APROBADOS",
+    "ejecucion_n8n": "246",
+    "registrado_en": "2026-11-05T00:31:44.337Z",
+    "alcance": "Código real del control con entradas sintéticas; sin HTTP, credenciales, bot ni escrituras. No prueba persistencia productiva ni consumo completo.",
+    "resultados": [
+      {
+        "autor": "Jorge Valencia",
+        "prueba": "P09",
+        "escenario": "PRESUPUESTO",
+        "resultado": "APROBADO",
+        "datos_sinteticos": true,
+        "permitido": false,
+        "motivos": [
+          "Presupuesto insuficiente: contabilizado 0 + reservas pendientes 0 + nueva reserva 0.01625 = 0.01625 USD > TOPE_USD_CASO 0.001"
+        ],
+        "reserva_calculada_usd": 0.01625,
+        "contador_previo": 0,
+        "fila_reserva_propuesta": false,
+        "generacion_real_ejecutada": false,
+        "alcance": "Control aislado; no ensayo integral de API ni persistencia en tablas.",
+        "sha256_codigo_original": "d1303138fca97eab1403841a0ff350f168d8978474283d5a70e02310d4b57baf",
+        "ejecucion_n8n": "246"
+      },
+      {
+        "autor": "Jorge Valencia",
+        "prueba": "P09",
+        "escenario": "LLAMADAS",
+        "resultado": "APROBADO",
+        "datos_sinteticos": true,
+        "permitido": false,
+        "motivos": [
+          "MAX_LLAMADAS alcanzado (6 intentos de generación de 6)"
+        ],
+        "reserva_calculada_usd": 0.01625,
+        "contador_previo": 6,
+        "fila_reserva_propuesta": false,
+        "generacion_real_ejecutada": false,
+        "alcance": "Control aislado; no ensayo integral de API ni persistencia en tablas.",
+        "sha256_codigo_original": "d1303138fca97eab1403841a0ff350f168d8978474283d5a70e02310d4b57baf",
+        "ejecucion_n8n": "246"
+      },
+      {
+        "autor": "Jorge Valencia",
+        "prueba": "P09",
+        "escenario": "DENTRO_DE_LIMITES",
+        "resultado": "APROBADO",
+        "datos_sinteticos": true,
+        "permitido": true,
+        "motivos": [],
+        "reserva_calculada_usd": 0.01625,
+        "contador_previo": 0,
+        "fila_reserva_propuesta": true,
+        "generacion_real_ejecutada": false,
+        "alcance": "Control aislado; no ensayo integral de API ni persistencia en tablas.",
+        "sha256_codigo_original": "d1303138fca97eab1403841a0ff350f168d8978474283d5a70e02310d4b57baf",
+        "ejecucion_n8n": "246"
+      }
+    ]
+  },
+  "fecha_local_referencia": "2026-11-04 18:31:44 America/Mexico_City",
+  "alcance_evidencia": "Código del control exportado, ejecutado en n8n con fixtures de presupuesto/consumo. No llamadas externas ni escrituras en tablas.",
+  "limites": [
+    "No demuestra persistencia de causas en rh_trazas/rh_costos ni bloqueo integral de una llamada HTTP conectada.",
+    "Se registra como prueba del control aislado, no prueba de carga o facturación."
+  ]
+}

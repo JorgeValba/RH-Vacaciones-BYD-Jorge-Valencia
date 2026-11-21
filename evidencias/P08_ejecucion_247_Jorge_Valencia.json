@@ -1,0 +1,37 @@
+{
+  "autor": "Jorge Valencia",
+  "origen_evidencia": "Salida JSON de n8n compartida por Jorge en el chat; sin consulta directa a la API",
+  "prueba": "P08",
+  "resultado": "FALLO_DE_CONEXION_CONTROLADO",
+  "ejecucion_n8n": "247",
+  "registrado_en": "2026-11-05T00:38:55.473Z",
+  "referencia_hora_mexico": "2026-11-04 18:38:55 America/Mexico_City",
+  "caso_id": "ENSAYO-P08-247",
+  "fallo_http_observado": {
+    "errno": -3008,
+    "code": "ENOTFOUND",
+    "syscall": "getaddrinfo",
+    "hostname": "rh-prueba-conexion.invalid"
+  },
+  "motivos": [
+    "El conteo previo de tokens falló ([object Object]); no se genera respuesta.",
+    "Sin reserva calculable"
+  ],
+  "permitido": false,
+  "generacion_intentada": false,
+  "fila_reserva_propuesta": false,
+  "configuracion_ensayo": {
+    "timeout_por_intento_ms": 3000,
+    "max_intentos_configurados": 2,
+    "espera_entre_intentos_ms": 1000
+  },
+  "alcance": "Petición HTTP real a un destino deliberadamente inválido; control y devolución de bloqueo del export. Sin OpenAI, ElevenLabs, Telegram o escrituras. Evidencia en salida de ejecución; no prueba completa de persistencia en tablas ni caída real del proveedor. Reintentos acotados configurados en este ensayo, no atribuirlos automáticamente al flujo publicado.",
+  "interpretacion": "El fallo de resolución DNS impide autorizar una generación y proponer una fila de reserva. La aserción del ensayo pasó.",
+  "limites": [
+    "ENOTFOUND es fallo DNS, no agotamiento real de cuota ni timeout observado.",
+    "Dos intentos y timeout de 3000 ms son parámetros configurados; no hay evidencia del número efectivo de intentos ni de que se alcanzara ese tiempo.",
+    "No prueba persistencia del estado de error en rh_trazas/rh_costos ni notificación por Telegram.",
+    "Los parámetros del ensayo no se atribuyen al workflow publicado."
+  ],
+  "incidencia_menor": "El detalle del objeto de error se convierte en [object Object] en motivos. La causa ENOTFOUND queda en fallo_http_observado; conviene mejorar la serialización del mensaje técnico. No se modificó el código publicado."
+}

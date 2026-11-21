@@ -1,0 +1,3 @@
+aprobacion_id,empleado_id,equipo_id,fecha_inicio,fecha_fin,estado,dias_reservados,autor
+APR-001,EMP-007,EQ-B,2026-11-23,2026-11-27,Aprobada,5,Jorge Valencia
+APR-002,EMP-008,EQ-B,2026-11-23,2026-11-27,Aprobada,5,Jorge Valencia

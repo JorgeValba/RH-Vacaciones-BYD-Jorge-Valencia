@@ -1,0 +1,1743 @@
+{
+  "name": "RH LLM — Llamada controlada gpt-5",
+  "nodes": [
+    {
+      "parameters": {
+        "inputSource": "passthrough"
+      },
+      "id": "72f38506-9643-41da-b984-b75460873354",
+      "name": "Recibir llamada",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        0,
+        128
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// RH-LIB v2 (2026-11-01) — funciones puras compartidas. Sin red, sin secretos.\nconst RH = (function () {\n  const esNum = (v) => typeof v === 'number' && Number.isFinite(v);\n  const esEnteroNoNeg = (v) => esNum(v) && v >= 0 && Math.floor(v) === v;\n  const esListaTxt = (v) => Array.isArray(v) && v.every((x) => typeof x === 'string');\n  const unicos = (a) => Array.from(new Set(a));\n\n  // Lee usage de Responses API sin sustituir ausencias por cero.\n  function leerUsage(usage) {\n    const r = { tokens_entrada: null, tokens_cache: null, tokens_salida: null, tokens_razonamiento: null, cache_informada: false, razonamiento_informado: false, usage_presente: false, errores: [] };\n    if (!usage || typeof usage !== 'object') { r.errores.push('usage ausente'); return r; }\n    r.usage_presente = true;\n    if (esEnteroNoNeg(usage.input_tokens)) r.tokens_entrada = usage.input_tokens; else r.errores.push('usage.input_tokens ausente o inválido');\n    if (esEnteroNoNeg(usage.output_tokens)) r.tokens_salida = usage.output_tokens; else r.errores.push('usage.output_tokens ausente o inválido');\n    const det = usage.input_tokens_details;\n    if (det && det.cached_tokens !== undefined && det.cached_tokens !== null) {\n      if (!esEnteroNoNeg(det.cached_tokens)) r.errores.push('cached_tokens inválido (' + String(det.cached_tokens) + ')');\n      else {\n        r.tokens_cache = det.cached_tokens; r.cache_informada = true;\n        if (r.tokens_entrada !== null && det.cached_tokens > r.tokens_entrada) r.errores.push('Incoherente: cached_tokens (' + det.cached_tokens + ') > input_tokens (' + r.tokens_entrada + ')');\n      }\n    }\n    const od = usage.output_tokens_details;\n    if (od && od.reasoning_tokens !== undefined && od.reasoning_tokens !== null) {\n      if (!esEnteroNoNeg(od.reasoning_tokens)) r.errores.push('reasoning_tokens inválido');\n      else {\n        r.tokens_razonamiento = od.reasoning_tokens; r.razonamiento_informado = true;\n        if (r.tokens_salida !== null && od.reasoning_tokens > r.tokens_salida) r.errores.push('Incoherente: reasoning_tokens > output_tokens');\n      }\n    }\n    return r;\n  }\n\n  // costo_tokens_usd = ((in - cache) * t_in + cache * t_cache + out * t_out) / 1e6\n  // El razonamiento ya está dentro de output_tokens: no se suma otra vez.\n  function costoTokens(u, t) {\n    if (!t || !(t.entrada > 0) || !(t.salida > 0) || !(t.cache >= 0)) return { costo: null, tipo: 'desconocido', motivo: 'Tarifas incompletas: costo no calculado.' };\n    if (u.errores.length || u.tokens_entrada === null || u.tokens_salida === null) return { costo: null, tipo: 'desconocido', motivo: 'Consumo desconocido o incoherente: ' + (u.errores.join('; ') || 'usage incompleto') + '. No se presume costo cero.' };\n    const cache = u.cache_informada ? u.tokens_cache : 0;\n    const costo = ((u.tokens_entrada - cache) * t.entrada + cache * t.cache + u.tokens_salida * t.salida) / 1000000;\n    if (u.cache_informada) return { costo: costo, tipo: 'calculado', motivo: 'Tokens medidos por usage de la API; costo calculado con tarifas configuradas. No es factura conciliada.' };\n    return { costo: costo, tipo: 'estimado', motivo: 'Caché no informada por la API: estimación conservadora sin descuento de caché (no se afirma caché medida = 0). No es factura conciliada.' };\n  }\n\n  // Reserva previa: entrada contada a tarifa normal (sin presumir caché) + salida máxima permitida.\n  function reservaLlamada(p) {\n    const tokens = (p.tokens_conteo * p.t.entrada + p.max_salida * p.t.salida) / 1000000;\n    const herramienta = (p.busquedas_max || 0) * (p.cargo_busqueda || 0);\n    const contenido = (p.tokens_contenido_supuesto || 0) * p.t.entrada / 1000000;\n    return { tokens: tokens, herramienta: herramienta, contenido: contenido, total: tokens + herramienta + contenido };\n  }\n\n  // Estado del presupuesto del caso a partir de las filas originales de rh_costos.\n  function estadoPresupuesto(filas) {\n    const gen = (filas || []).filter((f) => f && f.tipo_registro === 'generacion');\n    let contabilizado = 0; let pendiente = 0; let sinCota = 0;\n    gen.forEach((f) => {\n      const ec = String(f.estado_conciliacion || '');\n      if ((ec === 'calculado' || ec === 'estimado' || ec === 'conciliado') && esNum(f.costo_usd)) contabilizado += f.costo_usd;\n      else if (esNum(f.costo_reservado_usd)) pendiente += f.costo_reservado_usd;\n      else sinCota += 1;\n    });\n    return { intentos: gen.length, contabilizado: contabilizado, pendiente: pendiente, sin_cota: sinCota };\n  }\n\n  function evaluarAutorizacion(est, reserva, cfg) {\n    const motivos = [];\n    if (cfg.max_llamadas > 0 && est.intentos + 1 > cfg.max_llamadas) motivos.push('MAX_LLAMADAS alcanzado (' + est.intentos + ' intentos de generación de ' + cfg.max_llamadas + ')');\n    if (est.sin_cota > 0) motivos.push(est.sin_cota + ' llamada(s) previa(s) con consumo desconocido y sin reserva cuantificada');\n    if (!(cfg.tope_usd_caso > 0)) motivos.push('TOPE_USD_CASO no configurado (vacío no es ilimitado)');\n    if (reserva === null) motivos.push('Sin reserva calculable');\n    else {\n      const total = est.contabilizado + est.pendiente + reserva.total;\n      if (total > cfg.tope_usd_caso) motivos.push('Presupuesto insuficiente: contabilizado ' + est.contabilizado + ' + reservas pendientes ' + est.pendiente + ' + nueva reserva ' + reserva.total + ' = ' + total + ' USD > TOPE_USD_CASO ' + cfg.tope_usd_caso);\n    }\n    return motivos;\n  }\n\n  function mensajeErrorApi(status, body, modelo, fase) {\n    const e = (body && body.error) || {};\n    const msg = String(e.message || (typeof body === 'string' ? body : '') || '').slice(0, 300);\n    const code = String(e.code || '');\n    if (status === 404 || code === 'model_not_found' || /model/i.test(msg) && /(not exist|not found|does not have access|no access)/i.test(msg)) {\n      return 'El modelo ' + modelo + ' no está disponible para la credencial o cuenta (' + fase + ', HTTP ' + status + (code ? ', ' + code : '') + '): ' + msg + '. No se sustituye por otro modelo.';\n    }\n    return 'Error de API en ' + fase + ' (HTTP ' + status + (code ? ', ' + code : '') + '): ' + msg;\n  }\n\n  // Extrae el texto final de una respuesta; solo 'completed' libera contenido.\n  function extraerTexto(resp) {\n    const r = { status: resp && resp.status ? String(resp.status) : null, texto: null, motivo: '' };\n    if (!resp || typeof resp !== 'object') { r.motivo = 'Respuesta vacía'; return r; }\n    if (r.status !== 'completed') {\n      const det = resp.incomplete_details && resp.incomplete_details.reason ? ' (' + resp.incomplete_details.reason + ')' : '';\n      r.motivo = 'Respuesta no completada: status ' + r.status + det;\n      return r;\n    }\n    const msgs = (Array.isArray(resp.output) ? resp.output : []).filter((o) => o && o.type === 'message');\n    const partes = [];\n    msgs.forEach((m) => (m.content || []).forEach((c) => { if (c && c.type === 'output_text' && typeof c.text === 'string') partes.push(c.text); }));\n    if (!partes.length) { r.motivo = 'Sin texto de salida'; return r; }\n    r.texto = partes.join('\\n');\n    return r;\n  }\n\n  function hostPermitido(u, permitidos) {\n    try { const x = new URL(String(u)); const h = x.hostname.toLowerCase(); return x.protocol === 'https:' && permitidos.some((d) => h === d || h.endsWith('.' + d)); } catch (e) { return false; }\n  }\n  function normUrl(u) {\n    try { const x = new URL(String(u)); return x.hostname.toLowerCase().replace(/^www[.]/, '') + x.pathname.replace(/[/]+$/, ''); } catch (e) { return null; }\n  }\n\n  // Evidencia de búsqueda desde los metadatos devueltos (web_search_call y anotaciones), no desde el texto.\n  function extraerBusqueda(resp, permitidos) {\n    const out = resp && Array.isArray(resp.output) ? resp.output : [];\n    const llamadas = out.filter((o) => o && o.type === 'web_search_call');\n    const sinAccion = llamadas.filter((c) => !c.action || !c.action.type).length;\n    const cobrables = llamadas.filter((c) => !c.action || !c.action.type || c.action.type === 'search').length;\n    const completadas = llamadas.filter((c) => c.status === 'completed').length;\n    const fuentes = [];\n    llamadas.forEach((c) => { const ss = c.action && Array.isArray(c.action.sources) ? c.action.sources : []; ss.forEach((s) => { if (s && s.url) fuentes.push(String(s.url)); }); });\n    const anot = [];\n    out.filter((o) => o && o.type === 'message').forEach((m) => (m.content || []).forEach((p) => (p.annotations || []).forEach((a) => { if (a && a.type === 'url_citation' && a.url) anot.push({ url: String(a.url), title: String(a.title || '') }); })));\n    const setFuentes = new Set(fuentes.map(normUrl).filter(Boolean));\n    const recuperadasPermitidas = unicos(fuentes.filter((u) => hostPermitido(u, permitidos)));\n    const ajenas = unicos(fuentes.filter((u) => !hostPermitido(u, permitidos)));\n    const citasVerificadas = unicos(anot.filter((a) => hostPermitido(a.url, permitidos) && setFuentes.has(normUrl(a.url))).map((a) => a.url));\n    const citasNoVerificadas = unicos(anot.map((a) => a.url).filter((u) => citasVerificadas.indexOf(u) < 0));\n    const mostrar = citasVerificadas.length ? citasVerificadas : recuperadasPermitidas;\n    return {\n      llamadas_observadas: llamadas.length,\n      busquedas_cobrables: cobrables,\n      llamadas_sin_accion: sinAccion,\n      llamadas_completadas: completadas,\n      ids: llamadas.map((c) => String(c.id || '')),\n      fuentes_recuperadas: unicos(fuentes),\n      fuentes_permitidas: recuperadasPermitidas,\n      fuentes_ajenas: ajenas,\n      citas_verificadas: citasVerificadas,\n      citas_no_verificadas: citasNoVerificadas,\n      mostrar: mostrar,\n      verificable: completadas > 0 && recuperadasPermitidas.length > 0\n    };\n  }\n\n  // validado=true exige correcciones=[]; validado=false exige al menos una corrección concreta.\n  function validarRevision(o) {\n    const e = [];\n    if (!o || typeof o !== 'object') return ['Salida vacía'];\n    if (typeof o.validado !== 'boolean') e.push('validado no es booleano');\n    if (!esListaTxt(o.correcciones)) e.push('correcciones no es lista de textos');\n    if (!esListaTxt(o.observaciones)) e.push('observaciones no es lista de textos');\n    if (e.length) return e;\n    const concretas = o.correcciones.filter((c) => c.trim().length >= 8);\n    if (o.validado === true && o.correcciones.length > 0) e.push('Contradicción: validado=true con correcciones no vacías');\n    if (o.validado === false && concretas.length === 0) e.push('Contradicción: validado=false sin una corrección concreta');\n    return e;\n  }\n\n  // JSON siempre válido; si excede el límite guarda un resumen con indicación de truncamiento.\n  function jsonSeguro(v, n) {\n    const t = JSON.stringify(v === undefined ? null : v);\n    if (t.length <= n) return t;\n    const resumen = { truncado: true, longitud_original: t.length, resumen: t.slice(0, Math.max(0, n - 120)) };\n    let r = JSON.stringify(resumen);\n    while (r.length > n && resumen.resumen.length > 0) { resumen.resumen = resumen.resumen.slice(0, Math.floor(resumen.resumen.length * 0.8)); r = JSON.stringify(resumen); }\n    return r;\n  }\n\n  function cuerpoConteo(body) {\n    const permitidas = ['model', 'instructions', 'input', 'text', 'tools', 'tool_choice', 'reasoning', 'parallel_tool_calls'];\n    const c = {};\n    permitidas.forEach((k) => { if (body[k] !== undefined) c[k] = body[k]; });\n    return c;\n  }\n\n  function armarLlamadaEspecialista(s, p) {\n    const cfg = s.config;\n    const body = {\n      model: cfg.modelo,\n      instructions: p.instrucciones,\n      input: p.prompt,\n      text: { format: { type: 'json_schema', name: p.nombre_esquema, schema: p.esquema, strict: true } },\n      reasoning: { effort: cfg.reasoning_effort },\n      max_output_tokens: cfg.max_output_tokens,\n      store: false,\n      service_tier: 'default'\n    };\n    return {\n      llamada_id: s.caso_id + '-L' + p.numero,\n      caso_id: s.caso_id,\n      etapa: p.etapa,\n      agente: p.agente,\n      tipo: 'especialista',\n      body: body,\n      grupo_costo: 'operacion',\n      reintento: p.reintento || 0,\n      loop_id: p.loop_id || null,\n      skill_id: null,\n      version_propuesta: p.version_propuesta === undefined ? null : p.version_propuesta,\n      ejecucion_principal: s.ejecucion_id,\n      evento_id: s.evento ? s.evento.evento_id : null,\n      inicio_ms_caso: s.inicio_ms,\n      entrada_traza: p.entrada\n    };\n  }\n\n  return { esNum, esEnteroNoNeg, esListaTxt, leerUsage, costoTokens, reservaLlamada, estadoPresupuesto, evaluarAutorizacion, mensajeErrorApi, extraerTexto, hostPermitido, extraerBusqueda, validarRevision, jsonSeguro, cuerpoConteo, armarLlamadaEspecialista };\n})();\n\nconst s = $input.first().json;\nconst L = s.llamada_actual || {};\nconst cfg = s.config || {};\nconst errores = [];\nif (!L.llamada_id || !L.caso_id || !L.body) errores.push('Solicitud de llamada incompleta (falta llamada_id, caso_id o body)');\nif (L.body && L.body.model !== 'gpt-5') errores.push('Modelo no permitido: ' + (L.body && L.body.model) + ' (solo gpt-5, sin sustitución)');\n['temperature', 'top_p'].forEach((k) => { if (L.body && L.body[k] !== undefined) errores.push('Parámetro no admitido por el modelo/endpoint: ' + k); });\nif (L.body && L.body.reasoning && (L.body.reasoning.effort === 'none' || !L.body.reasoning.effort)) errores.push('reasoning.effort inválido para gpt-5');\nif (L.body && L.body.service_tier !== 'default') errores.push('Modalidad distinta de Standard (service_tier=default)');\nif (L.body && !(L.body.max_output_tokens > 0)) errores.push('max_output_tokens no definido');\nconst restante = (cfg.timeout_ms || 0) - (Date.now() - (L.inicio_ms_caso || Date.now()));\nreturn [{ json: { cuerpo_conteo: L.body ? RH.cuerpoConteo(L.body) : {}, errores_solicitud: errores, timeout_conteo_ms: Math.max(1000, Math.min(cfg.timeout_conteo_ms || 30000, restante)) } }];"
+      },
+      "id": "5a30c67c-60b0-4a43-9b8f-05249c1db3f5",
+      "name": "Preparar conteo",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        272,
+        240
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.openai.com/v1/responses/input_tokens",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "openAiApi",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify($json.cuerpo_conteo) }}",
+        "options": {
+          "response": {
+            "response": {
+              "fullResponse": true,
+              "neverError": true
+            }
+          },
+          "timeout": "={{ $json.timeout_conteo_ms }}"
+        }
+      },
+      "id": "07587df9-4a50-4427-97ab-c62923181171",
+      "name": "Contar tokens de entrada",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        496,
+        240
+      ],
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "dataTableId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "CONFIGURAR_TABLA_RH_COSTOS",
+          "cachedResultName": "rh_costos"
+        },
+        "matchType": "allConditions",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "caso_id",
+              "keyValue": "={{ $(\"Recibir llamada\").first().json.llamada_actual.caso_id }}"
+            }
+          ]
+        },
+        "returnAll": true
+      },
+      "id": "e8a51eb4-7560-434a-bd96-36abd42fe846",
+      "name": "Leer costos del caso",
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        720,
+        240
+      ],
+      "executeOnce": true,
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "jsCode": "// RH-LIB v2 (2026-11-01) — funciones puras compartidas. Sin red, sin secretos.\nconst RH = (function () {\n  const esNum = (v) => typeof v === 'number' && Number.isFinite(v);\n  const esEnteroNoNeg = (v) => esNum(v) && v >= 0 && Math.floor(v) === v;\n  const esListaTxt = (v) => Array.isArray(v) && v.every((x) => typeof x === 'string');\n  const unicos = (a) => Array.from(new Set(a));\n\n  // Lee usage de Responses API sin sustituir ausencias por cero.\n  function leerUsage(usage) {\n    const r = { tokens_entrada: null, tokens_cache: null, tokens_salida: null, tokens_razonamiento: null, cache_informada: false, razonamiento_informado: false, usage_presente: false, errores: [] };\n    if (!usage || typeof usage !== 'object') { r.errores.push('usage ausente'); return r; }\n    r.usage_presente = true;\n    if (esEnteroNoNeg(usage.input_tokens)) r.tokens_entrada = usage.input_tokens; else r.errores.push('usage.input_tokens ausente o inválido');\n    if (esEnteroNoNeg(usage.output_tokens)) r.tokens_salida = usage.output_tokens; else r.errores.push('usage.output_tokens ausente o inválido');\n    const det = usage.input_tokens_details;\n    if (det && det.cached_tokens !== undefined && det.cached_tokens !== null) {\n      if (!esEnteroNoNeg(det.cached_tokens)) r.errores.push('cached_tokens inválido (' + String(det.cached_tokens) + ')');\n      else {\n        r.tokens_cache = det.cached_tokens; r.cache_informada = true;\n        if (r.tokens_entrada !== null && det.cached_tokens > r.tokens_entrada) r.errores.push('Incoherente: cached_tokens (' + det.cached_tokens + ') > input_tokens (' + r.tokens_entrada + ')');\n      }\n    }\n    const od = usage.output_tokens_details;\n    if (od && od.reasoning_tokens !== undefined && od.reasoning_tokens !== null) {\n      if (!esEnteroNoNeg(od.reasoning_tokens)) r.errores.push('reasoning_tokens inválido');\n      else {\n        r.tokens_razonamiento = od.reasoning_tokens; r.razonamiento_informado = true;\n        if (r.tokens_salida !== null && od.reasoning_tokens > r.tokens_salida) r.errores.push('Incoherente: reasoning_tokens > output_tokens');\n      }\n    }\n    return r;\n  }\n\n  // costo_tokens_usd = ((in - cache) * t_in + cache * t_cache + out * t_out) / 1e6\n  // El razonamiento ya está dentro de output_tokens: no se suma otra vez.\n  function costoTokens(u, t) {\n    if (!t || !(t.entrada > 0) || !(t.salida > 0) || !(t.cache >= 0)) return { costo: null, tipo: 'desconocido', motivo: 'Tarifas incompletas: costo no calculado.' };\n    if (u.errores.length || u.tokens_entrada === null || u.tokens_salida === null) return { costo: null, tipo: 'desconocido', motivo: 'Consumo desconocido o incoherente: ' + (u.errores.join('; ') || 'usage incompleto') + '. No se presume costo cero.' };\n    const cache = u.cache_informada ? u.tokens_cache : 0;\n    const costo = ((u.tokens_entrada - cache) * t.entrada + cache * t.cache + u.tokens_salida * t.salida) / 1000000;\n    if (u.cache_informada) return { costo: costo, tipo: 'calculado', motivo: 'Tokens medidos por usage de la API; costo calculado con tarifas configuradas. No es factura conciliada.' };\n    return { costo: costo, tipo: 'estimado', motivo: 'Caché no informada por la API: estimación conservadora sin descuento de caché (no se afirma caché medida = 0). No es factura conciliada.' };\n  }\n\n  // Reserva previa: entrada contada a tarifa normal (sin presumir caché) + salida máxima permitida.\n  function reservaLlamada(p) {\n    const tokens = (p.tokens_conteo * p.t.entrada + p.max_salida * p.t.salida) / 1000000;\n    const herramienta = (p.busquedas_max || 0) * (p.cargo_busqueda || 0);\n    const contenido = (p.tokens_contenido_supuesto || 0) * p.t.entrada / 1000000;\n    return { tokens: tokens, herramienta: herramienta, contenido: contenido, total: tokens + herramienta + contenido };\n  }\n\n  // Estado del presupuesto del caso a partir de las filas originales de rh_costos.\n  function estadoPresupuesto(filas) {\n    const gen = (filas || []).filter((f) => f && f.tipo_registro === 'generacion');\n    let contabilizado = 0; let pendiente = 0; let sinCota = 0;\n    gen.forEach((f) => {\n      const ec = String(f.estado_conciliacion || '');\n      if ((ec === 'calculado' || ec === 'estimado' || ec === 'conciliado') && esNum(f.costo_usd)) contabilizado += f.costo_usd;\n      else if (esNum(f.costo_reservado_usd)) pendiente += f.costo_reservado_usd;\n      else sinCota += 1;\n    });\n    return { intentos: gen.length, contabilizado: contabilizado, pendiente: pendiente, sin_cota: sinCota };\n  }\n\n  function evaluarAutorizacion(est, reserva, cfg) {\n    const motivos = [];\n    if (cfg.max_llamadas > 0 && est.intentos + 1 > cfg.max_llamadas) motivos.push('MAX_LLAMADAS alcanzado (' + est.intentos + ' intentos de generación de ' + cfg.max_llamadas + ')');\n    if (est.sin_cota > 0) motivos.push(est.sin_cota + ' llamada(s) previa(s) con consumo desconocido y sin reserva cuantificada');\n    if (!(cfg.tope_usd_caso > 0)) motivos.push('TOPE_USD_CASO no configurado (vacío no es ilimitado)');\n    if (reserva === null) motivos.push('Sin reserva calculable');\n    else {\n      const total = est.contabilizado + est.pendiente + reserva.total;\n      if (total > cfg.tope_usd_caso) motivos.push('Presupuesto insuficiente: contabilizado ' + est.contabilizado + ' + reservas pendientes ' + est.pendiente + ' + nueva reserva ' + reserva.total + ' = ' + total + ' USD > TOPE_USD_CASO ' + cfg.tope_usd_caso);\n    }\n    return motivos;\n  }\n\n  function mensajeErrorApi(status, body, modelo, fase) {\n    const e = (body && body.error) || {};\n    const msg = String(e.message || (typeof body === 'string' ? body : '') || '').slice(0, 300);\n    const code = String(e.code || '');\n    if (status === 404 || code === 'model_not_found' || /model/i.test(msg) && /(not exist|not found|does not have access|no access)/i.test(msg)) {\n      return 'El modelo ' + modelo + ' no está disponible para la credencial o cuenta (' + fase + ', HTTP ' + status + (code ? ', ' + code : '') + '): ' + msg + '. No se sustituye por otro modelo.';\n    }\n    return 'Error de API en ' + fase + ' (HTTP ' + status + (code ? ', ' + code : '') + '): ' + msg;\n  }\n\n  // Extrae el texto final de una respuesta; solo 'completed' libera contenido.\n  function extraerTexto(resp) {\n    const r = { status: resp && resp.status ? String(resp.status) : null, texto: null, motivo: '' };\n    if (!resp || typeof resp !== 'object') { r.motivo = 'Respuesta vacía'; return r; }\n    if (r.status !== 'completed') {\n      const det = resp.incomplete_details && resp.incomplete_details.reason ? ' (' + resp.incomplete_details.reason + ')' : '';\n      r.motivo = 'Respuesta no completada: status ' + r.status + det;\n      return r;\n    }\n    const msgs = (Array.isArray(resp.output) ? resp.output : []).filter((o) => o && o.type === 'message');\n    const partes = [];\n    msgs.forEach((m) => (m.content || []).forEach((c) => { if (c && c.type === 'output_text' && typeof c.text === 'string') partes.push(c.text); }));\n    if (!partes.length) { r.motivo = 'Sin texto de salida'; return r; }\n    r.texto = partes.join('\\n');\n    return r;\n  }\n\n  function hostPermitido(u, permitidos) {\n    try { const x = new URL(String(u)); const h = x.hostname.toLowerCase(); return x.protocol === 'https:' && permitidos.some((d) => h === d || h.endsWith('.' + d)); } catch (e) { return false; }\n  }\n  function normUrl(u) {\n    try { const x = new URL(String(u)); return x.hostname.toLowerCase().replace(/^www[.]/, '') + x.pathname.replace(/[/]+$/, ''); } catch (e) { return null; }\n  }\n\n  // Evidencia de búsqueda desde los metadatos devueltos (web_search_call y anotaciones), no desde el texto.\n  function extraerBusqueda(resp, permitidos) {\n    const out = resp && Array.isArray(resp.output) ? resp.output : [];\n    const llamadas = out.filter((o) => o && o.type === 'web_search_call');\n    const sinAccion = llamadas.filter((c) => !c.action || !c.action.type).length;\n    const cobrables = llamadas.filter((c) => !c.action || !c.action.type || c.action.type === 'search').length;\n    const completadas = llamadas.filter((c) => c.status === 'completed').length;\n    const fuentes = [];\n    llamadas.forEach((c) => { const ss = c.action && Array.isArray(c.action.sources) ? c.action.sources : []; ss.forEach((s) => { if (s && s.url) fuentes.push(String(s.url)); }); });\n    const anot = [];\n    out.filter((o) => o && o.type === 'message').forEach((m) => (m.content || []).forEach((p) => (p.annotations || []).forEach((a) => { if (a && a.type === 'url_citation' && a.url) anot.push({ url: String(a.url), title: String(a.title || '') }); })));\n    const setFuentes = new Set(fuentes.map(normUrl).filter(Boolean));\n    const recuperadasPermitidas = unicos(fuentes.filter((u) => hostPermitido(u, permitidos)));\n    const ajenas = unicos(fuentes.filter((u) => !hostPermitido(u, permitidos)));\n    const citasVerificadas = unicos(anot.filter((a) => hostPermitido(a.url, permitidos) && setFuentes.has(normUrl(a.url))).map((a) => a.url));\n    const citasNoVerificadas = unicos(anot.map((a) => a.url).filter((u) => citasVerificadas.indexOf(u) < 0));\n    const mostrar = citasVerificadas.length ? citasVerificadas : recuperadasPermitidas;\n    return {\n      llamadas_observadas: llamadas.length,\n      busquedas_cobrables: cobrables,\n      llamadas_sin_accion: sinAccion,\n      llamadas_completadas: completadas,\n      ids: llamadas.map((c) => String(c.id || '')),\n      fuentes_recuperadas: unicos(fuentes),\n      fuentes_permitidas: recuperadasPermitidas,\n      fuentes_ajenas: ajenas,\n      citas_verificadas: citasVerificadas,\n      citas_no_verificadas: citasNoVerificadas,\n      mostrar: mostrar,\n      verificable: completadas > 0 && recuperadasPermitidas.length > 0\n    };\n  }\n\n  // validado=true exige correcciones=[]; validado=false exige al menos una corrección concreta.\n  function validarRevision(o) {\n    const e = [];\n    if (!o || typeof o !== 'object') return ['Salida vacía'];\n    if (typeof o.validado !== 'boolean') e.push('validado no es booleano');\n    if (!esListaTxt(o.correcciones)) e.push('correcciones no es lista de textos');\n    if (!esListaTxt(o.observaciones)) e.push('observaciones no es lista de textos');\n    if (e.length) return e;\n    const concretas = o.correcciones.filter((c) => c.trim().length >= 8);\n    if (o.validado === true && o.correcciones.length > 0) e.push('Contradicción: validado=true con correcciones no vacías');\n    if (o.validado === false && concretas.length === 0) e.push('Contradicción: validado=false sin una corrección concreta');\n    return e;\n  }\n\n  // JSON siempre válido; si excede el límite guarda un resumen con indicación de truncamiento.\n  function jsonSeguro(v, n) {\n    const t = JSON.stringify(v === undefined ? null : v);\n    if (t.length <= n) return t;\n    const resumen = { truncado: true, longitud_original: t.length, resumen: t.slice(0, Math.max(0, n - 120)) };\n    let r = JSON.stringify(resumen);\n    while (r.length > n && resumen.resumen.length > 0) { resumen.resumen = resumen.resumen.slice(0, Math.floor(resumen.resumen.length * 0.8)); r = JSON.stringify(resumen); }\n    return r;\n  }\n\n  function cuerpoConteo(body) {\n    const permitidas = ['model', 'instructions', 'input', 'text', 'tools', 'tool_choice', 'reasoning', 'parallel_tool_calls'];\n    const c = {};\n    permitidas.forEach((k) => { if (body[k] !== undefined) c[k] = body[k]; });\n    return c;\n  }\n\n  function armarLlamadaEspecialista(s, p) {\n    const cfg = s.config;\n    const body = {\n      model: cfg.modelo,\n      instructions: p.instrucciones,\n      input: p.prompt,\n      text: { format: { type: 'json_schema', name: p.nombre_esquema, schema: p.esquema, strict: true } },\n      reasoning: { effort: cfg.reasoning_effort },\n      max_output_tokens: cfg.max_output_tokens,\n      store: false,\n      service_tier: 'default'\n    };\n    return {\n      llamada_id: s.caso_id + '-L' + p.numero,\n      caso_id: s.caso_id,\n      etapa: p.etapa,\n      agente: p.agente,\n      tipo: 'especialista',\n      body: body,\n      grupo_costo: 'operacion',\n      reintento: p.reintento || 0,\n      loop_id: p.loop_id || null,\n      skill_id: null,\n      version_propuesta: p.version_propuesta === undefined ? null : p.version_propuesta,\n      ejecucion_principal: s.ejecucion_id,\n      evento_id: s.evento ? s.evento.evento_id : null,\n      inicio_ms_caso: s.inicio_ms,\n      entrada_traza: p.entrada\n    };\n  }\n\n  return { esNum, esEnteroNoNeg, esListaTxt, leerUsage, costoTokens, reservaLlamada, estadoPresupuesto, evaluarAutorizacion, mensajeErrorApi, extraerTexto, hostPermitido, extraerBusqueda, validarRevision, jsonSeguro, cuerpoConteo, armarLlamadaEspecialista };\n})();\n\nconst s = $('Recibir llamada').first().json;\nconst L = s.llamada_actual || {};\nconst cfg = s.config || {};\nconst prep = $('Preparar conteo').first().json;\nconst h = $('Contar tokens de entrada').first().json || {};\nconst filas = $input.all().map((i) => i.json).filter((o) => o && o.llamada_id);\nconst motivos = (prep.errores_solicitud || []).slice();\nconst ejecucion_id = 'principal:' + L.ejecucion_principal + ';subflujo:' + $execution.id;\nlet conteo = null;\nlet estadoConteo;\nif (h.error && h.statusCode === undefined) {\n  estadoConteo = 'fallo_red_o_timeout';\n  motivos.push('El conteo previo de tokens falló (' + String((h.error && h.error.message) || h.error).slice(0, 200) + '); no se genera respuesta.');\n} else if (!(h.statusCode >= 200 && h.statusCode < 300)) {\n  estadoConteo = 'error_api';\n  motivos.push(RH.mensajeErrorApi(h.statusCode, h.body, L.body && L.body.model, 'conteo de tokens') + ' No se genera respuesta.');\n} else if (!RH.esEnteroNoNeg(h.body && h.body.input_tokens)) {\n  estadoConteo = 'sin_input_tokens';\n  motivos.push('El conteo no devolvió input_tokens válido; no se genera respuesta.');\n} else { conteo = h.body.input_tokens; estadoConteo = 'ok'; }\nif (filas.some((f) => f.llamada_id === L.llamada_id)) motivos.push('llamada_id ' + L.llamada_id + ' ya existe en rh_costos; no se repite la llamada.');\nconst est = RH.estadoPresupuesto(filas);\nconst restante = cfg.timeout_ms - (Date.now() - L.inicio_ms_caso);\nif (!(restante > 2000)) motivos.push('TIMEOUT_MS global agotado o insuficiente para otra solicitud.');\nconst esLft = L.tipo === 'lft';\nconst t = { entrada: cfg.tarifa_entrada, salida: cfg.tarifa_salida, cache: cfg.tarifa_cache };\nif (!(t.entrada > 0) || !(t.salida > 0) || t.cache === null || !(t.cache >= 0)) motivos.push('Tarifas incompletas.');\nif (esLft && !(cfg.cargo_busqueda_usd > 0)) motivos.push('CARGO_BUSQUEDA_USD pendiente.');\nif (esLft && (cfg.supuesto_tokens_contenido_busqueda === null || !(cfg.supuesto_tokens_contenido_busqueda >= 0))) motivos.push('SUPUESTO_TOKENS_CONTENIDO_BUSQUEDA pendiente.');\nlet reserva = null;\nif (conteo !== null && L.body) {\n  reserva = RH.reservaLlamada({ tokens_conteo: conteo, max_salida: L.body.max_output_tokens, t: t, busquedas_max: esLft ? (L.body.max_tool_calls || 0) : 0, cargo_busqueda: esLft ? cfg.cargo_busqueda_usd : 0, tokens_contenido_supuesto: esLft ? cfg.supuesto_tokens_contenido_busqueda : 0 });\n}\nRH.evaluarAutorizacion(est, reserva, cfg).forEach((m) => { if (motivos.indexOf(m) < 0) motivos.push(m); });\nconst permitido = motivos.length === 0;\nconst ahora = new Date().toISOString();\nconst fila_conteo = {\n  llamada_id: L.llamada_id + '-C', caso_id: L.caso_id, etapa: L.etapa, agente: L.agente, proveedor: 'openai', modelo: L.body ? L.body.model : null,\n  fecha_hora: ahora, tipo_registro: 'conteo_auxiliar', estado: estadoConteo, estado_conciliacion: 'no_aplica', unidad_cobro: 'no aplica (solicitud auxiliar de conteo)',\n  tokens_entrada_conteo: conteo, origen_dato: 'conteo_api_input_tokens', motivo_estimacion: 'Solicitud auxiliar POST /v1/responses/input_tokens; no es una llamada de generación ni cuenta en MAX_LLAMADAS. No se presume su facturación.',\n  ejecucion_id: ejecucion_id, grupo_costo: L.grupo_costo || 'operacion', evidencia: RH.jsonSeguro({ http_status: h.statusCode === undefined ? null : h.statusCode }, 500), loop_id: L.loop_id || null, skill_id: L.skill_id || null\n};\nlet motivoReserva = null;\nif (reserva) {\n  motivoReserva = 'Reserva previa = ' + conteo + ' tokens de entrada contados x tarifa normal (sin presumir caché) + ' + L.body.max_output_tokens + ' tokens de salida máximos x tarifa de salida = ' + reserva.tokens + ' USD';\n  if (esLft) motivoReserva += '; cargo de herramienta reservado ' + reserva.herramienta + ' USD (' + L.body.max_tool_calls + ' búsqueda máx.); estimación de contenido recuperado ' + reserva.contenido + ' USD (supuesto de ' + cfg.supuesto_tokens_contenido_busqueda + ' tokens; NO es cota garantizada)';\n  motivoReserva += '.';\n}\nconst fila_reserva = permitido ? {\n  llamada_id: L.llamada_id, caso_id: L.caso_id, etapa: L.etapa, agente: L.agente, proveedor: 'openai', modelo: L.body.model, fecha_hora: ahora, moneda: cfg.moneda,\n  estado: 'reservada', origen_dato: 'reserva_previa', motivo_estimacion: motivoReserva,\n  tokens_entrada: null, tokens_salida: null, tokens_cache: null, duracion_ms: null,\n  tarifa_entrada_millon: cfg.tarifa_entrada, tarifa_salida_millon: cfg.tarifa_salida, cargo_busqueda_usd: null, costo_usd: null, reintento: L.reintento || 0,\n  response_id: null, ejecucion_id: ejecucion_id, tipo_registro: 'generacion', modalidad: 'standard', unidad_cobro: esLft ? 'tokens + llamada de búsqueda web' : 'tokens',\n  fecha_tarifa: cfg.fecha_tarifa, url_tarifa: cfg.url_tarifa, version_tarifas: cfg.version_tarifas, grupo_costo: L.grupo_costo || 'operacion', estado_conciliacion: 'pendiente',\n  skill_id: L.skill_id || null, loop_id: L.loop_id || null, tokens_razonamiento: null, tarifa_cache_millon: cfg.tarifa_cache, costo_tokens_usd: null, cantidad_busquedas: null,\n  duracion_voz_seg: null, cantidad_unidades: null, tarifa_unitaria: esLft ? cfg.cargo_busqueda_usd : null, importe_incluido_usd: null, cargo_adicional_usd: null,\n  costo_reservado_usd: reserva.total, tokens_entrada_conteo: conteo, estimacion_contenido_usd: esLft ? reserva.contenido : null, evidencia: null, llamadas_ref: null\n} : null;\nreturn [{ json: { permitido: permitido, motivos: motivos, conteo: conteo, reserva: reserva, presupuesto: est, timeout_http_ms: Math.max(1000, Math.min(restante, cfg.timeout_ms)), ejecucion_id: ejecucion_id, fila_conteo: fila_conteo, fila_reserva: fila_reserva, t_control: Date.now() } }];"
+      },
+      "id": "7aaaaefd-6372-4596-ab3e-2b842ae42a13",
+      "name": "Control de presupuesto",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        944,
+        240
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "upsert",
+        "dataTableId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "CONFIGURAR_TABLA_RH_COSTOS",
+          "cachedResultName": "rh_costos"
+        },
+        "matchType": "allConditions",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "llamada_id",
+              "keyValue": "={{ $json.fila_conteo.llamada_id }}"
+            }
+          ]
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "llamada_id": "={{ $json.fila_conteo.llamada_id }}",
+            "caso_id": "={{ $json.fila_conteo.caso_id }}",
+            "etapa": "={{ $json.fila_conteo.etapa }}",
+            "agente": "={{ $json.fila_conteo.agente }}",
+            "proveedor": "={{ $json.fila_conteo.proveedor }}",
+            "modelo": "={{ $json.fila_conteo.modelo }}",
+            "fecha_hora": "={{ $json.fila_conteo.fecha_hora }}",
+            "tipo_registro": "={{ $json.fila_conteo.tipo_registro }}",
+            "estado": "={{ $json.fila_conteo.estado }}",
+            "estado_conciliacion": "={{ $json.fila_conteo.estado_conciliacion }}",
+            "unidad_cobro": "={{ $json.fila_conteo.unidad_cobro }}",
+            "tokens_entrada_conteo": "={{ $json.fila_conteo.tokens_entrada_conteo }}",
+            "origen_dato": "={{ $json.fila_conteo.origen_dato }}",
+            "motivo_estimacion": "={{ $json.fila_conteo.motivo_estimacion }}",
+            "ejecucion_id": "={{ $json.fila_conteo.ejecucion_id }}",
+            "grupo_costo": "={{ $json.fila_conteo.grupo_costo }}",
+            "evidencia": "={{ $json.fila_conteo.evidencia }}",
+            "loop_id": "={{ $json.fila_conteo.loop_id }}",
+            "skill_id": "={{ $json.fila_conteo.skill_id }}"
+          },
+          "schema": [
+            {
+              "id": "llamada_id",
+              "displayName": "llamada_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "caso_id",
+              "displayName": "caso_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "etapa",
+              "displayName": "etapa",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "agente",
+              "displayName": "agente",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "proveedor",
+              "displayName": "proveedor",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "modelo",
+              "displayName": "modelo",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "fecha_hora",
+              "displayName": "fecha_hora",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "tipo_registro",
+              "displayName": "tipo_registro",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "estado",
+              "displayName": "estado",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "estado_conciliacion",
+              "displayName": "estado_conciliacion",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "unidad_cobro",
+              "displayName": "unidad_cobro",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "tokens_entrada_conteo",
+              "displayName": "tokens_entrada_conteo",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "origen_dato",
+              "displayName": "origen_dato",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "motivo_estimacion",
+              "displayName": "motivo_estimacion",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "ejecucion_id",
+              "displayName": "ejecucion_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "grupo_costo",
+              "displayName": "grupo_costo",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "evidencia",
+              "displayName": "evidencia",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "loop_id",
+              "displayName": "loop_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "skill_id",
+              "displayName": "skill_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "2f401621-4659-4929-a148-72fda77906e8",
+      "name": "Registrar conteo auxiliar",
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        1168,
+        240
+      ],
+      "alwaysOutputData": true,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "combinator": "and",
+          "conditions": [
+            {
+              "leftValue": "={{ $(\"Control de presupuesto\").first().json.permitido === true }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "220d86f3-6094-475b-b39f-4e15822425a2",
+      "name": "¿Autorizar llamada?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1392,
+        240
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "return [{ json: $('Control de presupuesto').first().json.fila_reserva }];"
+      },
+      "id": "42fee6ef-b1ec-420b-bbf6-05adf5cc06e5",
+      "name": "Fila de reserva",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        800,
+        176
+      ]
+    },
+    {
+      "parameters": {
+        "dataTableId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "CONFIGURAR_TABLA_RH_COSTOS",
+          "cachedResultName": "rh_costos"
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": null,
+          "schema": [
+            {
+              "id": "llamada_id",
+              "displayName": "llamada_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "caso_id",
+              "displayName": "caso_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "etapa",
+              "displayName": "etapa",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "agente",
+              "displayName": "agente",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "proveedor",
+              "displayName": "proveedor",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "modelo",
+              "displayName": "modelo",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "fecha_hora",
+              "displayName": "fecha_hora",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "moneda",
+              "displayName": "moneda",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "estado",
+              "displayName": "estado",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "origen_dato",
+              "displayName": "origen_dato",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "motivo_estimacion",
+              "displayName": "motivo_estimacion",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "tokens_entrada",
+              "displayName": "tokens_entrada",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "tokens_salida",
+              "displayName": "tokens_salida",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "tokens_cache",
+              "displayName": "tokens_cache",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "duracion_ms",
+              "displayName": "duracion_ms",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "tarifa_entrada_millon",
+              "displayName": "tarifa_entrada_millon",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "tarifa_salida_millon",
+              "displayName": "tarifa_salida_millon",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "cargo_busqueda_usd",
+              "displayName": "cargo_busqueda_usd",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "costo_usd",
+              "displayName": "costo_usd",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "reintento",
+              "displayName": "reintento",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "response_id",
+              "displayName": "response_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "ejecucion_id",
+              "displayName": "ejecucion_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "tipo_registro",
+              "displayName": "tipo_registro",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "modalidad",
+              "displayName": "modalidad",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "unidad_cobro",
+              "displayName": "unidad_cobro",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "fecha_tarifa",
+              "displayName": "fecha_tarifa",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "url_tarifa",
+              "displayName": "url_tarifa",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "version_tarifas",
+              "displayName": "version_tarifas",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "grupo_costo",
+              "displayName": "grupo_costo",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "estado_conciliacion",
+              "displayName": "estado_conciliacion",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "skill_id",
+              "displayName": "skill_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "loop_id",
+              "displayName": "loop_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "tokens_razonamiento",
+              "displayName": "tokens_razonamiento",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "tarifa_cache_millon",
+              "displayName": "tarifa_cache_millon",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "costo_tokens_usd",
+              "displayName": "costo_tokens_usd",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "cantidad_busquedas",
+              "displayName": "cantidad_busquedas",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "duracion_voz_seg",
+              "displayName": "duracion_voz_seg",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "cantidad_unidades",
+              "displayName": "cantidad_unidades",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "tarifa_unitaria",
+              "displayName": "tarifa_unitaria",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "importe_incluido_usd",
+              "displayName": "importe_incluido_usd",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "cargo_adicional_usd",
+              "displayName": "cargo_adicional_usd",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "costo_reservado_usd",
+              "displayName": "costo_reservado_usd",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "tokens_entrada_conteo",
+              "displayName": "tokens_entrada_conteo",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "estimacion_contenido_usd",
+              "displayName": "estimacion_contenido_usd",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "evidencia",
+              "displayName": "evidencia",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "llamadas_ref",
+              "displayName": "llamadas_ref",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "25040f85-3ef6-4410-a113-3e342f2bf1f7",
+      "name": "Reservar llamada",
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        1024,
+        176
+      ],
+      "alwaysOutputData": true,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "combinator": "and",
+          "conditions": [
+            {
+              "leftValue": "={{ $json.id !== undefined && $json.id !== null && !$json.error }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "2470631a-e618-4274-bb57-7f05bbba2ce4",
+      "name": "¿Reserva registrada?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1248,
+        176
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.openai.com/v1/responses",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "openAiApi",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify($(\"Recibir llamada\").first().json.llamada_actual.body) }}",
+        "options": {
+          "response": {
+            "response": {
+              "fullResponse": true,
+              "neverError": true
+            }
+          },
+          "timeout": "={{ $(\"Control de presupuesto\").first().json.timeout_http_ms }}"
+        }
+      },
+      "id": "d6d1c3d3-bd9d-476c-999f-696a768b304a",
+      "name": "Generar respuesta",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1328,
+        128
+      ],
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "jsCode": "// RH-LIB v2 (2026-11-01) — funciones puras compartidas. Sin red, sin secretos.\nconst RH = (function () {\n  const esNum = (v) => typeof v === 'number' && Number.isFinite(v);\n  const esEnteroNoNeg = (v) => esNum(v) && v >= 0 && Math.floor(v) === v;\n  const esListaTxt = (v) => Array.isArray(v) && v.every((x) => typeof x === 'string');\n  const unicos = (a) => Array.from(new Set(a));\n\n  // Lee usage de Responses API sin sustituir ausencias por cero.\n  function leerUsage(usage) {\n    const r = { tokens_entrada: null, tokens_cache: null, tokens_salida: null, tokens_razonamiento: null, cache_informada: false, razonamiento_informado: false, usage_presente: false, errores: [] };\n    if (!usage || typeof usage !== 'object') { r.errores.push('usage ausente'); return r; }\n    r.usage_presente = true;\n    if (esEnteroNoNeg(usage.input_tokens)) r.tokens_entrada = usage.input_tokens; else r.errores.push('usage.input_tokens ausente o inválido');\n    if (esEnteroNoNeg(usage.output_tokens)) r.tokens_salida = usage.output_tokens; else r.errores.push('usage.output_tokens ausente o inválido');\n    const det = usage.input_tokens_details;\n    if (det && det.cached_tokens !== undefined && det.cached_tokens !== null) {\n      if (!esEnteroNoNeg(det.cached_tokens)) r.errores.push('cached_tokens inválido (' + String(det.cached_tokens) + ')');\n      else {\n        r.tokens_cache = det.cached_tokens; r.cache_informada = true;\n        if (r.tokens_entrada !== null && det.cached_tokens > r.tokens_entrada) r.errores.push('Incoherente: cached_tokens (' + det.cached_tokens + ') > input_tokens (' + r.tokens_entrada + ')');\n      }\n    }\n    const od = usage.output_tokens_details;\n    if (od && od.reasoning_tokens !== undefined && od.reasoning_tokens !== null) {\n      if (!esEnteroNoNeg(od.reasoning_tokens)) r.errores.push('reasoning_tokens inválido');\n      else {\n        r.tokens_razonamiento = od.reasoning_tokens; r.razonamiento_informado = true;\n        if (r.tokens_salida !== null && od.reasoning_tokens > r.tokens_salida) r.errores.push('Incoherente: reasoning_tokens > output_tokens');\n      }\n    }\n    return r;\n  }\n\n  // costo_tokens_usd = ((in - cache) * t_in + cache * t_cache + out * t_out) / 1e6\n  // El razonamiento ya está dentro de output_tokens: no se suma otra vez.\n  function costoTokens(u, t) {\n    if (!t || !(t.entrada > 0) || !(t.salida > 0) || !(t.cache >= 0)) return { costo: null, tipo: 'desconocido', motivo: 'Tarifas incompletas: costo no calculado.' };\n    if (u.errores.length || u.tokens_entrada === null || u.tokens_salida === null) return { costo: null, tipo: 'desconocido', motivo: 'Consumo desconocido o incoherente: ' + (u.errores.join('; ') || 'usage incompleto') + '. No se presume costo cero.' };\n    const cache = u.cache_informada ? u.tokens_cache : 0;\n    const costo = ((u.tokens_entrada - cache) * t.entrada + cache * t.cache + u.tokens_salida * t.salida) / 1000000;\n    if (u.cache_informada) return { costo: costo, tipo: 'calculado', motivo: 'Tokens medidos por usage de la API; costo calculado con tarifas configuradas. No es factura conciliada.' };\n    return { costo: costo, tipo: 'estimado', motivo: 'Caché no informada por la API: estimación conservadora sin descuento de caché (no se afirma caché medida = 0). No es factura conciliada.' };\n  }\n\n  // Reserva previa: entrada contada a tarifa normal (sin presumir caché) + salida máxima permitida.\n  function reservaLlamada(p) {\n    const tokens = (p.tokens_conteo * p.t.entrada + p.max_salida * p.t.salida) / 1000000;\n    const herramienta = (p.busquedas_max || 0) * (p.cargo_busqueda || 0);\n    const contenido = (p.tokens_contenido_supuesto || 0) * p.t.entrada / 1000000;\n    return { tokens: tokens, herramienta: herramienta, contenido: contenido, total: tokens + herramienta + contenido };\n  }\n\n  // Estado del presupuesto del caso a partir de las filas originales de rh_costos.\n  function estadoPresupuesto(filas) {\n    const gen = (filas || []).filter((f) => f && f.tipo_registro === 'generacion');\n    let contabilizado = 0; let pendiente = 0; let sinCota = 0;\n    gen.forEach((f) => {\n      const ec = String(f.estado_conciliacion || '');\n      if ((ec === 'calculado' || ec === 'estimado' || ec === 'conciliado') && esNum(f.costo_usd)) contabilizado += f.costo_usd;\n      else if (esNum(f.costo_reservado_usd)) pendiente += f.costo_reservado_usd;\n      else sinCota += 1;\n    });\n    return { intentos: gen.length, contabilizado: contabilizado, pendiente: pendiente, sin_cota: sinCota };\n  }\n\n  function evaluarAutorizacion(est, reserva, cfg) {\n    const motivos = [];\n    if (cfg.max_llamadas > 0 && est.intentos + 1 > cfg.max_llamadas) motivos.push('MAX_LLAMADAS alcanzado (' + est.intentos + ' intentos de generación de ' + cfg.max_llamadas + ')');\n    if (est.sin_cota > 0) motivos.push(est.sin_cota + ' llamada(s) previa(s) con consumo desconocido y sin reserva cuantificada');\n    if (!(cfg.tope_usd_caso > 0)) motivos.push('TOPE_USD_CASO no configurado (vacío no es ilimitado)');\n    if (reserva === null) motivos.push('Sin reserva calculable');\n    else {\n      const total = est.contabilizado + est.pendiente + reserva.total;\n      if (total > cfg.tope_usd_caso) motivos.push('Presupuesto insuficiente: contabilizado ' + est.contabilizado + ' + reservas pendientes ' + est.pendiente + ' + nueva reserva ' + reserva.total + ' = ' + total + ' USD > TOPE_USD_CASO ' + cfg.tope_usd_caso);\n    }\n    return motivos;\n  }\n\n  function mensajeErrorApi(status, body, modelo, fase) {\n    const e = (body && body.error) || {};\n    const msg = String(e.message || (typeof body === 'string' ? body : '') || '').slice(0, 300);\n    const code = String(e.code || '');\n    if (status === 404 || code === 'model_not_found' || /model/i.test(msg) && /(not exist|not found|does not have access|no access)/i.test(msg)) {\n      return 'El modelo ' + modelo + ' no está disponible para la credencial o cuenta (' + fase + ', HTTP ' + status + (code ? ', ' + code : '') + '): ' + msg + '. No se sustituye por otro modelo.';\n    }\n    return 'Error de API en ' + fase + ' (HTTP ' + status + (code ? ', ' + code : '') + '): ' + msg;\n  }\n\n  // Extrae el texto final de una respuesta; solo 'completed' libera contenido.\n  function extraerTexto(resp) {\n    const r = { status: resp && resp.status ? String(resp.status) : null, texto: null, motivo: '' };\n    if (!resp || typeof resp !== 'object') { r.motivo = 'Respuesta vacía'; return r; }\n    if (r.status !== 'completed') {\n      const det = resp.incomplete_details && resp.incomplete_details.reason ? ' (' + resp.incomplete_details.reason + ')' : '';\n      r.motivo = 'Respuesta no completada: status ' + r.status + det;\n      return r;\n    }\n    const msgs = (Array.isArray(resp.output) ? resp.output : []).filter((o) => o && o.type === 'message');\n    const partes = [];\n    msgs.forEach((m) => (m.content || []).forEach((c) => { if (c && c.type === 'output_text' && typeof c.text === 'string') partes.push(c.text); }));\n    if (!partes.length) { r.motivo = 'Sin texto de salida'; return r; }\n    r.texto = partes.join('\\n');\n    return r;\n  }\n\n  function hostPermitido(u, permitidos) {\n    try { const x = new URL(String(u)); const h = x.hostname.toLowerCase(); return x.protocol === 'https:' && permitidos.some((d) => h === d || h.endsWith('.' + d)); } catch (e) { return false; }\n  }\n  function normUrl(u) {\n    try { const x = new URL(String(u)); return x.hostname.toLowerCase().replace(/^www[.]/, '') + x.pathname.replace(/[/]+$/, ''); } catch (e) { return null; }\n  }\n\n  // Evidencia de búsqueda desde los metadatos devueltos (web_search_call y anotaciones), no desde el texto.\n  function extraerBusqueda(resp, permitidos) {\n    const out = resp && Array.isArray(resp.output) ? resp.output : [];\n    const llamadas = out.filter((o) => o && o.type === 'web_search_call');\n    const sinAccion = llamadas.filter((c) => !c.action || !c.action.type).length;\n    const cobrables = llamadas.filter((c) => !c.action || !c.action.type || c.action.type === 'search').length;\n    const completadas = llamadas.filter((c) => c.status === 'completed').length;\n    const fuentes = [];\n    llamadas.forEach((c) => { const ss = c.action && Array.isArray(c.action.sources) ? c.action.sources : []; ss.forEach((s) => { if (s && s.url) fuentes.push(String(s.url)); }); });\n    const anot = [];\n    out.filter((o) => o && o.type === 'message').forEach((m) => (m.content || []).forEach((p) => (p.annotations || []).forEach((a) => { if (a && a.type === 'url_citation' && a.url) anot.push({ url: String(a.url), title: String(a.title || '') }); })));\n    const setFuentes = new Set(fuentes.map(normUrl).filter(Boolean));\n    const recuperadasPermitidas = unicos(fuentes.filter((u) => hostPermitido(u, permitidos)));\n    const ajenas = unicos(fuentes.filter((u) => !hostPermitido(u, permitidos)));\n    const citasVerificadas = unicos(anot.filter((a) => hostPermitido(a.url, permitidos) && setFuentes.has(normUrl(a.url))).map((a) => a.url));\n    const citasNoVerificadas = unicos(anot.map((a) => a.url).filter((u) => citasVerificadas.indexOf(u) < 0));\n    const mostrar = citasVerificadas.length ? citasVerificadas : recuperadasPermitidas;\n    return {\n      llamadas_observadas: llamadas.length,\n      busquedas_cobrables: cobrables,\n      llamadas_sin_accion: sinAccion,\n      llamadas_completadas: completadas,\n      ids: llamadas.map((c) => String(c.id || '')),\n      fuentes_recuperadas: unicos(fuentes),\n      fuentes_permitidas: recuperadasPermitidas,\n      fuentes_ajenas: ajenas,\n      citas_verificadas: citasVerificadas,\n      citas_no_verificadas: citasNoVerificadas,\n      mostrar: mostrar,\n      verificable: completadas > 0 && recuperadasPermitidas.length > 0\n    };\n  }\n\n  // validado=true exige correcciones=[]; validado=false exige al menos una corrección concreta.\n  function validarRevision(o) {\n    const e = [];\n    if (!o || typeof o !== 'object') return ['Salida vacía'];\n    if (typeof o.validado !== 'boolean') e.push('validado no es booleano');\n    if (!esListaTxt(o.correcciones)) e.push('correcciones no es lista de textos');\n    if (!esListaTxt(o.observaciones)) e.push('observaciones no es lista de textos');\n    if (e.length) return e;\n    const concretas = o.correcciones.filter((c) => c.trim().length >= 8);\n    if (o.validado === true && o.correcciones.length > 0) e.push('Contradicción: validado=true con correcciones no vacías');\n    if (o.validado === false && concretas.length === 0) e.push('Contradicción: validado=false sin una corrección concreta');\n    return e;\n  }\n\n  // JSON siempre válido; si excede el límite guarda un resumen con indicación de truncamiento.\n  function jsonSeguro(v, n) {\n    const t = JSON.stringify(v === undefined ? null : v);\n    if (t.length <= n) return t;\n    const resumen = { truncado: true, longitud_original: t.length, resumen: t.slice(0, Math.max(0, n - 120)) };\n    let r = JSON.stringify(resumen);\n    while (r.length > n && resumen.resumen.length > 0) { resumen.resumen = resumen.resumen.slice(0, Math.floor(resumen.resumen.length * 0.8)); r = JSON.stringify(resumen); }\n    return r;\n  }\n\n  function cuerpoConteo(body) {\n    const permitidas = ['model', 'instructions', 'input', 'text', 'tools', 'tool_choice', 'reasoning', 'parallel_tool_calls'];\n    const c = {};\n    permitidas.forEach((k) => { if (body[k] !== undefined) c[k] = body[k]; });\n    return c;\n  }\n\n  function armarLlamadaEspecialista(s, p) {\n    const cfg = s.config;\n    const body = {\n      model: cfg.modelo,\n      instructions: p.instrucciones,\n      input: p.prompt,\n      text: { format: { type: 'json_schema', name: p.nombre_esquema, schema: p.esquema, strict: true } },\n      reasoning: { effort: cfg.reasoning_effort },\n      max_output_tokens: cfg.max_output_tokens,\n      store: false,\n      service_tier: 'default'\n    };\n    return {\n      llamada_id: s.caso_id + '-L' + p.numero,\n      caso_id: s.caso_id,\n      etapa: p.etapa,\n      agente: p.agente,\n      tipo: 'especialista',\n      body: body,\n      grupo_costo: 'operacion',\n      reintento: p.reintento || 0,\n      loop_id: p.loop_id || null,\n      skill_id: null,\n      version_propuesta: p.version_propuesta === undefined ? null : p.version_propuesta,\n      ejecucion_principal: s.ejecucion_id,\n      evento_id: s.evento ? s.evento.evento_id : null,\n      inicio_ms_caso: s.inicio_ms,\n      entrada_traza: p.entrada\n    };\n  }\n\n  return { esNum, esEnteroNoNeg, esListaTxt, leerUsage, costoTokens, reservaLlamada, estadoPresupuesto, evaluarAutorizacion, mensajeErrorApi, extraerTexto, hostPermitido, extraerBusqueda, validarRevision, jsonSeguro, cuerpoConteo, armarLlamadaEspecialista };\n})();\n\nconst s = $('Recibir llamada').first().json;\nconst L = s.llamada_actual;\nconst cfg = s.config;\nconst ctrl = $('Control de presupuesto').first().json;\nconst h = $input.first().json || {};\nconst dur = Date.now() - ctrl.t_control;\nconst tarifas = { entrada: cfg.tarifa_entrada, salida: cfg.tarifa_salida, cache: cfg.tarifa_cache };\nlet estado; let ec; let origen; let motivo; let errorApi = ''; let body = null;\nlet u = RH.leerUsage(null);\nlet c = { costo: null, tipo: 'desconocido', motivo: '' };\nif (h.error && h.statusCode === undefined) {\n  const m = String((h.error && h.error.message) || h.error).slice(0, 300);\n  estado = /time ?out|ETIMEDOUT|ECONNABORTED|aborted/i.test(m) ? 'timeout' : 'error_red';\n  ec = 'desconocido'; origen = 'consumo_desconocido'; errorApi = 'Fallo de red o timeout: ' + m;\n  motivo = 'Sin respuesta de la API: consumo desconocido. La reserva de ' + ctrl.reserva.total + ' USD se conserva pendiente de conciliación con el proveedor; no se presume costo cero.';\n} else {\n  body = h.body && typeof h.body === 'object' ? h.body : {};\n  u = RH.leerUsage(body.usage);\n  if (!(h.statusCode >= 200 && h.statusCode < 300)) {\n    estado = 'error_api'; ec = 'desconocido'; origen = 'consumo_desconocido';\n    errorApi = RH.mensajeErrorApi(h.statusCode, body, L.body.model, 'generación');\n    motivo = 'La API respondió con error y sin usage verificable: consumo desconocido; se conserva la reserva para conciliar con el proveedor.';\n  } else {\n    c = RH.costoTokens(u, tarifas);\n    estado = body.status === 'completed' ? 'completada' : 'no_completada_' + String(body.status || 'sin_status');\n    if (u.errores.length) estado = estado + (u.usage_presente ? '_usage_incoherente' : '_usage_ausente');\n    ec = c.tipo;\n    origen = c.tipo === 'desconocido' ? 'consumo_desconocido' : (c.tipo === 'calculado' ? 'tokens:usage_api;costo:calculado_tarifas' : 'tokens:usage_api;costo:estimado_sin_descuento_cache');\n    motivo = c.motivo;\n  }\n}\nlet b = null; let cantidad = null; let cargo = null;\nif (L.tipo === 'lft' && body && h.statusCode >= 200 && h.statusCode < 300) {\n  b = RH.extraerBusqueda(body, cfg.dominios_lft);\n  cantidad = b.busquedas_cobrables;\n  cargo = cantidad * cfg.cargo_busqueda_usd;\n  motivo += ' Búsquedas observadas en la respuesta: ' + b.llamadas_observadas + ' (cobrables: ' + cantidad + ') x CARGO_BUSQUEDA_USD. Los tokens de contenido recuperado ya están en usage y no se suman otra vez.';\n  if (b.llamadas_sin_accion) motivo += ' ' + b.llamadas_sin_accion + ' web_search_call sin acción informada se cuentan como búsqueda (criterio conservador).';\n}\nconst costoTotal = c.costo === null ? null : c.costo + (L.tipo === 'lft' ? (cargo === null ? 0 : cargo) : 0);\nconst fila = {\n  llamada_id: L.llamada_id, estado: estado, estado_conciliacion: ec, response_id: body && body.id ? String(body.id) : null,\n  tokens_entrada: u.tokens_entrada, tokens_salida: u.tokens_salida, tokens_cache: u.tokens_cache, tokens_razonamiento: u.tokens_razonamiento,\n  costo_tokens_usd: c.costo, cargo_busqueda_usd: cargo, cantidad_busquedas: cantidad, costo_usd: costoTotal, duracion_ms: dur,\n  origen_dato: origen, motivo_estimacion: motivo, ejecucion_id: ctrl.ejecucion_id, costo_reservado_usd: ctrl.reserva.total,\n  evidencia: RH.jsonSeguro({ http_status: h.statusCode === undefined ? null : h.statusCode, error: errorApi || null, response_status: body ? body.status || null : null, incomplete_details: body ? body.incomplete_details || null : null, service_tier: body ? body.service_tier || null : null, modelo_respuesta: body ? body.model || null : null, usage_errores: u.errores, web_search_call_ids: b ? b.ids : [], fuentes_recuperadas: b ? b.fuentes_recuperadas.length : null }, 2000)\n};\nreturn [{ json: fila }];"
+      },
+      "id": "6b407e98-5de5-4727-83d1-7c2f4472e2d2",
+      "name": "Conciliar consumo",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1552,
+        128
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "dataTableId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "CONFIGURAR_TABLA_RH_COSTOS",
+          "cachedResultName": "rh_costos"
+        },
+        "matchType": "allConditions",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "llamada_id",
+              "keyValue": "={{ $json.llamada_id }}"
+            }
+          ]
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": null,
+          "schema": [
+            {
+              "id": "llamada_id",
+              "displayName": "llamada_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "caso_id",
+              "displayName": "caso_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "etapa",
+              "displayName": "etapa",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "agente",
+              "displayName": "agente",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "proveedor",
+              "displayName": "proveedor",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "modelo",
+              "displayName": "modelo",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "fecha_hora",
+              "displayName": "fecha_hora",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "moneda",
+              "displayName": "moneda",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "estado",
+              "displayName": "estado",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "origen_dato",
+              "displayName": "origen_dato",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "motivo_estimacion",
+              "displayName": "motivo_estimacion",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "tokens_entrada",
+              "displayName": "tokens_entrada",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "tokens_salida",
+              "displayName": "tokens_salida",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "tokens_cache",
+              "displayName": "tokens_cache",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "duracion_ms",
+              "displayName": "duracion_ms",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "tarifa_entrada_millon",
+              "displayName": "tarifa_entrada_millon",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "tarifa_salida_millon",
+              "displayName": "tarifa_salida_millon",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "cargo_busqueda_usd",
+              "displayName": "cargo_busqueda_usd",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "costo_usd",
+              "displayName": "costo_usd",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "reintento",
+              "displayName": "reintento",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "response_id",
+              "displayName": "response_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "ejecucion_id",
+              "displayName": "ejecucion_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "tipo_registro",
+              "displayName": "tipo_registro",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "modalidad",
+              "displayName": "modalidad",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "unidad_cobro",
+              "displayName": "unidad_cobro",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "fecha_tarifa",
+              "displayName": "fecha_tarifa",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "url_tarifa",
+              "displayName": "url_tarifa",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "version_tarifas",
+              "displayName": "version_tarifas",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "grupo_costo",
+              "displayName": "grupo_costo",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "estado_conciliacion",
+              "displayName": "estado_conciliacion",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "skill_id",
+              "displayName": "skill_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "loop_id",
+              "displayName": "loop_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "tokens_razonamiento",
+              "displayName": "tokens_razonamiento",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "tarifa_cache_millon",
+              "displayName": "tarifa_cache_millon",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "costo_tokens_usd",
+              "displayName": "costo_tokens_usd",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "cantidad_busquedas",
+              "displayName": "cantidad_busquedas",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "duracion_voz_seg",
+              "displayName": "duracion_voz_seg",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "cantidad_unidades",
+              "displayName": "cantidad_unidades",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "tarifa_unitaria",
+              "displayName": "tarifa_unitaria",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "importe_incluido_usd",
+              "displayName": "importe_incluido_usd",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "cargo_adicional_usd",
+              "displayName": "cargo_adicional_usd",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "costo_reservado_usd",
+              "displayName": "costo_reservado_usd",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "tokens_entrada_conteo",
+              "displayName": "tokens_entrada_conteo",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "estimacion_contenido_usd",
+              "displayName": "estimacion_contenido_usd",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "evidencia",
+              "displayName": "evidencia",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "llamadas_ref",
+              "displayName": "llamadas_ref",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "b0f33ca1-21f0-43c2-8bff-d4b24577bd49",
+      "name": "Persistir resultado",
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        1776,
+        128
+      ],
+      "alwaysOutputData": true,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "jsCode": "// RH-LIB v2 (2026-11-01) — funciones puras compartidas. Sin red, sin secretos.\nconst RH = (function () {\n  const esNum = (v) => typeof v === 'number' && Number.isFinite(v);\n  const esEnteroNoNeg = (v) => esNum(v) && v >= 0 && Math.floor(v) === v;\n  const esListaTxt = (v) => Array.isArray(v) && v.every((x) => typeof x === 'string');\n  const unicos = (a) => Array.from(new Set(a));\n\n  // Lee usage de Responses API sin sustituir ausencias por cero.\n  function leerUsage(usage) {\n    const r = { tokens_entrada: null, tokens_cache: null, tokens_salida: null, tokens_razonamiento: null, cache_informada: false, razonamiento_informado: false, usage_presente: false, errores: [] };\n    if (!usage || typeof usage !== 'object') { r.errores.push('usage ausente'); return r; }\n    r.usage_presente = true;\n    if (esEnteroNoNeg(usage.input_tokens)) r.tokens_entrada = usage.input_tokens; else r.errores.push('usage.input_tokens ausente o inválido');\n    if (esEnteroNoNeg(usage.output_tokens)) r.tokens_salida = usage.output_tokens; else r.errores.push('usage.output_tokens ausente o inválido');\n    const det = usage.input_tokens_details;\n    if (det && det.cached_tokens !== undefined && det.cached_tokens !== null) {\n      if (!esEnteroNoNeg(det.cached_tokens)) r.errores.push('cached_tokens inválido (' + String(det.cached_tokens) + ')');\n      else {\n        r.tokens_cache = det.cached_tokens; r.cache_informada = true;\n        if (r.tokens_entrada !== null && det.cached_tokens > r.tokens_entrada) r.errores.push('Incoherente: cached_tokens (' + det.cached_tokens + ') > input_tokens (' + r.tokens_entrada + ')');\n      }\n    }\n    const od = usage.output_tokens_details;\n    if (od && od.reasoning_tokens !== undefined && od.reasoning_tokens !== null) {\n      if (!esEnteroNoNeg(od.reasoning_tokens)) r.errores.push('reasoning_tokens inválido');\n      else {\n        r.tokens_razonamiento = od.reasoning_tokens; r.razonamiento_informado = true;\n        if (r.tokens_salida !== null && od.reasoning_tokens > r.tokens_salida) r.errores.push('Incoherente: reasoning_tokens > output_tokens');\n      }\n    }\n    return r;\n  }\n\n  // costo_tokens_usd = ((in - cache) * t_in + cache * t_cache + out * t_out) / 1e6\n  // El razonamiento ya está dentro de output_tokens: no se suma otra vez.\n  function costoTokens(u, t) {\n    if (!t || !(t.entrada > 0) || !(t.salida > 0) || !(t.cache >= 0)) return { costo: null, tipo: 'desconocido', motivo: 'Tarifas incompletas: costo no calculado.' };\n    if (u.errores.length || u.tokens_entrada === null || u.tokens_salida === null) return { costo: null, tipo: 'desconocido', motivo: 'Consumo desconocido o incoherente: ' + (u.errores.join('; ') || 'usage incompleto') + '. No se presume costo cero.' };\n    const cache = u.cache_informada ? u.tokens_cache : 0;\n    const costo = ((u.tokens_entrada - cache) * t.entrada + cache * t.cache + u.tokens_salida * t.salida) / 1000000;\n    if (u.cache_informada) return { costo: costo, tipo: 'calculado', motivo: 'Tokens medidos por usage de la API; costo calculado con tarifas configuradas. No es factura conciliada.' };\n    return { costo: costo, tipo: 'estimado', motivo: 'Caché no informada por la API: estimación conservadora sin descuento de caché (no se afirma caché medida = 0). No es factura conciliada.' };\n  }\n\n  // Reserva previa: entrada contada a tarifa normal (sin presumir caché) + salida máxima permitida.\n  function reservaLlamada(p) {\n    const tokens = (p.tokens_conteo * p.t.entrada + p.max_salida * p.t.salida) / 1000000;\n    const herramienta = (p.busquedas_max || 0) * (p.cargo_busqueda || 0);\n    const contenido = (p.tokens_contenido_supuesto || 0) * p.t.entrada / 1000000;\n    return { tokens: tokens, herramienta: herramienta, contenido: contenido, total: tokens + herramienta + contenido };\n  }\n\n  // Estado del presupuesto del caso a partir de las filas originales de rh_costos.\n  function estadoPresupuesto(filas) {\n    const gen = (filas || []).filter((f) => f && f.tipo_registro === 'generacion');\n    let contabilizado = 0; let pendiente = 0; let sinCota = 0;\n    gen.forEach((f) => {\n      const ec = String(f.estado_conciliacion || '');\n      if ((ec === 'calculado' || ec === 'estimado' || ec === 'conciliado') && esNum(f.costo_usd)) contabilizado += f.costo_usd;\n      else if (esNum(f.costo_reservado_usd)) pendiente += f.costo_reservado_usd;\n      else sinCota += 1;\n    });\n    return { intentos: gen.length, contabilizado: contabilizado, pendiente: pendiente, sin_cota: sinCota };\n  }\n\n  function evaluarAutorizacion(est, reserva, cfg) {\n    const motivos = [];\n    if (cfg.max_llamadas > 0 && est.intentos + 1 > cfg.max_llamadas) motivos.push('MAX_LLAMADAS alcanzado (' + est.intentos + ' intentos de generación de ' + cfg.max_llamadas + ')');\n    if (est.sin_cota > 0) motivos.push(est.sin_cota + ' llamada(s) previa(s) con consumo desconocido y sin reserva cuantificada');\n    if (!(cfg.tope_usd_caso > 0)) motivos.push('TOPE_USD_CASO no configurado (vacío no es ilimitado)');\n    if (reserva === null) motivos.push('Sin reserva calculable');\n    else {\n      const total = est.contabilizado + est.pendiente + reserva.total;\n      if (total > cfg.tope_usd_caso) motivos.push('Presupuesto insuficiente: contabilizado ' + est.contabilizado + ' + reservas pendientes ' + est.pendiente + ' + nueva reserva ' + reserva.total + ' = ' + total + ' USD > TOPE_USD_CASO ' + cfg.tope_usd_caso);\n    }\n    return motivos;\n  }\n\n  function mensajeErrorApi(status, body, modelo, fase) {\n    const e = (body && body.error) || {};\n    const msg = String(e.message || (typeof body === 'string' ? body : '') || '').slice(0, 300);\n    const code = String(e.code || '');\n    if (status === 404 || code === 'model_not_found' || /model/i.test(msg) && /(not exist|not found|does not have access|no access)/i.test(msg)) {\n      return 'El modelo ' + modelo + ' no está disponible para la credencial o cuenta (' + fase + ', HTTP ' + status + (code ? ', ' + code : '') + '): ' + msg + '. No se sustituye por otro modelo.';\n    }\n    return 'Error de API en ' + fase + ' (HTTP ' + status + (code ? ', ' + code : '') + '): ' + msg;\n  }\n\n  // Extrae el texto final de una respuesta; solo 'completed' libera contenido.\n  function extraerTexto(resp) {\n    const r = { status: resp && resp.status ? String(resp.status) : null, texto: null, motivo: '' };\n    if (!resp || typeof resp !== 'object') { r.motivo = 'Respuesta vacía'; return r; }\n    if (r.status !== 'completed') {\n      const det = resp.incomplete_details && resp.incomplete_details.reason ? ' (' + resp.incomplete_details.reason + ')' : '';\n      r.motivo = 'Respuesta no completada: status ' + r.status + det;\n      return r;\n    }\n    const msgs = (Array.isArray(resp.output) ? resp.output : []).filter((o) => o && o.type === 'message');\n    const partes = [];\n    msgs.forEach((m) => (m.content || []).forEach((c) => { if (c && c.type === 'output_text' && typeof c.text === 'string') partes.push(c.text); }));\n    if (!partes.length) { r.motivo = 'Sin texto de salida'; return r; }\n    r.texto = partes.join('\\n');\n    return r;\n  }\n\n  function hostPermitido(u, permitidos) {\n    try { const x = new URL(String(u)); const h = x.hostname.toLowerCase(); return x.protocol === 'https:' && permitidos.some((d) => h === d || h.endsWith('.' + d)); } catch (e) { return false; }\n  }\n  function normUrl(u) {\n    try { const x = new URL(String(u)); return x.hostname.toLowerCase().replace(/^www[.]/, '') + x.pathname.replace(/[/]+$/, ''); } catch (e) { return null; }\n  }\n\n  // Evidencia de búsqueda desde los metadatos devueltos (web_search_call y anotaciones), no desde el texto.\n  function extraerBusqueda(resp, permitidos) {\n    const out = resp && Array.isArray(resp.output) ? resp.output : [];\n    const llamadas = out.filter((o) => o && o.type === 'web_search_call');\n    const sinAccion = llamadas.filter((c) => !c.action || !c.action.type).length;\n    const cobrables = llamadas.filter((c) => !c.action || !c.action.type || c.action.type === 'search').length;\n    const completadas = llamadas.filter((c) => c.status === 'completed').length;\n    const fuentes = [];\n    llamadas.forEach((c) => { const ss = c.action && Array.isArray(c.action.sources) ? c.action.sources : []; ss.forEach((s) => { if (s && s.url) fuentes.push(String(s.url)); }); });\n    const anot = [];\n    out.filter((o) => o && o.type === 'message').forEach((m) => (m.content || []).forEach((p) => (p.annotations || []).forEach((a) => { if (a && a.type === 'url_citation' && a.url) anot.push({ url: String(a.url), title: String(a.title || '') }); })));\n    const setFuentes = new Set(fuentes.map(normUrl).filter(Boolean));\n    const recuperadasPermitidas = unicos(fuentes.filter((u) => hostPermitido(u, permitidos)));\n    const ajenas = unicos(fuentes.filter((u) => !hostPermitido(u, permitidos)));\n    const citasVerificadas = unicos(anot.filter((a) => hostPermitido(a.url, permitidos) && setFuentes.has(normUrl(a.url))).map((a) => a.url));\n    const citasNoVerificadas = unicos(anot.map((a) => a.url).filter((u) => citasVerificadas.indexOf(u) < 0));\n    const mostrar = citasVerificadas.length ? citasVerificadas : recuperadasPermitidas;\n    return {\n      llamadas_observadas: llamadas.length,\n      busquedas_cobrables: cobrables,\n      llamadas_sin_accion: sinAccion,\n      llamadas_completadas: completadas,\n      ids: llamadas.map((c) => String(c.id || '')),\n      fuentes_recuperadas: unicos(fuentes),\n      fuentes_permitidas: recuperadasPermitidas,\n      fuentes_ajenas: ajenas,\n      citas_verificadas: citasVerificadas,\n      citas_no_verificadas: citasNoVerificadas,\n      mostrar: mostrar,\n      verificable: completadas > 0 && recuperadasPermitidas.length > 0\n    };\n  }\n\n  // validado=true exige correcciones=[]; validado=false exige al menos una corrección concreta.\n  function validarRevision(o) {\n    const e = [];\n    if (!o || typeof o !== 'object') return ['Salida vacía'];\n    if (typeof o.validado !== 'boolean') e.push('validado no es booleano');\n    if (!esListaTxt(o.correcciones)) e.push('correcciones no es lista de textos');\n    if (!esListaTxt(o.observaciones)) e.push('observaciones no es lista de textos');\n    if (e.length) return e;\n    const concretas = o.correcciones.filter((c) => c.trim().length >= 8);\n    if (o.validado === true && o.correcciones.length > 0) e.push('Contradicción: validado=true con correcciones no vacías');\n    if (o.validado === false && concretas.length === 0) e.push('Contradicción: validado=false sin una corrección concreta');\n    return e;\n  }\n\n  // JSON siempre válido; si excede el límite guarda un resumen con indicación de truncamiento.\n  function jsonSeguro(v, n) {\n    const t = JSON.stringify(v === undefined ? null : v);\n    if (t.length <= n) return t;\n    const resumen = { truncado: true, longitud_original: t.length, resumen: t.slice(0, Math.max(0, n - 120)) };\n    let r = JSON.stringify(resumen);\n    while (r.length > n && resumen.resumen.length > 0) { resumen.resumen = resumen.resumen.slice(0, Math.floor(resumen.resumen.length * 0.8)); r = JSON.stringify(resumen); }\n    return r;\n  }\n\n  function cuerpoConteo(body) {\n    const permitidas = ['model', 'instructions', 'input', 'text', 'tools', 'tool_choice', 'reasoning', 'parallel_tool_calls'];\n    const c = {};\n    permitidas.forEach((k) => { if (body[k] !== undefined) c[k] = body[k]; });\n    return c;\n  }\n\n  function armarLlamadaEspecialista(s, p) {\n    const cfg = s.config;\n    const body = {\n      model: cfg.modelo,\n      instructions: p.instrucciones,\n      input: p.prompt,\n      text: { format: { type: 'json_schema', name: p.nombre_esquema, schema: p.esquema, strict: true } },\n      reasoning: { effort: cfg.reasoning_effort },\n      max_output_tokens: cfg.max_output_tokens,\n      store: false,\n      service_tier: 'default'\n    };\n    return {\n      llamada_id: s.caso_id + '-L' + p.numero,\n      caso_id: s.caso_id,\n      etapa: p.etapa,\n      agente: p.agente,\n      tipo: 'especialista',\n      body: body,\n      grupo_costo: 'operacion',\n      reintento: p.reintento || 0,\n      loop_id: p.loop_id || null,\n      skill_id: null,\n      version_propuesta: p.version_propuesta === undefined ? null : p.version_propuesta,\n      ejecucion_principal: s.ejecucion_id,\n      evento_id: s.evento ? s.evento.evento_id : null,\n      inicio_ms_caso: s.inicio_ms,\n      entrada_traza: p.entrada\n    };\n  }\n\n  return { esNum, esEnteroNoNeg, esListaTxt, leerUsage, costoTokens, reservaLlamada, estadoPresupuesto, evaluarAutorizacion, mensajeErrorApi, extraerTexto, hostPermitido, extraerBusqueda, validarRevision, jsonSeguro, cuerpoConteo, armarLlamadaEspecialista };\n})();\n\nconst s = $('Recibir llamada').first().json;\nconst L = s.llamada_actual;\nconst cfg = s.config;\nconst ctrl = $('Control de presupuesto').first().json;\nconst fila = $('Conciliar consumo').first().json;\nconst h = $('Generar respuesta').first().json || {};\nconst ok2xx = h.statusCode >= 200 && h.statusCode < 300;\nconst body = ok2xx && h.body && typeof h.body === 'object' ? h.body : null;\nconst txt = body ? RH.extraerTexto(body) : { status: null, texto: null, motivo: 'Sin respuesta válida' };\nlet salida = null;\nif (txt.texto !== null) { try { salida = JSON.parse(txt.texto); } catch (e) { salida = { texto: txt.texto }; } }\nconst b = L.tipo === 'lft' && body ? RH.extraerBusqueda(body, cfg.dominios_lft) : null;\nconst u = RH.leerUsage(body ? body.usage : null);\nreturn [{ json: {\n  traza_id: L.llamada_id + '-T', caso_id: L.caso_id, evento_id: L.evento_id || null, etapa: L.etapa, agente: L.agente, estado: fila.estado,\n  entrada_json: RH.jsonSeguro({ entrada: L.entrada_traza || null, tokens_entrada_conteo: ctrl.conteo }, 6000),\n  salida_json: RH.jsonSeguro(salida !== null ? salida : { error: txt.motivo }, 6000),\n  fuentes_json: RH.jsonSeguro(b ? { permitidas: b.fuentes_permitidas, citas_verificadas: b.citas_verificadas, ajenas: b.fuentes_ajenas, citas_no_verificadas: b.citas_no_verificadas } : [], 2000),\n  advertencias_json: RH.jsonSeguro(u.errores.concat(txt.status === 'completed' ? [] : [txt.motivo]), 2000),\n  creado_en: new Date().toISOString(), version_propuesta: L.version_propuesta === undefined ? null : L.version_propuesta, duracion_ms: fila.duracion_ms,\n  llamada_id: L.llamada_id, ejecucion_id: ctrl.ejecucion_id\n} }];"
+      },
+      "id": "db8f46a1-688b-4d7d-9e5e-63c781a05548",
+      "name": "Fila de traza de llamada",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2000,
+        128
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "upsert",
+        "dataTableId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "CONFIGURAR_TABLA_RH_TRAZAS",
+          "cachedResultName": "rh_trazas"
+        },
+        "matchType": "allConditions",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "traza_id",
+              "keyValue": "={{ $json.traza_id }}"
+            }
+          ]
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": null,
+          "schema": [
+            {
+              "id": "traza_id",
+              "displayName": "traza_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "caso_id",
+              "displayName": "caso_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "evento_id",
+              "displayName": "evento_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "etapa",
+              "displayName": "etapa",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "agente",
+              "displayName": "agente",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "estado",
+              "displayName": "estado",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "entrada_json",
+              "displayName": "entrada_json",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "salida_json",
+              "displayName": "salida_json",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "fuentes_json",
+              "displayName": "fuentes_json",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "advertencias_json",
+              "displayName": "advertencias_json",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "creado_en",
+              "displayName": "creado_en",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "version_propuesta",
+              "displayName": "version_propuesta",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "duracion_ms",
+              "displayName": "duracion_ms",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "llamada_id",
+              "displayName": "llamada_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "ejecucion_id",
+              "displayName": "ejecucion_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "60f4bdac-8f32-45d6-abff-b693327723b0",
+      "name": "Guardar traza de llamada",
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        2224,
+        128
+      ],
+      "alwaysOutputData": true,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "jsCode": "// RH-LIB v2 (2026-11-01) — funciones puras compartidas. Sin red, sin secretos.\nconst RH = (function () {\n  const esNum = (v) => typeof v === 'number' && Number.isFinite(v);\n  const esEnteroNoNeg = (v) => esNum(v) && v >= 0 && Math.floor(v) === v;\n  const esListaTxt = (v) => Array.isArray(v) && v.every((x) => typeof x === 'string');\n  const unicos = (a) => Array.from(new Set(a));\n\n  // Lee usage de Responses API sin sustituir ausencias por cero.\n  function leerUsage(usage) {\n    const r = { tokens_entrada: null, tokens_cache: null, tokens_salida: null, tokens_razonamiento: null, cache_informada: false, razonamiento_informado: false, usage_presente: false, errores: [] };\n    if (!usage || typeof usage !== 'object') { r.errores.push('usage ausente'); return r; }\n    r.usage_presente = true;\n    if (esEnteroNoNeg(usage.input_tokens)) r.tokens_entrada = usage.input_tokens; else r.errores.push('usage.input_tokens ausente o inválido');\n    if (esEnteroNoNeg(usage.output_tokens)) r.tokens_salida = usage.output_tokens; else r.errores.push('usage.output_tokens ausente o inválido');\n    const det = usage.input_tokens_details;\n    if (det && det.cached_tokens !== undefined && det.cached_tokens !== null) {\n      if (!esEnteroNoNeg(det.cached_tokens)) r.errores.push('cached_tokens inválido (' + String(det.cached_tokens) + ')');\n      else {\n        r.tokens_cache = det.cached_tokens; r.cache_informada = true;\n        if (r.tokens_entrada !== null && det.cached_tokens > r.tokens_entrada) r.errores.push('Incoherente: cached_tokens (' + det.cached_tokens + ') > input_tokens (' + r.tokens_entrada + ')');\n      }\n    }\n    const od = usage.output_tokens_details;\n    if (od && od.reasoning_tokens !== undefined && od.reasoning_tokens !== null) {\n      if (!esEnteroNoNeg(od.reasoning_tokens)) r.errores.push('reasoning_tokens inválido');\n      else {\n        r.tokens_razonamiento = od.reasoning_tokens; r.razonamiento_informado = true;\n        if (r.tokens_salida !== null && od.reasoning_tokens > r.tokens_salida) r.errores.push('Incoherente: reasoning_tokens > output_tokens');\n      }\n    }\n    return r;\n  }\n\n  // costo_tokens_usd = ((in - cache) * t_in + cache * t_cache + out * t_out) / 1e6\n  // El razonamiento ya está dentro de output_tokens: no se suma otra vez.\n  function costoTokens(u, t) {\n    if (!t || !(t.entrada > 0) || !(t.salida > 0) || !(t.cache >= 0)) return { costo: null, tipo: 'desconocido', motivo: 'Tarifas incompletas: costo no calculado.' };\n    if (u.errores.length || u.tokens_entrada === null || u.tokens_salida === null) return { costo: null, tipo: 'desconocido', motivo: 'Consumo desconocido o incoherente: ' + (u.errores.join('; ') || 'usage incompleto') + '. No se presume costo cero.' };\n    const cache = u.cache_informada ? u.tokens_cache : 0;\n    const costo = ((u.tokens_entrada - cache) * t.entrada + cache * t.cache + u.tokens_salida * t.salida) / 1000000;\n    if (u.cache_informada) return { costo: costo, tipo: 'calculado', motivo: 'Tokens medidos por usage de la API; costo calculado con tarifas configuradas. No es factura conciliada.' };\n    return { costo: costo, tipo: 'estimado', motivo: 'Caché no informada por la API: estimación conservadora sin descuento de caché (no se afirma caché medida = 0). No es factura conciliada.' };\n  }\n\n  // Reserva previa: entrada contada a tarifa normal (sin presumir caché) + salida máxima permitida.\n  function reservaLlamada(p) {\n    const tokens = (p.tokens_conteo * p.t.entrada + p.max_salida * p.t.salida) / 1000000;\n    const herramienta = (p.busquedas_max || 0) * (p.cargo_busqueda || 0);\n    const contenido = (p.tokens_contenido_supuesto || 0) * p.t.entrada / 1000000;\n    return { tokens: tokens, herramienta: herramienta, contenido: contenido, total: tokens + herramienta + contenido };\n  }\n\n  // Estado del presupuesto del caso a partir de las filas originales de rh_costos.\n  function estadoPresupuesto(filas) {\n    const gen = (filas || []).filter((f) => f && f.tipo_registro === 'generacion');\n    let contabilizado = 0; let pendiente = 0; let sinCota = 0;\n    gen.forEach((f) => {\n      const ec = String(f.estado_conciliacion || '');\n      if ((ec === 'calculado' || ec === 'estimado' || ec === 'conciliado') && esNum(f.costo_usd)) contabilizado += f.costo_usd;\n      else if (esNum(f.costo_reservado_usd)) pendiente += f.costo_reservado_usd;\n      else sinCota += 1;\n    });\n    return { intentos: gen.length, contabilizado: contabilizado, pendiente: pendiente, sin_cota: sinCota };\n  }\n\n  function evaluarAutorizacion(est, reserva, cfg) {\n    const motivos = [];\n    if (cfg.max_llamadas > 0 && est.intentos + 1 > cfg.max_llamadas) motivos.push('MAX_LLAMADAS alcanzado (' + est.intentos + ' intentos de generación de ' + cfg.max_llamadas + ')');\n    if (est.sin_cota > 0) motivos.push(est.sin_cota + ' llamada(s) previa(s) con consumo desconocido y sin reserva cuantificada');\n    if (!(cfg.tope_usd_caso > 0)) motivos.push('TOPE_USD_CASO no configurado (vacío no es ilimitado)');\n    if (reserva === null) motivos.push('Sin reserva calculable');\n    else {\n      const total = est.contabilizado + est.pendiente + reserva.total;\n      if (total > cfg.tope_usd_caso) motivos.push('Presupuesto insuficiente: contabilizado ' + est.contabilizado + ' + reservas pendientes ' + est.pendiente + ' + nueva reserva ' + reserva.total + ' = ' + total + ' USD > TOPE_USD_CASO ' + cfg.tope_usd_caso);\n    }\n    return motivos;\n  }\n\n  function mensajeErrorApi(status, body, modelo, fase) {\n    const e = (body && body.error) || {};\n    const msg = String(e.message || (typeof body === 'string' ? body : '') || '').slice(0, 300);\n    const code = String(e.code || '');\n    if (status === 404 || code === 'model_not_found' || /model/i.test(msg) && /(not exist|not found|does not have access|no access)/i.test(msg)) {\n      return 'El modelo ' + modelo + ' no está disponible para la credencial o cuenta (' + fase + ', HTTP ' + status + (code ? ', ' + code : '') + '): ' + msg + '. No se sustituye por otro modelo.';\n    }\n    return 'Error de API en ' + fase + ' (HTTP ' + status + (code ? ', ' + code : '') + '): ' + msg;\n  }\n\n  // Extrae el texto final de una respuesta; solo 'completed' libera contenido.\n  function extraerTexto(resp) {\n    const r = { status: resp && resp.status ? String(resp.status) : null, texto: null, motivo: '' };\n    if (!resp || typeof resp !== 'object') { r.motivo = 'Respuesta vacía'; return r; }\n    if (r.status !== 'completed') {\n      const det = resp.incomplete_details && resp.incomplete_details.reason ? ' (' + resp.incomplete_details.reason + ')' : '';\n      r.motivo = 'Respuesta no completada: status ' + r.status + det;\n      return r;\n    }\n    const msgs = (Array.isArray(resp.output) ? resp.output : []).filter((o) => o && o.type === 'message');\n    const partes = [];\n    msgs.forEach((m) => (m.content || []).forEach((c) => { if (c && c.type === 'output_text' && typeof c.text === 'string') partes.push(c.text); }));\n    if (!partes.length) { r.motivo = 'Sin texto de salida'; return r; }\n    r.texto = partes.join('\\n');\n    return r;\n  }\n\n  function hostPermitido(u, permitidos) {\n    try { const x = new URL(String(u)); const h = x.hostname.toLowerCase(); return x.protocol === 'https:' && permitidos.some((d) => h === d || h.endsWith('.' + d)); } catch (e) { return false; }\n  }\n  function normUrl(u) {\n    try { const x = new URL(String(u)); return x.hostname.toLowerCase().replace(/^www[.]/, '') + x.pathname.replace(/[/]+$/, ''); } catch (e) { return null; }\n  }\n\n  // Evidencia de búsqueda desde los metadatos devueltos (web_search_call y anotaciones), no desde el texto.\n  function extraerBusqueda(resp, permitidos) {\n    const out = resp && Array.isArray(resp.output) ? resp.output : [];\n    const llamadas = out.filter((o) => o && o.type === 'web_search_call');\n    const sinAccion = llamadas.filter((c) => !c.action || !c.action.type).length;\n    const cobrables = llamadas.filter((c) => !c.action || !c.action.type || c.action.type === 'search').length;\n    const completadas = llamadas.filter((c) => c.status === 'completed').length;\n    const fuentes = [];\n    llamadas.forEach((c) => { const ss = c.action && Array.isArray(c.action.sources) ? c.action.sources : []; ss.forEach((s) => { if (s && s.url) fuentes.push(String(s.url)); }); });\n    const anot = [];\n    out.filter((o) => o && o.type === 'message').forEach((m) => (m.content || []).forEach((p) => (p.annotations || []).forEach((a) => { if (a && a.type === 'url_citation' && a.url) anot.push({ url: String(a.url), title: String(a.title || '') }); })));\n    const setFuentes = new Set(fuentes.map(normUrl).filter(Boolean));\n    const recuperadasPermitidas = unicos(fuentes.filter((u) => hostPermitido(u, permitidos)));\n    const ajenas = unicos(fuentes.filter((u) => !hostPermitido(u, permitidos)));\n    const citasVerificadas = unicos(anot.filter((a) => hostPermitido(a.url, permitidos) && setFuentes.has(normUrl(a.url))).map((a) => a.url));\n    const citasNoVerificadas = unicos(anot.map((a) => a.url).filter((u) => citasVerificadas.indexOf(u) < 0));\n    const mostrar = citasVerificadas.length ? citasVerificadas : recuperadasPermitidas;\n    return {\n      llamadas_observadas: llamadas.length,\n      busquedas_cobrables: cobrables,\n      llamadas_sin_accion: sinAccion,\n      llamadas_completadas: completadas,\n      ids: llamadas.map((c) => String(c.id || '')),\n      fuentes_recuperadas: unicos(fuentes),\n      fuentes_permitidas: recuperadasPermitidas,\n      fuentes_ajenas: ajenas,\n      citas_verificadas: citasVerificadas,\n      citas_no_verificadas: citasNoVerificadas,\n      mostrar: mostrar,\n      verificable: completadas > 0 && recuperadasPermitidas.length > 0\n    };\n  }\n\n  // validado=true exige correcciones=[]; validado=false exige al menos una corrección concreta.\n  function validarRevision(o) {\n    const e = [];\n    if (!o || typeof o !== 'object') return ['Salida vacía'];\n    if (typeof o.validado !== 'boolean') e.push('validado no es booleano');\n    if (!esListaTxt(o.correcciones)) e.push('correcciones no es lista de textos');\n    if (!esListaTxt(o.observaciones)) e.push('observaciones no es lista de textos');\n    if (e.length) return e;\n    const concretas = o.correcciones.filter((c) => c.trim().length >= 8);\n    if (o.validado === true && o.correcciones.length > 0) e.push('Contradicción: validado=true con correcciones no vacías');\n    if (o.validado === false && concretas.length === 0) e.push('Contradicción: validado=false sin una corrección concreta');\n    return e;\n  }\n\n  // JSON siempre válido; si excede el límite guarda un resumen con indicación de truncamiento.\n  function jsonSeguro(v, n) {\n    const t = JSON.stringify(v === undefined ? null : v);\n    if (t.length <= n) return t;\n    const resumen = { truncado: true, longitud_original: t.length, resumen: t.slice(0, Math.max(0, n - 120)) };\n    let r = JSON.stringify(resumen);\n    while (r.length > n && resumen.resumen.length > 0) { resumen.resumen = resumen.resumen.slice(0, Math.floor(resumen.resumen.length * 0.8)); r = JSON.stringify(resumen); }\n    return r;\n  }\n\n  function cuerpoConteo(body) {\n    const permitidas = ['model', 'instructions', 'input', 'text', 'tools', 'tool_choice', 'reasoning', 'parallel_tool_calls'];\n    const c = {};\n    permitidas.forEach((k) => { if (body[k] !== undefined) c[k] = body[k]; });\n    return c;\n  }\n\n  function armarLlamadaEspecialista(s, p) {\n    const cfg = s.config;\n    const body = {\n      model: cfg.modelo,\n      instructions: p.instrucciones,\n      input: p.prompt,\n      text: { format: { type: 'json_schema', name: p.nombre_esquema, schema: p.esquema, strict: true } },\n      reasoning: { effort: cfg.reasoning_effort },\n      max_output_tokens: cfg.max_output_tokens,\n      store: false,\n      service_tier: 'default'\n    };\n    return {\n      llamada_id: s.caso_id + '-L' + p.numero,\n      caso_id: s.caso_id,\n      etapa: p.etapa,\n      agente: p.agente,\n      tipo: 'especialista',\n      body: body,\n      grupo_costo: 'operacion',\n      reintento: p.reintento || 0,\n      loop_id: p.loop_id || null,\n      skill_id: null,\n      version_propuesta: p.version_propuesta === undefined ? null : p.version_propuesta,\n      ejecucion_principal: s.ejecucion_id,\n      evento_id: s.evento ? s.evento.evento_id : null,\n      inicio_ms_caso: s.inicio_ms,\n      entrada_traza: p.entrada\n    };\n  }\n\n  return { esNum, esEnteroNoNeg, esListaTxt, leerUsage, costoTokens, reservaLlamada, estadoPresupuesto, evaluarAutorizacion, mensajeErrorApi, extraerTexto, hostPermitido, extraerBusqueda, validarRevision, jsonSeguro, cuerpoConteo, armarLlamadaEspecialista };\n})();\n\nconst s = $('Recibir llamada').first().json;\nconst L = s.llamada_actual;\nconst cfg = s.config;\nconst ctrl = $('Control de presupuesto').first().json;\nconst fila = $('Conciliar consumo').first().json;\nconst h = $('Generar respuesta').first().json || {};\nconst ok2xx = h.statusCode >= 200 && h.statusCode < 300;\nconst body = ok2xx && h.body && typeof h.body === 'object' ? h.body : null;\nlet errorApi = '';\nif (h.error && h.statusCode === undefined) errorApi = 'Fallo de red o timeout en la generación: ' + String((h.error && h.error.message) || h.error).slice(0, 200) + '. Consumo desconocido; reserva conservada.';\nelse if (!ok2xx) errorApi = RH.mensajeErrorApi(h.statusCode, h.body, L.body.model, 'generación');\nconst txt = body ? RH.extraerTexto(body) : { status: null, texto: null, motivo: errorApi || 'Sin respuesta válida' };\nconst b = L.tipo === 'lft' && body ? RH.extraerBusqueda(body, cfg.dominios_lft) : null;\nlet persistido = false;\ntry { persistido = $('Persistir resultado').all().map((i) => i.json).some((x) => x && x.id !== undefined && x.id !== null && !x.error); } catch (e) { persistido = false; }\nlet trazaGuardada = false;\ntry { trazaGuardada = $('Guardar traza de llamada').all().map((i) => i.json).some((x) => x && x.id !== undefined && x.id !== null && !x.error); } catch (e) { trazaGuardada = false; }\nconst out = JSON.parse(JSON.stringify(s));\nif (out.llamada_actual) delete out.llamada_actual.body;\nout.resultado_llamada = {\n  permitido: true, motivos: [], generacion_intentada: true, llamada_id: L.llamada_id, ejecucion_id: ctrl.ejecucion_id,\n  http_status: h.statusCode === undefined ? null : h.statusCode, error_api: errorApi,\n  estado_respuesta: txt.status, motivo_incompleto: txt.motivo, salida_texto: txt.texto, response_id: fila.response_id,\n  consumo: { estado: fila.estado, estado_conciliacion: fila.estado_conciliacion, tokens_entrada: fila.tokens_entrada, tokens_cache: fila.tokens_cache, tokens_salida: fila.tokens_salida, tokens_razonamiento: fila.tokens_razonamiento, costo_tokens_usd: fila.costo_tokens_usd, cargo_busqueda_usd: fila.cargo_busqueda_usd, costo_usd: fila.costo_usd, costo_reservado_usd: fila.costo_reservado_usd },\n  busqueda: b, conteo_tokens: ctrl.conteo, reserva_usd: ctrl.reserva ? ctrl.reserva.total : null,\n  fallo_persistencia: !persistido, traza_guardada: trazaGuardada\n};\nreturn [{ json: out }];"
+      },
+      "id": "cd202d39-39fa-4719-b8c9-dae0a16ee632",
+      "name": "Devolver resultado",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2448,
+        128
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const s = $('Recibir llamada').first().json;\nconst ctrl = $('Control de presupuesto').first().json;\nconst motivos = (ctrl.motivos || []).slice();\nif (ctrl.permitido) {\n  let det = '';\n  try { const rr = $('Reservar llamada').first().json; det = rr && rr.error ? String((rr.error && rr.error.message) || rr.error).slice(0, 200) : 'sin id de fila'; } catch (e) { det = 'nodo no ejecutado'; }\n  motivos.push('No se pudo guardar la reserva previa en rh_costos (' + det + '); no se realizó la llamada pagada.');\n}\nconst out = JSON.parse(JSON.stringify(s));\nif (out.llamada_actual) delete out.llamada_actual.body;\nout.resultado_llamada = { permitido: false, motivos: motivos, generacion_intentada: false, llamada_id: s.llamada_actual ? s.llamada_actual.llamada_id : null, ejecucion_id: ctrl.ejecucion_id, conteo_tokens: ctrl.conteo, reserva_usd: ctrl.reserva ? ctrl.reserva.total : null, presupuesto: ctrl.presupuesto };\nreturn [{ json: out }];"
+      },
+      "id": "8207cee8-dbe4-4852-95c0-6957ffb02959",
+      "name": "Devolver bloqueo",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1440,
+        224
+      ]
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Recibir llamada": {
+      "main": [
+        [
+          {
+            "node": "Preparar conteo",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Preparar conteo": {
+      "main": [
+        [
+          {
+            "node": "Contar tokens de entrada",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Contar tokens de entrada": {
+      "main": [
+        [
+          {
+            "node": "Leer costos del caso",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Leer costos del caso": {
+      "main": [
+        [
+          {
+            "node": "Control de presupuesto",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Control de presupuesto": {
+      "main": [
+        [
+          {
+            "node": "Registrar conteo auxiliar",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Registrar conteo auxiliar": {
+      "main": [
+        [
+          {
+            "node": "¿Autorizar llamada?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "¿Autorizar llamada?": {
+      "main": [
+        [
+          {
+            "node": "Fila de reserva",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Devolver bloqueo",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fila de reserva": {
+      "main": [
+        [
+          {
+            "node": "Reservar llamada",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Reservar llamada": {
+      "main": [
+        [
+          {
+            "node": "¿Reserva registrada?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "¿Reserva registrada?": {
+      "main": [
+        [
+          {
+            "node": "Generar respuesta",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Devolver bloqueo",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generar respuesta": {
+      "main": [
+        [
+          {
+            "node": "Conciliar consumo",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Conciliar consumo": {
+      "main": [
+        [
+          {
+            "node": "Persistir resultado",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Persistir resultado": {
+      "main": [
+        [
+          {
+            "node": "Fila de traza de llamada",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fila de traza de llamada": {
+      "main": [
+        [
+          {
+            "node": "Guardar traza de llamada",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Guardar traza de llamada": {
+      "main": [
+        [
+          {
+            "node": "Devolver resultado",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  }
+}

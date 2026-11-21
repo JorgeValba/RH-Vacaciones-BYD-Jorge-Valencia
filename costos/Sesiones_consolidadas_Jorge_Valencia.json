@@ -1,0 +1,154 @@
+{
+  "autor": "Jorge Valencia",
+  "fecha_revision": "2026-11-04",
+  "sesiones": [
+    {
+      "conversation_id": "conv_5101m6dhpfrpfs5vcv0c3mvk3nay",
+      "start_time_unix_secs": 1793603616,
+      "text_only": true,
+      "duracion_sesion_seg": 601,
+      "creditos": 43,
+      "cost_fiat": "0.004319",
+      "llm_price": "0.001319",
+      "platform_price": "0.003",
+      "tier": "free",
+      "audio_salida_seg": 0,
+      "audio_entrada_seg": 0,
+      "inicio": "widget",
+      "terminacion": "Conversation has exceeded maximum duration"
+    },
+    {
+      "conversation_id": "conv_5401m6dgfm8ve1j8d7f203nra5rc",
+      "start_time_unix_secs": 1793602343,
+      "text_only": true,
+      "duracion_sesion_seg": 600,
+      "creditos": 75,
+      "cost_fiat": "0.0074807",
+      "llm_price": "0.0014807",
+      "platform_price": "0.006",
+      "tier": "free",
+      "audio_salida_seg": 0,
+      "audio_entrada_seg": 0,
+      "inicio": "react_sdk",
+      "terminacion": "Conversation has exceeded maximum duration"
+    },
+    {
+      "conversation_id": "conv_7101m6dfv8j1eysvjvbmmpcf72gy",
+      "start_time_unix_secs": 1793601675,
+      "text_only": true,
+      "duracion_sesion_seg": 601,
+      "creditos": 115,
+      "cost_fiat": "0.011432150000000002",
+      "llm_price": "0.00243215",
+      "platform_price": "0.009000000000000001",
+      "tier": "free",
+      "audio_salida_seg": 0,
+      "audio_entrada_seg": 0,
+      "inicio": "react_sdk",
+      "terminacion": "Conversation has exceeded maximum duration"
+    },
+    {
+      "conversation_id": "conv_7501m6df2ymnevevp2j1cbj1hrgj",
+      "start_time_unix_secs": 1793600879,
+      "text_only": true,
+      "duracion_sesion_seg": 600,
+      "creditos": 79,
+      "cost_fiat": "0.007822",
+      "llm_price": "0.001822",
+      "platform_price": "0.006",
+      "tier": "free",
+      "audio_salida_seg": 0,
+      "audio_entrada_seg": 0,
+      "inicio": "react_sdk",
+      "terminacion": "Conversation has exceeded maximum duration"
+    },
+    {
+      "conversation_id": "conv_5701m6dekh14fqf8dprrggy0vprs",
+      "start_time_unix_secs": 1793600373,
+      "text_only": true,
+      "duracion_sesion_seg": 484,
+      "creditos": 184,
+      "cost_fiat": "0.01842015",
+      "llm_price": "0.0034201499999999994",
+      "platform_price": "0.015",
+      "tier": "free",
+      "audio_salida_seg": 0,
+      "audio_entrada_seg": 0,
+      "inicio": "react_sdk",
+      "terminacion": "Client disconnected: 1000"
+    },
+    {
+      "conversation_id": "conv_0901m6dbj5xkf0z8qee6qpjxy9h2",
+      "start_time_unix_secs": 1793597183,
+      "text_only": false,
+      "duracion_sesion_seg": 4,
+      "creditos": 23,
+      "cost_fiat": "0.0022302663564268085",
+      "llm_price": 0,
+      "platform_price": "0.0022302663564268085",
+      "tier": "free",
+      "audio_salida_seg": "3.84",
+      "audio_entrada_seg": 0,
+      "inicio": "react_sdk",
+      "terminacion": "Client disconnected: 1001"
+    },
+    {
+      "conversation_id": "conv_3601m6dbg5x1et5tpxr9n5hnxp5s",
+      "start_time_unix_secs": 1793597118,
+      "text_only": false,
+      "duracion_sesion_seg": 5,
+      "creditos": 32,
+      "cost_fiat": "0.0031267288011602237",
+      "llm_price": 0,
+      "platform_price": "0.0031267288011602237",
+      "tier": "free",
+      "audio_salida_seg": "5.119999999999999",
+      "audio_entrada_seg": 0,
+      "inicio": "react_sdk",
+      "terminacion": "Client disconnected: 1001"
+    },
+    {
+      "conversation_id": "conv_6501m6dnc3x9e80s8wghfg8037kn",
+      "text_only": false,
+      "duracion_sesion_seg": 67,
+      "creditos": 784,
+      "cost_fiat": "0.07805611055323627",
+      "llm_price": "0.00327175",
+      "platform_price": "0.07478436055323627",
+      "tier": "free",
+      "audio_entrada_seg": "15.904000000000009",
+      "audio_salida_seg": "33.86862500000001"
+    },
+    {
+      "conversation_id": "conv_0401m6jmbw18f9g9hvbekqwqecsk",
+      "text_only": true,
+      "duracion_sesion_seg": 601,
+      "creditos": 88,
+      "cost_fiat": "0.00881365",
+      "llm_price": "0.0028136499999999996",
+      "platform_price": "0.006",
+      "tier": "free",
+      "audio_entrada_seg": 0,
+      "audio_salida_seg": 0
+    }
+  ],
+  "moneda_verificada": "USD",
+  "fuente_unidad": "https://elevenlabs.io/docs/changelog/2026/7/6",
+  "alcance": "Nueve sesiones únicas con archivos locales verificables; no historial completo de cuenta. Sin transcripciones.",
+  "total_metadata_usd": "0.1417007557108233042",
+  "creditos_reportados": 1423,
+  "fuentes": [
+    {
+      "archivo": "Consumo_ElevenLabs_Jorge_Valencia.json",
+      "sha256": "fcc0df3800746cfa6185c3a8943a306f73be8e71f214584af8fa994b0548448e"
+    },
+    {
+      "archivo": "Prueba_voz_confirmada_Jorge_Valencia.json",
+      "sha256": "118f0de8bd2a9613287301980dc13a27be094e068703c081fcc1f2f7a03849aa"
+    },
+    {
+      "archivo": "Pages_herramientas_verificadas_Jorge_Valencia.json",
+      "sha256": "83e9ec7b6af9d277c7af0dad3df3ef3b7bb22765702b20f5414f5d499a370991"
+    }
+  ]
+}

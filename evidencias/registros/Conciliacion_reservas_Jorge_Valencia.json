@@ -1,0 +1,96 @@
+{
+  "autor": "Jorge Valencia",
+  "fecha_revision": "2026-11-04",
+  "tipo": "Cruce estático de CSV; no nueva ejecución remota",
+  "fuentes": [
+    {
+      "archivo": "rh_solicitudes (1).csv",
+      "sha256": "5632156dde2667e4408c75931c14bf4e4653da4f2c079f51b310dca497bf9c76"
+    },
+    {
+      "archivo": "rh aprobadas.csv",
+      "sha256": "81316f1d24ec0e37743c94f7483297730a350d5a96057f321d2ab985e08bb2cf"
+    }
+  ],
+  "reservas_total": 5,
+  "dias_total": 24,
+  "reservas_con_solicitud_aprobada": 3,
+  "dias_con_solicitud_aprobada": 14,
+  "reservas_precargadas_identificadas": [
+    "APR-001",
+    "APR-002"
+  ],
+  "dias_precargados": 10,
+  "ids_duplicados": [],
+  "conciliacion": [
+    {
+      "caso_id": "VAC-20261102-YTLRX08S4",
+      "aprobacion_id": "APR-VAC-20261102-YTLRX08S4-V1",
+      "dias": 5,
+      "comprobaciones": {
+        "reserva_unica": true,
+        "decision_aprobar": true,
+        "empleado": true,
+        "equipo": true,
+        "inicio": true,
+        "fin": true,
+        "dias": true,
+        "estado": true
+      },
+      "coincide": true
+    },
+    {
+      "caso_id": "VAC-20261102-YTLS2ZE8C",
+      "aprobacion_id": "APR-VAC-20261102-YTLS2ZE8C-V1",
+      "dias": 5,
+      "comprobaciones": {
+        "reserva_unica": true,
+        "decision_aprobar": true,
+        "empleado": true,
+        "equipo": true,
+        "inicio": true,
+        "fin": true,
+        "dias": true,
+        "estado": true
+      },
+      "coincide": true
+    },
+    {
+      "caso_id": "VAC-20261102-YTLSBKE8E",
+      "aprobacion_id": "APR-VAC-20261102-YTLSBKE8E-V1",
+      "dias": 4,
+      "comprobaciones": {
+        "reserva_unica": true,
+        "decision_aprobar": true,
+        "empleado": true,
+        "equipo": true,
+        "inicio": true,
+        "fin": true,
+        "dias": true,
+        "estado": true
+      },
+      "coincide": true
+    }
+  ],
+  "filas_otros_estados_con_reserva_mismo_folio": [],
+  "observacion_fechas_iniciales": [
+    {
+      "aprobacion_id": "APR-001",
+      "fecha_iso_original": "2026-11-23T00:00:00.000Z",
+      "dia_en_mexico": "2026-11-22",
+      "nota": "Semilla histórica a medianoche UTC: comprobar si el calendario usa fecha literal o conversión local antes de afirmar coincidencia con el día previsto."
+    },
+    {
+      "aprobacion_id": "APR-002",
+      "fecha_iso_original": "2026-11-23T00:00:00.000Z",
+      "dia_en_mexico": "2026-11-22",
+      "nota": "Semilla histórica a medianoche UTC: comprobar si el calendario usa fecha literal o conversión local antes de afirmar coincidencia con el día previsto."
+    }
+  ],
+  "limites": [
+    "La ausencia de duplicados en este corte no prueba concurrencia ni deduplicación bajo todas las condiciones.",
+    "Las dos reservas precargadas no son solicitudes aprobadas mediante el bot.",
+    "No demuestra pagos de prima ni nuevos accesos; falta cruzar trazas y costos.",
+    "Las fuentes fueron recibidas en días distintos; comprobar cambios posteriores al cerrar el paquete."
+  ]
+}

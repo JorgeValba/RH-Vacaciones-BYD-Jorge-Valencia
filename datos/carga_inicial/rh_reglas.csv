@@ -1,0 +1,2 @@
+regla_id,version,fecha_corte,calendario_inicio,calendario_fin,tasa_prima,cobertura_minima,modo,autor
+REGLAS-001,1.0,2026-11-01,2026-11-01,2026-12-31,0.25,3,SIMULADO,Jorge Valencia

@@ -18,3 +18,8 @@ Salida: continuar únicamente con autorización y margen; al agotarse presupuest
 Carga de ambos archivos en n8n; ejecución con dos casos; V1 fallida y V2 corregida; pruebas de inyección, acceso y presupuesto. Las pruebas locales del adaptador no sustituyen estas ejecuciones.
 ## Autoevaluación de diseño, no de funcionamiento
 Escala 0–4: claridad 4, contexto 4, evidencia 3, control 4, utilidad 3 = 18/20 para cada skill y loop. La evidencia se califica 3 porque las condiciones están definidas, pero la operación integrada todavía no se acredita. Revisar con los registros de n8n antes de entregar.
+
+
+## Actualización de evidencia al 4 de noviembre de 2026
+
+Elaborado por: Jorge Valencia. La especificación anterior es histórica y no debe interpretarse como ausencia de la integración posterior. Las trazas recogidas muestran carga de skills en YTLSAI66N, YTLSBKE8E y YTLSEX4SR, así como controles loop_seguridad/loop_calidad. YTLS6SW04 muestra corrección V1→V2 con seis generaciones y costo incremental histórico calculado USD 0.003967; ese caso no tiene carga_skill registrada. No afirmar que sea una prueba conjunta de carga y corrección del adaptador posterior. Falta revisar autoevaluación final y evidencia faltante en tests/pruebas.csv, aún por consolidar.

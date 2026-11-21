@@ -1,0 +1,153 @@
+{
+  "name": "RH Panel actualizado — Jorge Valencia",
+  "nodes": [
+    {
+      "parameters": {
+        "path": "rh-panel-publico-jv-v1",
+        "responseMode": "responseNode",
+        "options": {
+          "allowedOrigins": "https://jorgevalba.github.io"
+        }
+      },
+      "id": "69dcdf84-e402-4dca-a572-18c87b5ae0d3",
+      "name": "Panel: recibir consulta",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -304,
+        352
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "dataTableId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "CONFIGURAR_TABLA_RH_SOLICITUDES"
+        },
+        "matchType": "allConditions",
+        "filters": {
+          "conditions": []
+        },
+        "returnAll": true
+      },
+      "id": "f2a7515f-b7df-4d9d-8af3-f1f5a6d73a9e",
+      "name": "Panel: leer solicitudes",
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        -32,
+        352
+      ],
+      "alwaysOutputData": true,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Elaborado por: Jorge Valencia. Proyección pública de registros exclusivamente ficticios.\n(function(root){\n const estados=['Aprobada','Rechazada','Pendiente de aprobación','Expirada','Requiere aclaración','Requiere ajuste por cobertura','Saldo insuficiente','Requiere ajuste por saldo','Error controlado','Procesando aprobación','En proceso'];\n function preparar(rows,now=Date.now()){\n  if(!Array.isArray(rows)||!Number.isFinite(now))throw Error('LECTURA_INVALIDA');\n  const casos=[],ids=new Set();\n  for(const r of rows){\n   if(!r||typeof r!=='object'||r.error)throw Error('LECTURA_INVALIDA');\n   if(Object.keys(r).length===0)continue; // Always Output Data de una tabla vacía.\n   if(typeof r.caso_id!=='string')throw Error('REGISTRO_INVALIDO');\n   if(!r.caso_id.startsWith('VAC-'))continue;\n   const p=JSON.parse(r.propuesta_json);\n   const emp=typeof r.empleado_id==='string'&&/^EMP-\\d{3}$/.test(r.empleado_id)&&+r.empleado_id.slice(4)>=1&&+r.empleado_id.slice(4)<=15;\n   if(p?.modo!=='SIMULADO'||!emp)throw Error('REGISTRO_NO_FICTICIO');\n   if(!/^VAC-[A-Z0-9-]{4,80}$/.test(r.caso_id)||ids.has(r.caso_id))throw Error('FOLIO_INVALIDO');\n   ids.add(r.caso_id);\n   if(!estados.includes(r.estado)||!['EQ-A','EQ-B','EQ-C',null,'',undefined].includes(r.equipo_id))throw Error('ESQUEMA_INVALIDO');\n   const raw=r.dias_solicitados;\n   const dias=raw===null||raw===undefined||raw===''?null:typeof raw==='boolean'?NaN:Number(raw);\n   if(dias!==null&&(!Number.isInteger(dias)||dias<0))throw Error('DIAS_INVALIDOS');\n   if(r.estado==='Aprobada'&&!(dias>0))throw Error('APROBACION_INVALIDA');\n   for(const key of ['creado_en','actualizado_en'])if(typeof r[key]!=='string'||!Number.isFinite(Date.parse(r[key])))throw Error('FECHA_INVALIDA');\n   if(Date.parse(r.actualizado_en)<Date.parse(r.creado_en))throw Error('FECHA_INVALIDA');\n   let estado=r.estado;\n   const vence=Date.parse(p.control_decision?.vence_en);\n   if(estado==='Pendiente de aprobación'&&Number.isFinite(vence)&&now>=vence)estado='Expirada';\n   casos.push({caso_id:r.caso_id,equipo_id:r.equipo_id||null,estado,dias_solicitados:dias,creado_en:r.creado_en,actualizado_en:r.actualizado_en});\n  }\n  return {schema_version:1,autor:'Jorge Valencia',modo:'SIMULADO',tipo_datos:'ficticios_sanitizados',exportado_en:new Date(now).toISOString(),fuente:'Consulta actualizada de rh_solicitudes, n8n',casos};\n }\n root.RHPublicPanel={preparar};\n})(typeof globalThis==='undefined'?this:globalThis);\n\n// No propagar errores de la base ni registros privados al navegador.\ntry {\n const data=RHPublicPanel.preparar($input.all().map(i=>i.json));\n return [{json:{status:200,body:data}}];\n} catch {\n return [{json:{status:503,body:{ok:false,codigo:'PANEL_NO_DISPONIBLE',mensaje:'No fue posible generar el resumen público. Intenta más tarde.'}}}];\n}\n"
+      },
+      "id": "fed2263b-3928-456f-bf9e-712999269095",
+      "name": "Panel: preparar resumen permitido",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        240,
+        352
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ $json.body }}",
+        "options": {
+          "responseCode": "={{ $json.status }}",
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Cache-Control",
+                "value": "no-store, max-age=0"
+              },
+              {
+                "name": "X-Content-Type-Options",
+                "value": "nosniff"
+              },
+              {
+                "name": "Access-Control-Allow-Origin",
+                "value": "https://jorgevalba.github.io"
+              },
+              {
+                "name": "Vary",
+                "value": "Origin"
+              }
+            ]
+          }
+        }
+      },
+      "id": "928be369-83db-4b53-a27d-f2e65a6bd443",
+      "name": "Panel: responder al HTML",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        512,
+        352
+      ]
+    },
+    {
+      "parameters": {
+        "content": "Elaborado por: Jorge Valencia\n\nSolo lectura de rh_solicitudes. Devuelve los mismos seis campos ficticios ya publicados en Pages. Sin credenciales en HTML, sin OpenAI, sin Telegram Trigger y sin escrituras.\n\nPublicar en el mismo proyecto de las tablas. Production URL: /webhook/rh-panel-publico-jv-v1\n\nEndpoint público: CORS no es autenticación. Solo datos ficticios; no usar para expedientes reales. Si un registro no cumple los controles, responder 503 sin detalles.",
+        "height": 280,
+        "width": 430
+      },
+      "id": "9a4cb32c-9631-43f0-b98c-705c8436fcc4",
+      "name": "Jorge Valencia — Panel actualizado",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -48,
+        0
+      ]
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Panel: recibir consulta": {
+      "main": [
+        [
+          {
+            "node": "Panel: leer solicitudes",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Panel: leer solicitudes": {
+      "main": [
+        [
+          {
+            "node": "Panel: preparar resumen permitido",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Panel: preparar resumen permitido": {
+      "main": [
+        [
+          {
+            "node": "Panel: responder al HTML",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  }
+}

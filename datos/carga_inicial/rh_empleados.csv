@@ -1,0 +1,16 @@
+empleado_id,alias_ficticio,equipo_id,fecha_ingreso,periodo_inicio,periodo_fin,dias_generados,dias_usados_corte,salario_diario_mxn,autor
+EMP-001,Persona ficticia 01,EQ-A,2023-10-01,2026-10-01,2027-09-30,16,6,600,Jorge Valencia
+EMP-002,Persona ficticia 02,EQ-A,2025-10-01,2026-10-01,2027-09-30,12,2,650,Jorge Valencia
+EMP-003,Persona ficticia 03,EQ-A,2024-10-01,2026-10-01,2027-09-30,14,4,700,Jorge Valencia
+EMP-004,Persona ficticia 04,EQ-A,2021-10-01,2026-10-01,2027-09-30,20,10,750,Jorge Valencia
+EMP-005,Persona ficticia 05,EQ-A,2020-10-01,2026-10-01,2027-09-30,22,12,800,Jorge Valencia
+EMP-006,Persona ficticia 06,EQ-B,2022-10-01,2026-10-01,2027-09-30,18,8,620,Jorge Valencia
+EMP-007,Persona ficticia 07,EQ-B,2024-10-01,2026-10-01,2027-09-30,14,4,680,Jorge Valencia
+EMP-008,Persona ficticia 08,EQ-B,2023-10-01,2026-10-01,2027-09-30,16,6,720,Jorge Valencia
+EMP-009,Persona ficticia 09,EQ-B,2025-10-01,2026-10-01,2027-09-30,12,2,660,Jorge Valencia
+EMP-010,Persona ficticia 10,EQ-B,2016-10-01,2026-10-01,2027-09-30,22,14,900,Jorge Valencia
+EMP-011,Persona ficticia 11,EQ-C,2024-10-01,2026-10-01,2027-09-30,14,12,640,Jorge Valencia
+EMP-012,Persona ficticia 12,EQ-C,2025-10-01,2026-10-01,2027-09-30,12,2,610,Jorge Valencia
+EMP-013,Persona ficticia 13,EQ-C,2021-10-01,2026-10-01,2027-09-30,20,10,780,Jorge Valencia
+EMP-014,Persona ficticia 14,EQ-C,2020-10-01,2026-10-01,2027-09-30,22,12,820,Jorge Valencia
+EMP-015,Persona ficticia 15,EQ-C,2015-10-01,2026-10-01,2027-09-30,24,16,950,Jorge Valencia

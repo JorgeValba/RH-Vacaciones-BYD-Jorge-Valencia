@@ -1,0 +1,53 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "resumen",
+    "dias_solicitados",
+    "saldo_actual",
+    "saldo_proyectado",
+    "prima_bruta_mxn",
+    "prima_adicional_mxn",
+    "cobertura_ok",
+    "alertas",
+    "fuentes_citadas"
+  ],
+  "properties": {
+    "resumen": {
+      "type": "string"
+    },
+    "dias_solicitados": {
+      "type": "number"
+    },
+    "saldo_actual": {
+      "type": "number"
+    },
+    "saldo_proyectado": {
+      "type": "number"
+    },
+    "prima_bruta_mxn": {
+      "type": "number"
+    },
+    "prima_adicional_mxn": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "cobertura_ok": {
+      "type": "boolean"
+    },
+    "alertas": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "fuentes_citadas": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  }
+}

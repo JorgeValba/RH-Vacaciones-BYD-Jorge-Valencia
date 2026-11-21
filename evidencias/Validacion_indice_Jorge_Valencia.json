@@ -1,0 +1,10 @@
+{
+  "autor": "Jorge Valencia",
+  "evidencias_identificadas": 22,
+  "capturas_seleccionadas": 13,
+  "pruebas_con_identificador": 14,
+  "enlaces_locales_comprobados": 104,
+  "hashes_archivos_referenciados_comprobados": 56,
+  "resultado": "RUTAS_Y_REFERENCIAS_VALIDAS",
+  "alcance": "Validación local de enlaces, anchors y hashes; no publicación ni comprobación de disponibilidad remota."
+}

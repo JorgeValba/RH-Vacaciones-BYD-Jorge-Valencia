@@ -1,0 +1,27 @@
+{
+  "autor": "Jorge Valencia",
+  "prueba": "P07",
+  "origen": "Captura de Telegram aportada por Jorge como prueba de cuenta sin permiso",
+  "fecha_recepcion_contexto": "2026-11-04",
+  "fecha_evento_confirmada": null,
+  "hora_visible": [
+    "18:58",
+    "18:59"
+  ],
+  "entradas": [
+    "/start",
+    "/nuevo EMP-004 2026-12-14 2026-12-18"
+  ],
+  "respuesta_observada": "Acceso no habilitado o vencido. Solicita un código a Jorge y envía /acceso CODIGO. El acceso requiere un pase vigente para los casos ficticios compartidos.",
+  "resultado_visible": "Ambos mensajes reciben denegación de acceso; la respuesta no muestra folio ni propuesta de vacaciones.",
+  "alcance": "Denegación observable desde Telegram para la cuenta que Jorge identifica como no autorizada. Complementa configuración de acceso y pruebas previas de canje autorizado.",
+  "limites": [
+    "La captura no muestra ID/recorrido de ejecución n8n ni lectura posterior de tablas.",
+    "No afirmar ausencia de llamadas pagadas/escrituras solo a partir del mensaje.",
+    "No acredita por separado revocación y vencimiento: el mensaje agrupa esas causas."
+  ],
+  "captura_privada": {
+    "archivo": "codex-clipboard-55276453-be8a-4f8c-aa19-183498f2f6dd.png",
+    "sha256": "3a4720c08be155a6d9894fdc2372e47a168fda70bc76a4eb574144997e629a28"
+  }
+}

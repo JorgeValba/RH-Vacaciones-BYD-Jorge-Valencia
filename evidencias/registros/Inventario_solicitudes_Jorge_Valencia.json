@@ -1,0 +1,32 @@
+{
+  "autor": "Jorge Valencia",
+  "fecha_recepcion": "2026-11-03",
+  "fuente_archivo": "rh_solicitudes (1).csv",
+  "sha256": "5632156dde2667e4408c75931c14bf4e4653da4f2c079f51b310dca497bf9c76",
+  "filas": 13,
+  "folios_duplicados": [],
+  "empleados_distintos": 7,
+  "estados": {
+    "Error controlado": 1,
+    "Pendiente de aprobación": 4,
+    "Requiere ajuste por cobertura": 1,
+    "Saldo insuficiente": 1,
+    "Aprobada": 3,
+    "Rechazada": 1,
+    "Requiere aclaración": 1,
+    "Expirada": 1
+  },
+  "dias_solicitados_en_casos_aprobados": 14,
+  "estado_y_propuesta_coinciden": true,
+  "modos_simulados": 13,
+  "datos_omitidos": [
+    "usuario_id",
+    "chat_id",
+    "evento_id",
+    "empleado_id",
+    "propuesta_json",
+    "motivo",
+    "montos_individuales"
+  ],
+  "limite": "El CSV acredita el estado persistido del corte; requiere cruce con reservas, trazas y costos para probar unicidad, ejecución de especialistas y consumo."
+}

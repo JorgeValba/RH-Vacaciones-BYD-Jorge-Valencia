@@ -1,0 +1,25 @@
+{
+  "autor": "Jorge Valencia",
+  "fecha_revision": "2026-11-04",
+  "accion": "Añadir exclusivamente hostname Pages a allowlist de Main mediante la herramienta conectada; verificado por lectura posterior.",
+  "version_anterior": "agtvrsn_2001m6mdtrtzfw1sdch1yzxbsnxq",
+  "agent_id": "agent_5201m5nm2h0zf9pat9j1whqzv691",
+  "branch_id": "agtbrch_0701m5nm2jdefggr8sg77vkbp1es",
+  "version_id": "agtvrsn_8601m6me8xxrekrt4txf7f0zq6h9",
+  "config": {
+    "name": "HR assistant BYD",
+    "platform_settings.auth": {
+      "enable_auth": false,
+      "allowlist": [
+        {
+          "hostname": "jorgevalba.github.io"
+        }
+      ],
+      "require_origin_header": false
+    },
+    "conversation_config.agent.prompt.max_tokens": 1500,
+    "conversation_config.agent.prompt.llm": "gpt-5-mini"
+  },
+  "nuevas_conversaciones": 0,
+  "limite": "Configuración guardada; no es una prueba de conexión ni de rechazo desde otro origen."
+}

@@ -1,0 +1,27 @@
+{
+  "autor": "Jorge Valencia",
+  "estado": "Preparada; ejecución en n8n pendiente",
+  "nodos": 8,
+  "destino_de_ensayo": "https://rh-prueba-conexion.invalid/p08",
+  "nodos_codigo_identico": [
+    {
+      "nombre": "Preparar conteo",
+      "sha256": "a8497f520153f3893d3f709f5eb218e54619ae9e6d8ef7da7e3e7a7d2dfc84ee"
+    },
+    {
+      "nombre": "Control de presupuesto",
+      "sha256": "d1303138fca97eab1403841a0ff350f168d8978474283d5a70e02310d4b57baf"
+    },
+    {
+      "nombre": "Devolver bloqueo",
+      "sha256": "c3dbd58b72fdc7078c6405bfce833161344f8c97506c7f93f0c56fae79447269"
+    }
+  ],
+  "diferencias_explicitas": [
+    "Inicio y datos de llamada sintéticos.",
+    "HTTP real sin credenciales a destino inválido; timeout 3000 ms y máximo dos intentos configurados solo en esta copia.",
+    "Leer costos sustituido por historial vacío, sin tablas.",
+    "Se conserva código de preparación, autorización y devolución de bloqueo; sin nodos de generación.",
+    "No se prueba entrega Telegram ni persistencia de error en tablas."
+  ]
+}

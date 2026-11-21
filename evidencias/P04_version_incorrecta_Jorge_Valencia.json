@@ -1,0 +1,59 @@
+{
+  "autor": "Jorge Valencia",
+  "prueba": "P04_version_incorrecta",
+  "fecha_recepcion": "2026-11-04",
+  "fecha_evento_confirmada": null,
+  "nota_fecha": "Folio contiene 20261105; capturas muestran horas pero no fecha explícita. Se conserva folio literal y no se infiere fecha del evento.",
+  "caso_id": "VAC-20261105-YTLSU4260",
+  "empleado_id": "EMP-004",
+  "version_mostrada": 1,
+  "estado_previo": "Pendiente de aprobación",
+  "entrada": "/aprobar VAC-20261105-YTLSU4260 V2",
+  "hora_solicitud_visible": "18:17",
+  "hora_respuesta_visible": "18:18",
+  "resultado_observado": "La versión indicada no es la vigente. Consulta /estado FOLIO y utiliza la versión mostrada.",
+  "nota_bot": "Esta operación no utiliza OpenAI.",
+  "estado_evidencia": "Rechazo de V2, estado posterior Pendiente V1 y cero filas para reserva V1 según captura y confirmación del filtro por Jorge.",
+  "capturas_privadas": [
+    {
+      "archivo": "codex-clipboard-defcee46-01b4-4620-a67c-7cc25221a7e7.jpg",
+      "sha256": "9223e2913a3ca4cb8652711c9dec9940d0ef7e3da89e460b933e420cd66b2bee"
+    },
+    {
+      "archivo": "codex-clipboard-0e5cd01c-4282-44ba-a067-6ca9b5033ce6.jpg",
+      "sha256": "64c42f202bb3f4a12dcd835e859e64c3f57ba416e7fccd40512b5677affb1ccb"
+    }
+  ],
+  "limites": [
+    "Sin ID de ejecución ni log completo.",
+    "El criterio de filtro no aparece desplegado; contraste de reserva V1 según indicación y confirmación del usuario, no auditoría de todas las reservas/versiones.",
+    "No se consultó saldo efectivo del empleado después de la prueba; saldo mostrado es proyectado.",
+    "No inferir costo total cero; caso posterior al corte de costos/solicitudes ya conciliado."
+  ],
+  "consulta_posterior": {
+    "entrada": "/estado VAC-20261105-YTLSU4260",
+    "hora_visible": "18:20",
+    "estado": "Pendiente de aprobación",
+    "version": 1,
+    "vigencia_hasta": "2026-11-05T00:46:44.545Z",
+    "dias": 5,
+    "saldo_proyectado": 5,
+    "prima_estimada_mxn": 937.5,
+    "captura_privada": {
+      "archivo": "codex-clipboard-a8cdf436-ef1a-471c-9ad9-d9e73adec4b9.jpg",
+      "sha256": "4b81dde3a535dc541d74b7f4bd1119b5c4c0b6e674189a7e94f9b0ca416fe4ba"
+    }
+  },
+  "consulta_reserva_posterior": {
+    "tabla_indicada": "rh aprobadas",
+    "columna": "aprobacion_id",
+    "filtro_solicitado": "APR-VAC-20261105-YTLSU4260-V1",
+    "resultado_visible": "No rows; Total 0",
+    "confirmacion_usuario": "Si son 0 registros",
+    "alcance": "Cero filas visibles; el valor/operador del filtro y nombre de tabla no aparecen en el recorte. Se atribuye la aplicación del filtro a la confirmación de Jorge. No consulta de todas las versiones.",
+    "captura_privada": {
+      "archivo": "codex-clipboard-4e3dc49e-ce36-4115-8702-bf85d387640b.png",
+      "sha256": "96912e4c4ceba84cddbc614018036683a4e7fdeeab3806fd832f557393d21df9"
+    }
+  }
+}

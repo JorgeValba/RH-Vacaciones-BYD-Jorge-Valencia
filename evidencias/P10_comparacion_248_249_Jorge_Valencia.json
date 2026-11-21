@@ -1,0 +1,24 @@
+{
+  "autor": "Jorge Valencia",
+  "prueba": "P10",
+  "ejecuciones": [
+    "248",
+    "249"
+  ],
+  "resultado": "CONTROL_SECUENCIAL_DOCUMENTADO",
+  "campos_comparados": {
+    "evento_id": "tg-844548491-65",
+    "caso_id": "VAC-20261102-YTLSBKE8E",
+    "eventos_en_tabla": 1,
+    "rama_observada": "false: evento ya registrado",
+    "abrir_otro_caso": false
+  },
+  "origen": "Dos salidas JSON n8n compartidas por Jorge; consulta e IF del export sobre un evento histórico persistido.",
+  "alcance": "Ambas reproducciones detectaron una sola fila y tomaron la rama de duplicado. El ensayo solo consulta; no retransmite un webhook real ni realiza la primera escritura.",
+  "limites": [
+    "No prueba atomicidad entre buscar e insertar bajo concurrencia.",
+    "No prueba recepción duplicada real del webhook de Telegram.",
+    "No atribuir ausencia de escrituras del ensayo a una ejecución integral de aprobación."
+  ],
+  "no_repetir_ensayo": true
+}

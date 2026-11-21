@@ -1,0 +1,5 @@
+﻿autor,etapa,agente,generaciones,tokens_entrada,tokens_cache_incluidos,tokens_salida,costo_gpt5_usd,alcance
+Jorge Valencia,recepcion,Agente 1 - Recepción,12,7604,0,744,0.01694500,Solo generaciones GPT-5 del corte; no sumar otra vez al ledger.
+Jorge Valencia,consulta,Agente 2 - Consulta,12,14404,0,2622,0.04422500,Solo generaciones GPT-5 del corte; no sumar otra vez al ledger.
+Jorge Valencia,propuesta,Agente 3 - Propuesta,12,15636,1152,2152,0.03976900,Solo generaciones GPT-5 del corte; no sumar otra vez al ledger.
+Jorge Valencia,revision,Agente 4 - Revisión,12,16274,1024,1574,0.03493050,Solo generaciones GPT-5 del corte; no sumar otra vez al ledger.
