@@ -1,0 +1,56 @@
+{
+  "autor": "Jorge Valencia",
+  "fecha_revision": "2026-11-21",
+  "repositorio": "https://github.com/JorgeValba/RH-Vacaciones-BYD-Jorge-Valencia",
+  "rama": "main",
+  "commit_contenido_verificado": "d09b218d4756fc3dc7369fa21ec65a92fde05a8f",
+  "tree_sha": "53e052e4362f3f5abdca04688dcdf17cfed11147",
+  "archivos": 136,
+  "fotos_seleccionadas": 13,
+  "workflows_n8n_sanitizados": 4,
+  "estructura_minima_presente": true,
+  "publicacion": {
+    "run_id": 44946570444,
+    "url": "https://github.com/JorgeValba/RH-Vacaciones-BYD-Jorge-Valencia/actions/runs/44946570444",
+    "conclusion": "success",
+    "jobs": [
+      {
+        "nombre": "validar",
+        "conclusion": "success"
+      },
+      {
+        "nombre": "publicar",
+        "conclusion": "success"
+      }
+    ]
+  },
+  "revision_local": {
+    "json_validos": 50,
+    "enlaces_locales_sin_rotura": 155,
+    "env_example_sin_valores": true,
+    "patrones_secretos_detectados": 0,
+    "pruebas_codigo": [
+      "skills.test.mjs",
+      "voz.test.mjs",
+      "validar_panel.mjs",
+      "panel_actualizado.test.mjs"
+    ],
+    "resultado_pruebas": "Cuatro comandos con exit 0"
+  },
+  "integridad": {
+    "archivos_candidatos_comparados_por_git_sha": 135,
+    "matriz_historica_remota_conservada": "docs/Matriz_web_voz_Jorge_Valencia.csv",
+    "web_sin_cambios_de_codigo": true,
+    "hashes_de_13_capturas_coincidentes": true
+  },
+  "alcance": "Publicación de materiales y despliegue en Actions comprobados. No se iniciaron conversaciones ElevenLabs ni se probó nuevamente el servicio n8n. La consulta web al sitio no produjo lectura verificable; no confundir despliegue exitoso con prueba actual de todos los servicios.",
+  "confirmacion_usuario": "Los cuatro workflows son los mismos que se probaron.",
+  "pendientes": [
+    "Informe final de 8–12 páginas y reflexión individual revisada.",
+    "Video 5–8 min, demostración hasta 12 min y ZIP del estado final.",
+    "Disponibilidad n8n/ElevenLabs y cuotas durante evaluación.",
+    "Instalación independiente/provisión privada de pases; límites de evidencia aislada conservados.",
+    "Costo de construcción no recuperado y comparación costo/calidad medida.",
+    "Consentimiento inicial, permiso de micrófono y obstrucción del widget en móvil."
+  ]
+}
