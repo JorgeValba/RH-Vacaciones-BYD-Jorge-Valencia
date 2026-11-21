@@ -13,6 +13,5 @@
   "operaciones_escritura_en_ensayo": 0,
   "llamadas_modelo_en_ensayo": 0,
   "alcance": "Consulta e IF del export aplicados a un evento histórico persistido; reproducción aislada y secuencial, no reenvío real del webhook de Telegram ni prueba de concurrencia.",
-  "siguiente_comprobacion": "Ejecutar de nuevo este workflow y comparar mismo evento, mismo folio y una sola fila.",
   "estado_evidencia": "Segunda reproducción aislada documentada; comparación secuencial disponible."
 }

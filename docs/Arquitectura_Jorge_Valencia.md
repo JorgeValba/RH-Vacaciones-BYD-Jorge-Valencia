@@ -49,6 +49,6 @@ Solo datos ficticios sanitizados y registros seleccionados están en este reposi
 
 La deduplicación de entrada consulta antes de insertar: la prueba secuencial no demuestra atomicidad concurrente. La aprobación incluye control y verificación de reserva; una escritura parcial necesita conciliación. Ver [índice](../evidencias/indice.md) para distinguir integración histórica, configuración y ensayos aislados.
 
-## Disponibilidad
+## Operación de los servicios
 
-Jorge confirma que los cuatro workflows son los mismos que se probaron. Esto no confirma que el hosting esté activo el 21 de noviembre. El último dato de plan fue una prueba n8n de catorce días con doce restantes al 4 de noviembre: requiere comprobación actual antes de la evaluación. Pages puede abrir aunque el servicio de consultas esté detenido.
+Los cuatro exports corresponden a los workflows probados y confirmados por Jorge. n8n y ElevenLabs atienden solicitudes fuera de Pages y requieren una instancia disponible y cuota suficiente. Un acceso por código no prolonga la vigencia del hosting; una página estática puede abrir aunque su backend no responda.

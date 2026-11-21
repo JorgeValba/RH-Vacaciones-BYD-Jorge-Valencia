@@ -1,7 +1,7 @@
 ---
 name: evaluar-vacaciones-byd
 description: Preparar una propuesta de vacaciones con saldo, cobertura y prima validados.
-version: 1.0.1
+version: 1.0.2
 ---
 # Evaluar vacaciones RH BYD
 Elaborado por: Jorge Valencia.
@@ -37,4 +37,5 @@ Cifras coinciden con cálculos deterministas; mismo caso_id; fuentes identificad
 Válido: EMP-002, 2026-11-23 a 2026-11-27, con calendario completo y cinco días laborables. Con saldo 10 y cobertura suficiente, proyectar saldo 5; la prima depende del salario y tasa de sus tablas.
 Aclaración: /nuevo EMP-002 sin fechas. No llamar al modelo para inventarlas.
 ## Carga y uso
-adaptador/cargar_skills.mjs lee este archivo, identifica versión y calcula SHA-256. Su contenido se adjunta a las instrucciones y el registro de carga acompaña al caso. Integración en n8n pendiente; guardar el archivo en GitHub por sí solo no acredita uso operativo.
+Este archivo es un SKILL.md descargable con instrucciones reutilizables. El adaptador local adaptador/cargar_skills.mjs lee su contenido y registra versión y SHA-256. En n8n, el nodo Cargar skills versionados utiliza snapshots compilados y proyecta las reglas por rol; las trazas del proyecto documentan su carga y reutilización.
+La revisión de este archivo actualiza únicamente la documentación de carga; no cambia las reglas de negocio o permisos. Las versiones y hashes de los snapshots efectivamente ejecutados se conservan en skills/Snapshots_n8n_Jorge_Valencia.json. Descargar este archivo no actualiza por sí solo una instancia n8n. Para usarlo en otra implementación, cargarlo con el adaptador y verificar la traza; para cambiar un snapshot n8n, recompilarlo y comprobar su integridad antes de usarlo.

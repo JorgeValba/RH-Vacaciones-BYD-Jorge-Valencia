@@ -25,4 +25,4 @@ assert.equal(V.saldo({empleado_id:'EMP-005'},[emp],[reserve,reserve],[rule],Date
 assert.equal(V.saldo({empleado_id:'EMP-005'},[emp],[],[rule,rule],Date.now()).ok,false);
 assert.equal(V.saldo({empleado_id:'EMP-005'},[{...emp,alias_ficticio:'Nombre real'}],[],[rule],Date.now()).ok,false);
 assert.equal(V.saldo({empleado_id:'EMP-005'},[emp],[{...reserve,dias_reservados:20}],[rule],Date.now()).ok,false);
-console.log('Consultas verificadas: validación, alcance ficticio, fechas, saldo, privacidad, duplicados y ausencia de modificaciones. Autenticación real pendiente de configurar en n8n.');
+console.log('Consultas verificadas: validación, alcance ficticio, fechas, saldo, privacidad, duplicados y ausencia de modificaciones. Estas aserciones son locales; la evidencia del webhook autenticado se consulta por separado.');

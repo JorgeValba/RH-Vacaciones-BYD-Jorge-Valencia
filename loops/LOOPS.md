@@ -1,25 +1,28 @@
-# Loops del asistente RH
-Elaborado por: Jorge Valencia. Versión 1.0. Estado: especificación para integrar y contrastar con n8n.
+# Loops de RH Vacaciones BYD
+Elaborado por: Jorge Valencia. Reglas y evidencia de ejecución.
 
 ## Calidad de negocio
-Entrada: propuesta del Agente 3, datos y cálculos deterministas, fuentes y caso_id. Responsable: orquestador y Agente 4.
-Generar → medir esquema, cifras y fuentes → diagnosticar diferencias → devolver al Agente 3 → revisar nuevamente.
-Máximo: dos propuestas totales, una original y una corrección; se mantiene el límite existente para controlar consumo. Si la segunda revisión falla: Error controlado, sin aprobación ni reserva.
-Tiempo: dentro de los 120 segundos del caso; presupuesto: comparte el tope de 0.10 USD, sin crear una bolsa adicional. Máximo global de seis llamadas generativas. Los valores deben coincidir con Configuración antes de integrar.
-Salida: pendiente de aprobación solo después de revisión válida. Registrar V1 fallida, diagnóstico, V2 y costo incremental con el mismo caso_id. La aparición de V2 por sí sola no prueba que hubo mejora: se requiere la traza.
+
+Entrada: propuesta del Agente 3, cálculos deterministas, referencias y caso_id. Responsables: orquestador y Agente 4.
+
+Secuencia: generar → contrastar esquema, cifras y fuentes → diagnosticar diferencias → devolver al Agente 3 → revisar otra vez. El máximo es dos propuestas totales, una original y una corrección; se justifica para mantener cuatro especialistas iniciales y dos llamadas de corrección dentro de seis generaciones, 120 segundos y USD 0.10 compartidos por caso.
+
+Retorno: lista concreta de correcciones al Agente 3. Salida válida: propuesta revisada para decisión humana. Una segunda revisión negativa o un límite agotado produce Error controlado, sin aprobación automática ni reserva anticipada.
+
+En el caso VAC-20261102-YTLS6SW04, Revisión V1 devolvió validado=false; Propuesta corrigió explicación de base/tasa y redacción; Revisión V2 devolvió validado=true. El costo incremental L5/L6 fue USD 0.003967. La decisión humana posterior fue rechazo: calidad validada no equivale a aprobación.
 
 ## Seguridad y costo
-Entrada: paso siguiente, autorización, permisos, presupuesto y consumo acumulado. Responsable: reglas del orquestador, sin LLM para decidir permisos.
-Evaluar → autorizar o detener → reservar costo → ejecutar paso permitido → registrar consumo → revisar límites → volver al control antes del siguiente paso.
-Máximo: seis llamadas generativas por caso; 120 segundos y 0.10 USD compartidos. No reintentar automáticamente una escritura empresarial ambigua. Superar un límite bloquea nuevas llamadas y genera cierre controlado; una escritura parcial conserva control para conciliación.
-Salida: continuar únicamente con autorización y margen; al agotarse presupuesto/tiempo/llamadas: Error controlado y motivo observable. Registrar costos desconocidos como null y no contabilizar dos veces el subtotal del loop.
 
-## Evidencia pendiente
-Carga de ambos archivos en n8n; ejecución con dos casos; V1 fallida y V2 corregida; pruebas de inyección, acceso y presupuesto. Las pruebas locales del adaptador no sustituyen estas ejecuciones.
-## Autoevaluación de diseño, no de funcionamiento
-Escala 0–4: claridad 4, contexto 4, evidencia 3, control 4, utilidad 3 = 18/20 para cada skill y loop. La evidencia se califica 3 porque las condiciones están definidas, pero la operación integrada todavía no se acredita. Revisar con los registros de n8n antes de entregar.
+Entrada: paso siguiente, autorización, permisos, contador, tiempo, consumo y reserva. Responsable: lógica determinista del orquestador y subworkflow LLM.
 
+Secuencia: comprobar acceso y margen → autorizar/detener → reservar costo → ejecutar paso permitido → registrar consumo → comprobar resultado y límites antes del paso siguiente. Máximo global: seis generaciones, 120 segundos y USD 0.10 por caso. No repetir indefinidamente una escritura ambigua.
 
-## Actualización de evidencia al 4 de noviembre de 2026
+Retorno: continuar solo con autorización y margen. Ante límite o datos insuficientes, detener con motivo. Escritura parcial de reserva: conservar control para conciliación. Un costo desconocido es null y una reserva presupuestaria no es un cargo pagado.
 
-Elaborado por: Jorge Valencia. La especificación anterior es histórica y no debe interpretarse como ausencia de la integración posterior. Las trazas recogidas muestran carga de skills en YTLSAI66N, YTLSBKE8E y YTLSEX4SR, así como controles loop_seguridad/loop_calidad. YTLS6SW04 muestra corrección V1→V2 con seis generaciones y costo incremental histórico calculado USD 0.003967; ese caso no tiene carga_skill registrada. No afirmar que sea una prueba conjunta de carga y corrección del adaptador posterior. Falta revisar autoevaluación final y evidencia faltante en tests/pruebas.csv, aún por consolidar.
+Las trazas de YTLSBKE8E y YTLSEX4SR documentan los controles. La ejecución aislada 246 contrastó presupuesto insuficiente, máximo de llamadas y caso dentro del límite; es una prueba del código de autorización con entradas sintéticas, no persistencia integral del bloqueo en todas las tablas.
+
+## Evidencia y autoevaluación
+
+La [consolidación P11](../docs/P11_Skills_loops_Jorge_Valencia.md) relaciona versiones, diagnóstico, costos y reutilización. Los registros están en [Evidencia_agentes_loops](../evidencias/registros/Evidencia_agentes_loops_Jorge_Valencia.json) y el [índice](../evidencias/indice.md#e-p11-01). La autoevaluación cualitativa asistida utiliza cinco aspectos 0–4 y conserva sus justificaciones; no es una calificación de la docente.
+
+Estos loops ya están implementados en el workflow principal y el subworkflow de llamada controlada. LOOPS.md describe su operación; no se instala como si fuera un workflow JSON ni reemplaza los nodos ejecutables.

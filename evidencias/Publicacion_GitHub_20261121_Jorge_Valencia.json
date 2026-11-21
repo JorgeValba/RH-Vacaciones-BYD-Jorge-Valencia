@@ -44,13 +44,5 @@
     "hashes_de_13_capturas_coincidentes": true
   },
   "alcance": "Publicación de materiales y despliegue en Actions comprobados. No se iniciaron conversaciones ElevenLabs ni se probó nuevamente el servicio n8n. La consulta web al sitio no produjo lectura verificable; no confundir despliegue exitoso con prueba actual de todos los servicios.",
-  "confirmacion_usuario": "Los cuatro workflows son los mismos que se probaron.",
-  "pendientes": [
-    "Informe final de 8–12 páginas y reflexión individual revisada.",
-    "Video 5–8 min, demostración hasta 12 min y ZIP del estado final.",
-    "Disponibilidad n8n/ElevenLabs y cuotas durante evaluación.",
-    "Instalación independiente/provisión privada de pases; límites de evidencia aislada conservados.",
-    "Costo de construcción no recuperado y comparación costo/calidad medida.",
-    "Consentimiento inicial, permiso de micrófono y obstrucción del widget en móvil."
-  ]
+  "confirmacion_usuario": "Los cuatro workflows son los mismos que se probaron."
 }

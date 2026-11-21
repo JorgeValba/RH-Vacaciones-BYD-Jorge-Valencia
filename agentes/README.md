@@ -1,30 +1,49 @@
-# Roles, contratos y ejecución
-Elaborado por: Jorge Valencia. Extraído de la versión V2.4 recibida.
+# Roles e instrucciones
+Elaborado por: Jorge Valencia.
 
-| Rol | Recibe | Aporta | No puede hacer |
+## Propósito y relación con la guía
+
+Guía p.3 y p.13: cinco roles distinguibles, contratos, instrucciones y traza común.
+
+## Qué contiene y en qué formato
+
+| Archivo o carpeta | Formato | Qué contiene y qué hacer con él |
+|---|---|---|
+| [Contratos_Jorge_Valencia.json](Contratos_Jorge_Valencia.json) | JSON (.json) | Relaciona instrucciones, esquema de salida y plantilla de entrada de cada especialista. |
+| [Orquestador_Jorge_Valencia.md](Orquestador_Jorge_Valencia.md) | Markdown (.md) | Orden de etapas, control determinista, estados, límites y cierre. |
+| [voz_core.js](voz_core.js) | JavaScript (.js) | Funciones deterministas de estado/saldo; base de las comprobaciones de consultas. |
+| [especialistas/](especialistas/README.md) | Carpeta | Abrir su README para formatos, uso y validación de ese componente. |
+| [voz/](voz/README.md) | Carpeta | Abrir su README para formatos, uso y validación de ese componente. |
+
+## Cómo utilizarlo
+
+Leer Orquestador_Jorge_Valencia.md y Contratos_Jorge_Valencia.json. En especialistas/ cada rol tiene instrucciones TXT, esquema JSON y expresión de entrada JS. La carpeta voz/ documenta la interfaz adicional.
+
+## Entorno y configuración
+
+Los cuatro especialistas se ejecutan por el workflow LLM; el orquestador es lógica n8n. voz_core.js ofrece consultas deterministas reutilizadas y probadas localmente.
+
+## Validación y resultado esperado
+
+La salida de cada agente se valida con su esquema y cálculos deterministas. Caso_id viaja en el sobre/traza, sin añadir campos no permitidos al JSON del especialista.
+
+## Relaciones con el proyecto
+
+- [Guía general](../README.md): requisitos, instalación, inicio, credenciales, parada y solución de problemas.
+- [Índice de evidencias](../evidencias/indice.md): resultados y archivos relacionados.
+- [Matriz de pruebas](../tests/pruebas.csv): entradas, esperados y resultados observados.
+
+
+## Responsabilidad de cada rol
+
+| Rol | Recibe | Entrega | Permiso principal |
 |---|---|---|---|
-| Orquestador | Evento autorizado, solicitud, reglas, datos y límites | Ordena etapas, calcula con código, valida salidas, controla presupuesto/corrección y cierre | Delegar permisos o decisión de RH al modelo |
-| Recepción | Texto y solicitud estructurada | Contrasta empleado/fechas, faltantes y observaciones | Evaluar salarios/saldo/cobertura |
-| Consulta | Recepción, registros recuperados y fuentes | Decide suficiencia y selecciona referencias permitidas | Afirmar que consultó directamente las tablas o buscar en la web en /nuevo |
-| Propuesta | Cálculos deterministas, alertas, fuentes y correcciones | Explicación breve; copia cifras, distingue prima bruta/adicional | Recalcular cifras o aprobar |
-| Revisión | Solicitud, cálculos, propuesta, alertas y fuentes | validado y correcciones concretas | Convertir calidad válida en aprobación humana |
+| Orquestador | Evento autorizado, datos, límites y resultados | Estado del caso, invocaciones, validaciones y cierre | Coordina y aplica lógica determinista; no delega permisos al modelo |
+| Recepción | Texto original y solicitud estructurada | Campos consistentes, faltantes y observaciones | Valida captura; no evalúa salarios o cobertura |
+| Consulta | Registros y fuentes de su contrato | Suficiencia y referencias permitidas | Selecciona entre datos recuperados por n8n; no inventa consultas externas |
+| Propuesta | Cálculos deterministas, alertas, fuentes y correcciones | Explicación breve con cifras verificadas | Propone; no aprueba ni escribe reservas |
+| Revisión | Solicitud, cálculos y propuesta | validado y correcciones concretas | Puede devolver o impedir liberación; no sustituye decisión humana |
 
-Los cuatro especialistas usan GPT-5; son roles diferentes por instrucciones, entradas y salidas. El orquestador es lógica de n8n y funciones, no una quinta llamada LLM. Las búsquedas legales generales corresponden a la ruta separada /lft.
+El sobre común conserva caso_id, etapa, resultado y referencia de consumo. El JSON estricto del especialista solo contiene los campos de su esquema; no añadir caso_id si ese esquema lo excluye. Las expresiones JS son referencia de entrada de n8n, no scripts que el evaluador deba ejecutar directamente.
 
-## Archivos extraídos
-
-`Contratos_Jorge_Valencia.json` enlaza instrucciones base, esquema de salida y expresión de construcción de entrada de cada rol. Los esquemas se extrajeron literalmente, sin añadir caso_id al JSON estricto. El identificador viaja en el sobre de la llamada y su traza.
-
-El prompt efectivo incluye la base más las reglas de skills seleccionadas por rol en `Cargar skills versionados`. Las fuentes de esos archivos se sincronizaron en esta copia con el snapshot del workflow: negocio 1.0.1, seguridad 1.0.0. No se cambió el runtime remoto ni se eliminó texto del original para aparentar otra configuración. Documentación nueva utiliza la descripción vigente del caso.
-
-## Corrección y validación
-
-Recepción valida campos; Consulta verifica referencias presentes; Propuesta contrasta cifras y frases de simulación, 70 palabras/700 caracteres; Revisión verifica coherencia entre validado y correcciones. La salida inválida se detiene. Una revisión negativa puede volver a Propuesta una sola vez, dentro del máximo global de seis generaciones, 120 s y USD 0.10 por caso. Son límites exportados, no una nueva prueba de agotamiento.
-
-La salida de Propuesta se compara con el cálculo usando la tolerancia implementada para valores numéricos; no se describe como igualdad binaria absoluta. La aprobación humana revalida el negocio y conserva control de escritura antes de reservar. Las reglas del servidor siguen aplicándose aunque un usuario solicite ignorarlas.
-
-## Evidencia disponible
-
-Tres casos aprobados con cuatro etapas en las trazas; YTLS6SW04 contiene seis generaciones y V1/V2, antes de la carga de skills posterior. Skills cargados en tres casos posteriores. No atribuir la carga posterior al caso histórico de corrección. Ver evidencias/registros/ y docs/Estado_entrega_Jorge_Valencia.md.
-
-La configuración de voz del archivo histórico FRIDAY_prompt_Jorge_Valencia.txt no se usa como fuente suficiente del prompt activo de ElevenLabs. El nombre visible actual es HR assistant BYD; la configuración activa recuperada está en voz/Configuracion_activa_Jorge_Valencia.json y voz/prompt_activo.txt, con sus límites observados. El widget de voz es una interfaz adicional y no reemplaza a los cuatro especialistas.
+El prompt efectivo combina instrucciones_base con reglas pertinentes de los skills que el nodo de carga proyecta por rol. Las trazas distinguen la versión realmente usada de revisiones documentales posteriores. El asistente ElevenLabs consulta por herramientas y es una interfaz adicional, no un quinto especialista que reemplace la orquestación.

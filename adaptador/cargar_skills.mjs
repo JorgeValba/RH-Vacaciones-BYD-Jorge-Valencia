@@ -1,4 +1,4 @@
-// Elaborado por: Jorge Valencia. Adaptador local; integración n8n pendiente.
+// Elaborado por: Jorge Valencia. Adaptador local de archivos SKILL.md; n8n utiliza el adaptador de snapshots del export.
 import {readFile} from 'node:fs/promises';
 import {createHash} from 'node:crypto';
 export async function cargarSkills(casoId,base=new URL('../',import.meta.url)) {

@@ -1,11 +1,11 @@
 # Uso de IA, fuentes y licencias
-Elaborado por: Jorge Valencia. Estado: declaración basada en el trabajo documentado; reflexión individual pendiente de revisión final del autor.
+Elaborado por: Jorge Valencia. Declaración basada en las herramientas y aportaciones documentadas.
 
 ## Herramientas y aportaciones
 
 Se utilizó asistencia de IA mediante ChatGPT/Codex para planear, desarrollar, revisar código/configuración, organizar evidencias y redactar documentación. El asistente de n8n ayudó a construir versiones iniciales de los workflows. GPT-5 ejecuta los cuatro especialistas del sistema; ElevenLabs presta conversación y voz y utiliza el modelo de conversación documentado en su configuración. No atribuir la ejecución de esos servicios a desarrollo manual sin asistencia.
 
-Jorge Valencia eligió y delimitó el caso, proporcionó el acceso y los archivos, configuró cuentas y credenciales, ejecutó las pruebas compartidas, aportó capturas/resultados y decidió alcance y diseño. La asistencia generó propuestas de código y documentación; las pruebas, sus fallas y sus límites aparecen en la matriz. La autoevaluación de skills/loops es una propuesta asistida que Jorge debe revisar, no una calificación independiente.
+Jorge Valencia eligió y delimitó el caso, proporcionó el acceso y los archivos, configuró cuentas y credenciales, ejecutó las pruebas compartidas, aportó capturas/resultados y decidió alcance y diseño. La asistencia generó propuestas de código y documentación; las pruebas, sus fallas y sus límites aparecen en la matriz. La autoevaluación de skills/loops es una valoración cualitativa asistida, no una calificación independiente.
 
 No se publican razonamientos internos, conversaciones completas, claves, pases ni IDs personales. No se afirma que todo el sistema se haya desarrollado sin IA ni que cada ensayo aislado equivalga a una integración completa.
 
@@ -19,7 +19,3 @@ No se publican razonamientos internos, conversaciones completas, claves, pases n
 - Capturas: aportadas por Jorge durante pruebas; selección en [índice](../evidencias/indice.md), con originales de revisión fuera del repositorio.
 
 El repositorio no concede por esta declaración una licencia general de software que Jorge no haya elegido. La licencia OFL de la fuente no se extiende automáticamente al código o a las marcas.
-
-## Revisión individual pendiente
-
-Antes de entregar el informe, Jorge debe revisar las atribuciones y añadir su reflexión sobre la decisión que resuelve la solución, el aporte de cada agente, el control que evitó una acción indebida, el mayor costo observado, el efecto de multiplicar volumen y lo que validaría antes de usar datos reales. No inventar experiencias u opiniones personales en su nombre.

@@ -1,6 +1,6 @@
 {
   "autor": "Jorge Valencia",
-  "estado": "Preparado para publicación; validación remota posterior al commit",
+  "estado": "Material documental del repositorio",
   "fecha_consolidacion": "2026-11-04",
   "evidencias": [
     {
@@ -18,7 +18,7 @@
       ],
       "resultado_observable": "YTLSBKE8E tiene cuatro especialistas, decisión de aprobar y una reserva de cuatro días.",
       "limite": "Evidencia del corte histórico; no nueva ejecución de extremo a extremo ni garantía para todos los casos.",
-      "estado": "Documentada en paquete local"
+      "estado": "Evidencia documentada; alcance descrito en la ficha"
     },
     {
       "autor": "Jorge Valencia",
@@ -35,7 +35,7 @@
       ],
       "resultado_observable": "YTLRX08S4 y YTLS2ZE8C: cuatro especialistas y reserva de cinco días por caso.",
       "limite": "EMP-001 requirió conciliación del formato de fecha; conservar la incidencia y no presentarlo como recorrido sin fallas.",
-      "estado": "Documentada en paquete local"
+      "estado": "Evidencia documentada; alcance descrito en la ficha"
     },
     {
       "autor": "Jorge Valencia",
@@ -51,7 +51,7 @@
       ],
       "resultado_observable": "Herramientas de folio y saldo responden ok: YTLSBKE8E Aprobada V1, cuatro días; EMP-005 saldo seis días.",
       "limite": "Sesión de texto, no voz hablada. Sus consultas VOZ-188/191 son posteriores al corte del CSV histórico.",
-      "estado": "Documentada en paquete local"
+      "estado": "Evidencia documentada; alcance descrito en la ficha"
     },
     {
       "autor": "Jorge Valencia",
@@ -68,7 +68,7 @@
       ],
       "resultado_observable": "Sesión de 67 segundos con audio de usuario y respuesta; consulta de saldo EMP-005 ok y periodo correcto.",
       "limite": "No transcripción completa ni repetición reciente de la prueba; no confundirla con E-P03-01.",
-      "estado": "Documentada en paquete local"
+      "estado": "Evidencia documentada; alcance descrito en la ficha"
     },
     {
       "autor": "Jorge Valencia",
@@ -84,7 +84,7 @@
       ],
       "resultado_observable": "Propuesta V1; intento V2 rechazado; consulta posterior conserva Pendiente de aprobación V1.",
       "limite": "Las capturas completas de conversación se conservan en revisión privada; fecha del evento no explícita en imagen. No demuestra por sí solo ausencia de todas las escrituras.",
-      "estado": "Documentada en paquete local"
+      "estado": "Evidencia documentada; alcance descrito en la ficha"
     },
     {
       "autor": "Jorge Valencia",
@@ -101,7 +101,7 @@
       ],
       "resultado_observable": "No rows / Total 0 para la consulta de reserva V1 solicitada, según confirmación del usuario.",
       "limite": "El operador y valor del filtro no aparecen desplegados; no acredita todas las versiones ni saldo efectivo del empleado.",
-      "estado": "Documentada en paquete local"
+      "estado": "Evidencia documentada; alcance descrito en la ficha"
     },
     {
       "autor": "Jorge Valencia",
@@ -119,7 +119,7 @@
       ],
       "resultado_observable": "/nuevo EMP-004 recibe formato de ayuda; termina en Responder ayuda o rechazo sin especialistas visibles.",
       "limite": "No se ensayó entrada vacía/sticker. La guía admite vacía o incompleta. La captura no es auditoría de facturación o de todas las tablas.",
-      "estado": "Documentada en paquete local"
+      "estado": "Evidencia documentada; alcance descrito en la ficha"
     },
     {
       "autor": "Jorge Valencia",
@@ -137,7 +137,7 @@
       ],
       "resultado_observable": "Petición de ignorar reglas/revelar claves responde con ayuda sin secretos; especialistas sin ejecutar.",
       "limite": "Bloqueo previo al modelo; no es una prueba exhaustiva de inyección dentro de cada LLM o documento recuperado.",
-      "estado": "Documentada en paquete local"
+      "estado": "Evidencia documentada; alcance descrito en la ficha"
     },
     {
       "autor": "Jorge Valencia",
@@ -154,7 +154,7 @@
       ],
       "resultado_observable": "La cuenta identificada por Jorge como no autorizada recibe rechazo ante /start y /nuevo.",
       "limite": "Sin recorrido de ejecución ni consulta posterior de tablas; el mensaje agrupa acceso no habilitado y vencido, no prueba cada causa por separado.",
-      "estado": "Documentada en paquete local"
+      "estado": "Evidencia documentada; alcance descrito en la ficha"
     },
     {
       "autor": "Jorge Valencia",
@@ -172,7 +172,7 @@
       ],
       "resultado_observable": "Ejecución 247: ENOTFOUND; permitido=false, generación no intentada y sin fila de reserva propuesta.",
       "limite": "No caída real de OpenAI, cuota agotada o timeout observado. Sin persistencia de error en tablas/Telegram; reintentos configurados solo en el ensayo.",
-      "estado": "Documentada en paquete local"
+      "estado": "Evidencia documentada; alcance descrito en la ficha"
     },
     {
       "autor": "Jorge Valencia",
@@ -189,7 +189,7 @@
       ],
       "resultado_observable": "Ejecución 246: presupuesto insuficiente y seis intentos bloquean; contraste dentro de límites autoriza.",
       "limite": "Código del control aislado; no consume seis llamadas reales ni prueba persistencia integral del bloqueo.",
-      "estado": "Documentada en paquete local"
+      "estado": "Evidencia documentada; alcance descrito en la ficha"
     },
     {
       "autor": "Jorge Valencia",
@@ -208,7 +208,7 @@
       ],
       "resultado_observable": "248/249: mismo evento y folio YTLSBKE8E, una fila en ambas lecturas y rama de duplicado.",
       "limite": "Ensayo de solo lectura, sin primera inserción ni reenvío real del webhook. No acredita atomicidad o concurrencia.",
-      "estado": "Documentada en paquete local"
+      "estado": "Evidencia documentada; alcance descrito en la ficha"
     },
     {
       "autor": "Jorge Valencia",
@@ -227,7 +227,7 @@
       ],
       "resultado_observable": "V1 false→V2 true en YTLS6SW04; costo extra USD 0.003967; ambos skills cargados y reutilizados en BKE8E/EX4SR.",
       "limite": "Corrección histórica anterior a las cargas posteriores; no atribuirle el mismo adaptador. Autoevaluación propuesta para revisión de Jorge, no nota de la docente.",
-      "estado": "Documentada en paquete local"
+      "estado": "Evidencia documentada; alcance descrito en la ficha"
     },
     {
       "autor": "Jorge Valencia",
@@ -244,7 +244,7 @@
       ],
       "resultado_observable": "41396056569 bloquea artefacto/publicación por validación; 41396256574 publica al retirar inyección. Mismo commit.",
       "limite": "No cambio de código entre ambas ejecuciones; no retirada del sitio previamente publicado ni nueva ejecución para este índice.",
-      "estado": "Documentada en paquete local"
+      "estado": "Evidencia documentada; alcance descrito en la ficha"
     },
     {
       "autor": "Jorge Valencia",
@@ -258,11 +258,11 @@
       "rutas": [
         "evidencias/capturas/P13_interfaz/E-P13-01_390_panel_Jorge_Valencia.png",
         "evidencias/capturas/P13_interfaz/E-P13-01_1366_panel_Jorge_Valencia.png",
-        "docs/Evidencias_visuales_pendientes_Jorge_Valencia.md"
+        "evidencias/capturas/README.md"
       ],
       "resultado_observable": "Panel en anchos visibles de 390 y 1366 px; evidencia visual del reacomodo de componentes.",
       "limite": "No acredita por imagen teclado, permisos de micrófono o accesibilidad completa; widget observado con obstrucción en teléfono real.",
-      "estado": "Documentada en paquete local"
+      "estado": "Evidencia documentada; alcance descrito en la ficha"
     },
     {
       "autor": "Jorge Valencia",
@@ -278,11 +278,11 @@
         "costos/costos.csv",
         "costos/Resumen_y_supuestos_Jorge_Valencia.json",
         "costos/Sesiones_consolidadas_Jorge_Valencia.json",
-        "costos/LEEME_costos_Jorge_Valencia.md"
+        "costos/README.md"
       ],
       "resultado_observable": "48 generaciones con trazas y fórmulas conciliadas; nueve sesiones ElevenLabs documentadas; USD 0.27757026 de subtotal identificado.",
       "limite": "No factura ni gasto completo del proyecto. Construcción y consumo no recuperado siguen desconocidos; cuotas de plataformas no son gratuitas indefinidamente.",
-      "estado": "Documentada en paquete local"
+      "estado": "Evidencia documentada; alcance descrito en la ficha"
     },
     {
       "autor": "Jorge Valencia",
@@ -300,8 +300,8 @@
         "evidencias/registros/Conciliacion_reservas_Jorge_Valencia.json"
       ],
       "resultado_observable": "KPI 13 solicitudes, dos pendientes, catorce días aprobados, con fecha/fuente visibles en el corte.",
-      "limite": "Captura histórica; el panel vivo puede tener más filas después. Dos pendientes se derivan como expiradas sin escritura; no comparar cortes distintos como si fueran simultáneos.",
-      "estado": "Documentada en paquete local"
+      "limite": "Captura histórica; el panel vivo puede tener más filas después. Dos no informados se derivan como expiradas sin escritura; no comparar cortes distintos como si fueran simultáneos.",
+      "estado": "Evidencia documentada; alcance descrito en la ficha"
     },
     {
       "autor": "Jorge Valencia",
@@ -319,7 +319,7 @@
       ],
       "resultado_observable": "Cantidades por estado, barras desde cero e historial de trece folios ficticios.",
       "limite": "Representación visual del mismo corte; no prueba lectura en tiempo real por sí sola.",
-      "estado": "Documentada en paquete local"
+      "estado": "Evidencia documentada; alcance descrito en la ficha"
     },
     {
       "autor": "Jorge Valencia",
@@ -337,7 +337,7 @@
       ],
       "resultado_observable": "EQ-B produce KPI 1/0/0 y una fila con cobertura insuficiente.",
       "limite": "Filtro y respuesta visual; no es una nueva ejecución de decisión de vacaciones.",
-      "estado": "Documentada en paquete local"
+      "estado": "Evidencia documentada; alcance descrito en la ficha"
     },
     {
       "autor": "Jorge Valencia",
@@ -353,7 +353,7 @@
       ],
       "resultado_observable": "Main releída con hostname jorgevalba.github.io y max_tokens=1500.",
       "limite": "Configuración verificada; no prueba adversaria desde otro origen ni conversación posterior a ese cambio.",
-      "estado": "Documentada en paquete local"
+      "estado": "Evidencia documentada; alcance descrito en la ficha"
     },
     {
       "autor": "Jorge Valencia",
@@ -364,12 +364,12 @@
       "fecha_referencia": "Corte histórico o recepción 2026-11-04; ver archivo fuente",
       "rutas": [
         "datos/Esquema_tablas_Jorge_Valencia.json",
-        "datos/carga_inicial/LEEME_Jorge_Valencia.md",
+        "datos/carga_inicial/README.md",
         "docs/Manual_instalacion_Jorge_Valencia.md"
       ],
       "resultado_observable": "Once tablas lógicas, seis CSV iniciales y manual de vinculación/configuración.",
-      "limite": "No acredita aún instalación independiente completa ni provisión de pases privados reproducida.",
-      "estado": "Documentada en paquete local"
+      "limite": "No acredita aún instalación indeno informado completa ni provisión de pases privados reproducida.",
+      "estado": "Evidencia documentada; alcance descrito en la ficha"
     },
     {
       "autor": "Jorge Valencia",
@@ -383,11 +383,11 @@
       "rutas": [
         "costos/escenarios.csv",
         "costos/Resumen_y_supuestos_Jorge_Valencia.json",
-        "costos/LEEME_costos_Jorge_Valencia.md"
+        "costos/README.md"
       ],
       "resultado_observable": "Seis escenarios a 100/1,000/10,000 casos; cuota n8n 145/10,000 y doce días restantes reportados por Jorge.",
       "limite": "No prueba de carga ni cotización cerrada. EUR y USD separados, fecha final exacta de prueba no confirmada; escenarios no equivalen al gasto observado.",
-      "estado": "Documentada en paquete local"
+      "estado": "Evidencia documentada; alcance descrito en la ficha"
     }
   ],
   "archivos_referenciados": [
@@ -423,8 +423,8 @@
       "autor": "Jorge Valencia",
       "evidencia_id": "E-P03-01",
       "ruta": "evidencias/Pages_herramientas_verificadas_Jorge_Valencia.json",
-      "sha256": "83e9ec7b6af9d277c7af0dad3df3ef3b7bb22765702b20f5414f5d499a370991",
-      "bytes": 3895
+      "sha256": "d570c54f372addbdc8aacec7db9f3b495fc86abf0f1ef43273ac0f2399468d4c",
+      "bytes": 3967
     },
     {
       "autor": "Jorge Valencia",
@@ -458,8 +458,8 @@
       "autor": "Jorge Valencia",
       "evidencia_id": "E-P05-01",
       "ruta": "evidencias/P05_entrada_incompleta_Jorge_Valencia.json",
-      "sha256": "9d67386c3c9c65a2b7768e0e27f48325fc7f83bc1bcb4f13fd56896650aa17d1",
-      "bytes": 1719
+      "sha256": "b5559d8404c928698d5d54ffbc0fbaffb42fbb1d004bfa765b792ec2f01c46ff",
+      "bytes": 1674
     },
     {
       "autor": "Jorge Valencia",
@@ -479,8 +479,8 @@
       "autor": "Jorge Valencia",
       "evidencia_id": "E-P06-01",
       "ruta": "evidencias/P06_peticion_secretos_Jorge_Valencia.json",
-      "sha256": "8db0166d5381b9f6bb18d6e671537389a46aa0874216be83e921a4a72bf42530",
-      "bytes": 1623
+      "sha256": "551911a87ccc981a632a96210e9424addf63206b7a35ecaedbb1c4ae2a1f8cfe",
+      "bytes": 1514
     },
     {
       "autor": "Jorge Valencia",
@@ -556,15 +556,15 @@
       "autor": "Jorge Valencia",
       "evidencia_id": "E-P10-01",
       "ruta": "evidencias/P10_ejecucion_248_Jorge_Valencia.json",
-      "sha256": "fde3df8dda4eb0e6bd5b496e496e610b4b78735a58a8f3583254794650350c93",
-      "bytes": 918
+      "sha256": "fae473ca96a2bb7c16fcb6f959dee98157a88cfa20a67cb2004bf63237287c16",
+      "bytes": 801
     },
     {
       "autor": "Jorge Valencia",
       "evidencia_id": "E-P10-01",
       "ruta": "evidencias/P10_ejecucion_249_Jorge_Valencia.json",
-      "sha256": "73a3a0a2c9b53c1a6ad594e75de13aac85b44131a9b477df4ac0b77e9b3a5a60",
-      "bytes": 940
+      "sha256": "1099e2ef5f5e757081b503f9d7c045000a2f16458d79cc57797661c06bc5d1b4",
+      "bytes": 807
     },
     {
       "autor": "Jorge Valencia",
@@ -577,8 +577,8 @@
       "autor": "Jorge Valencia",
       "evidencia_id": "E-P11-01",
       "ruta": "docs/P11_Skills_loops_Jorge_Valencia.md",
-      "sha256": "c1fba379dfcc67c22cc78537d83a30ef76851fcbbc2acefd6f8a4092e40efcbf",
-      "bytes": 8886
+      "sha256": "f023101452a491423b2affbe2fdb525d01afd67b3f0e8bfa8eb49afa60aac646",
+      "bytes": 8655
     },
     {
       "autor": "Jorge Valencia",
@@ -598,8 +598,8 @@
       "autor": "Jorge Valencia",
       "evidencia_id": "E-P11-01",
       "ruta": "skills/Snapshots_n8n_Jorge_Valencia.json",
-      "sha256": "8b0928eca708c345354e0ee090fab89150ce922145d1210f0e934442172ff3b6",
-      "bytes": 728
+      "sha256": "933a3e4a5a5a1495bfd58aecc626933c1a5b229aefa1259635b6cc8f43152bc8",
+      "bytes": 1460
     },
     {
       "autor": "Jorge Valencia",
@@ -612,8 +612,8 @@
       "autor": "Jorge Valencia",
       "evidencia_id": "E-P12-01",
       "ruta": "docs/Actions_evidencia_Jorge_Valencia.md",
-      "sha256": "19ea88063511fdff20e253920504c4afc06e08c8c2faa2b5c0ebdac0ca66df9a",
-      "bytes": 3353
+      "sha256": "0ced8a1b5c26f55f24da7b6171cce875a8903bdb680b8bcd5c0721513bb0e6e0",
+      "bytes": 3059
     },
     {
       "autor": "Jorge Valencia",
@@ -632,16 +632,16 @@
     {
       "autor": "Jorge Valencia",
       "evidencia_id": "E-P13-01",
-      "ruta": "docs/Evidencias_visuales_pendientes_Jorge_Valencia.md",
-      "sha256": "e800861535add10b1332a97d0937e3b8c9146641f14d4d55ac928948095fe018",
-      "bytes": 1445
+      "ruta": "evidencias/capturas/README.md",
+      "sha256": "6234734c740bad00d24140825cae6a6c0969aafc0baa759e51f965a7bb2a9f76",
+      "bytes": 1986
     },
     {
       "autor": "Jorge Valencia",
       "evidencia_id": "E-P14-01",
       "ruta": "costos/Conciliacion_costos_Jorge_Valencia.json",
-      "sha256": "dad21cd847ce2b6467ee87d78c90e0fa5be02f1bc339b34a174e1fad967e8efd",
-      "bytes": 4305
+      "sha256": "b29e9f9b378411fe9eb9b8d37fc33ef363dec742bc857c8655bb60eac1708254",
+      "bytes": 3687
     },
     {
       "autor": "Jorge Valencia",
@@ -654,8 +654,8 @@
       "autor": "Jorge Valencia",
       "evidencia_id": "E-P14-01",
       "ruta": "costos/Resumen_y_supuestos_Jorge_Valencia.json",
-      "sha256": "97166494c0337aa8d589f8bf7f75031e671b046627d3c7c3c2f4bad65c37336f",
-      "bytes": 2449
+      "sha256": "905c9a4797af3d2352a3314c10000fb6ffafea77b8807da9547a8c64871478be",
+      "bytes": 2324
     },
     {
       "autor": "Jorge Valencia",
@@ -667,9 +667,9 @@
     {
       "autor": "Jorge Valencia",
       "evidencia_id": "E-P14-01",
-      "ruta": "costos/LEEME_costos_Jorge_Valencia.md",
-      "sha256": "02dbea0fa65b3c41226c3f24737e2b2f1e573e8386c10aca0449256b8724685e",
-      "bytes": 7782
+      "ruta": "costos/README.md",
+      "sha256": "e7ef08a613e024de94d8993c5c13b19b09d59a5ef45b4f6e9a3ad54a4a159577",
+      "bytes": 5493
     },
     {
       "autor": "Jorge Valencia",
@@ -751,16 +751,16 @@
     {
       "autor": "Jorge Valencia",
       "evidencia_id": "E-DAT-01",
-      "ruta": "datos/carga_inicial/LEEME_Jorge_Valencia.md",
-      "sha256": "7d9b7d192f423002cf52919b21dab8a296ad3f55777d12c7f06e08688acaee4d",
-      "bytes": 1202
+      "ruta": "datos/carga_inicial/README.md",
+      "sha256": "06652670e87fa3c19cd0833a250aa7564d66760591e7de081362d4f5901daa5d",
+      "bytes": 2996
     },
     {
       "autor": "Jorge Valencia",
       "evidencia_id": "E-DAT-01",
       "ruta": "docs/Manual_instalacion_Jorge_Valencia.md",
-      "sha256": "765e95c96689a4efa323a54af19212f401de36bda6e1d3685edc4b31a6fa3578",
-      "bytes": 14231
+      "sha256": "16b8fa8020ad04c82ca9737f44857b8640acba9b89727bc8cdcf0951b402de2e",
+      "bytes": 13871
     },
     {
       "autor": "Jorge Valencia",
@@ -773,15 +773,15 @@
       "autor": "Jorge Valencia",
       "evidencia_id": "E-COST-01",
       "ruta": "costos/Resumen_y_supuestos_Jorge_Valencia.json",
-      "sha256": "97166494c0337aa8d589f8bf7f75031e671b046627d3c7c3c2f4bad65c37336f",
-      "bytes": 2449
+      "sha256": "905c9a4797af3d2352a3314c10000fb6ffafea77b8807da9547a8c64871478be",
+      "bytes": 2324
     },
     {
       "autor": "Jorge Valencia",
       "evidencia_id": "E-COST-01",
-      "ruta": "costos/LEEME_costos_Jorge_Valencia.md",
-      "sha256": "02dbea0fa65b3c41226c3f24737e2b2f1e573e8386c10aca0449256b8724685e",
-      "bytes": 7782
+      "ruta": "costos/README.md",
+      "sha256": "e7ef08a613e024de94d8993c5c13b19b09d59a5ef45b4f6e9a3ad54a4a159577",
+      "bytes": 5493
     }
   ],
   "capturas_copiadas_sin_editar": [
@@ -892,5 +892,6 @@
   ],
   "regla_hash": "SHA-256 del archivo en este corte; volver a generar si cambia el contenido. No se hashea este mismo manifiesto.",
   "fuera_del_repositorio": "Originales en revisión privada; no subir la carpeta completa por defecto.",
-  "revision_estructura": "2026-11-21"
+  "revision_estructura": "2026-11-21",
+  "revision_documental": "2026-11-21"
 }

@@ -5,7 +5,7 @@ Elaborado por: Jorge Valencia. Versión documental 1.0, 4 de noviembre de 2026.
 
 **Evaluar el sistema existente:** abrir Pages y el bot indicados en README; solicitar pase a Jorge por el canal privado. No importar, reemplazar tablas ni inicializar códigos en la instancia funcionando.
 
-**Recrear en otra cuenta:** usar esta guía y las cuatro plantillas de n8n. Crear un bot propio y un proyecto separado, con credenciales propias. Las plantillas tienen marcadores CONFIGURAR, se importan sin activar y no traen claves, cuentas autorizadas ni pases. La recreación completa todavía requiere provisionar pases en privado y verificar los controles de la cuenta ElevenLabs recreada; esos límites quedan explícitos.
+**Recrear en otra cuenta:** usar esta guía y las cuatro plantillas de n8n. Crear un bot propio y un proyecto separado, con credenciales propias. Las plantillas tienen marcadores CONFIGURAR, se importan sin activar y no traen claves, cuentas autorizadas ni pases. El propietario autoriza sus IDs privados y administra sus accesos en la nueva instancia, sin copiar pases de otra cuenta.
 
 ## 2. Entorno registrado
 
@@ -35,7 +35,7 @@ Mantener fechas de negocio AAAA-MM-DD como texto y números como Number; no conv
 
 En control, crear exactamente una fila: clave=GLOBAL, estado=Libre, propietario vacío, revision=0, verificado=0, autor=Jorge Valencia. Las columnas de revisión/verificado son Number. No poner verificado=1 a mano para saltarse /probar_control. Si una decisión queda interrumpida, conciliar antes de liberar; no forzar Libre sin revisar reserva y caso.
 
-Para el propietario de la recreación, configurar listas privadas de IDs de usuario/chat en Configuración. Si se requieren invitados, provisionar códigos aleatorios de un uso por un mecanismo privado; guardar solo SHA-256 y estado Disponible en la tabla. Registrar fechas de creación/canje máximo de acuerdo con la regla 30 días para canjear y 30 desde canje. No copiar ni ejecutar otra vez el inicializador privado de Jorge en producción. El generador reproducible de nuevos pases no está incluido todavía en este paquete público: no declarar esa parte automatizada.
+Para el propietario de la recreación, configurar listas privadas de IDs de usuario/chat en Configuración. Si se requieren invitados, provisionar códigos aleatorios de un uso por un mecanismo privado; guardar solo SHA-256 y estado Disponible en la tabla. Registrar fechas de creación/canje máximo de acuerdo con la regla 30 días para canjear y 30 desde canje. No copiar ni ejecutar otra vez el inicializador privado de Jorge en producción. Los códigos se administran en privado; el repositorio no distribuye pases de la cuenta de Jorge.
 
 ## 4. Importar cuatro workflows
 
@@ -69,7 +69,7 @@ Panel usa GET /webhook/rh-panel-publico-jv-v1. Su origen permitido debe correspo
 
 ## 7. ElevenLabs y HTML
 
-Crear/configurar agente en español, nombre HR assistant BYD, identificación de IA, alcance ficticio/LFT informativo y sin aprobación. La configuración activa recuperada por lectura está en agentes/voz/Configuracion_activa_Jorge_Valencia.json y su prompt en agentes/voz/prompt_activo.txt. El archivo histórico con FRIDAY en el nombre no es la configuración vigente. La lectura inicial registró max_tokens=-1 y allowlist vacía; una lectura posterior verificó max_tokens=1500 y jorgevalba.github.io en Main. Configurar el dominio propio y el límite en una recreación; ver evidencias/ElevenLabs_dominio_configurado_Jorge_Valencia.json.
+Crear/configurar agente en español, nombre HR assistant BYD, identificación de IA, alcance ficticio/LFT informativo y sin aprobación. La configuración activa recuperada por lectura está en agentes/voz/Configuracion_activa_Jorge_Valencia.json y su prompt en agentes/voz/prompt_activo.txt. La lectura inicial registró max_tokens=-1 y allowlist vacía; una lectura posterior verificó max_tokens=1500 y jorgevalba.github.io en Main. Configurar el dominio propio y el límite en una recreación; ver evidencias/ElevenLabs_dominio_configurado_Jorge_Valencia.json.
 
 Dos herramientas de servidor para el endpoint voz:
 
@@ -83,7 +83,7 @@ Dos herramientas de servidor para el endpoint voz:
 
 Solo esos campos por operación; conversacion_id debe ser referencia válida de sesión y no se pide al usuario como clave. Configurar secreto de cabecera en servidor. Las consultas leen registro/saldo y no reservan ni pagan. Configuración voz.CONSULTAS_FICTICIAS_HABILITADAS debe estar true cuando la integración esté lista. Si no se confirma auditoría, el flujo devuelve error controlado; revisar las tablas del mismo proyecto.
 
-Insertar el widget con el agent_id público en web/config.json y dominio permitido del sitio según la configuración admitida por la cuenta. API keys quedan fuera del HTML. La interfaz identifica IA y tiene consentimiento y alternativas; falta cerrar la comprobación de orden de consentimiento en una sesión nueva. No afirmar que una captura de chat prueba conversación hablada.
+Insertar el widget con el agent_id público en web/config.json y dominio permitido del sitio según la configuración admitida por la cuenta. API keys quedan fuera del HTML. La interfaz identifica IA y dispone de consentimiento y alternativas; la evidencia de cada control se describe en su ficha. No afirmar que una captura de chat prueba conversación hablada.
 
 Para publicar en la recreación: repositorio con web/, tests/, skills/ y .github/workflows/pages.yml; habilitar Pages mediante Actions. El workflow actual valida y publica únicamente web/. No subir secretos ni poner datos de recreación internos bajo web/. Probar primero las cuatro instrucciones locales del README.
 
@@ -126,4 +126,4 @@ Procedimiento contrastado con exportaciones entregadas y documentación oficial 
 - [Tablas de datos, proyecto e importación CSV](https://docs.n8n.io/build/work-with-data/data-tables.md).
 - [Webhook: test/producción y autenticación](https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.webhook/).
 
-La redacción no equivale a una nueva instalación en otra cuenta. CSV iniciales y esquemas están preparados; todavía falta verificar esa recreación y completar provisión privada de pases, límites/dominios del agente de voz y cierre de pruebas. Se conserva el alcance de las verificaciones existentes sin afirmar reproducibilidad total antes de probarla.
+Las instrucciones proceden de los exports y cortes descritos. Una recreación utiliza IDs, tablas, credenciales, pases y dominios de su propia cuenta; no reutiliza las concesiones privadas de la instancia de Jorge. Las evidencias identifican el entorno y alcance en que se realizaron las comprobaciones.

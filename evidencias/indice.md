@@ -1,17 +1,9 @@
-# Índice trazable de evidencias
-Elaborado por: Jorge Valencia. Materiales preparados para publicación. La disponibilidad remota se verifica después del commit.
+# Índice de evidencias de RH Vacaciones BYD
+Elaborado por: Jorge Valencia.
 
-Los identificadores E-Pxx-nn son estables. Se citan desde el reporte y se relacionan con tests/pruebas.csv. La etiqueta de prueba no implica aprobación integral: leer tipo, resultado y límite de cada ficha.
+Cada ID E-Pxx-nn relaciona una observación con archivos de soporte y su alcance. La [matriz](../tests/pruebas.csv) registra la prueba, entrada, esperado, observado y versión; las fotos complementan los datos.
 
-La página 12 de la guía exige rutas de evidencia y distingue capturas de acceso funcional; la página 13 pide índice, matriz y paquete reproducible. GitHub Pages es la aplicación; este índice pertenece al repositorio de entrega.
-
-## Cómo citar y localizar
-
-Ejemplo de referencia en el informe: «El intento con V2 fue rechazado y el caso conservó V1 pendiente; véase [E-P04-01](#e-p04-01)». El enlace abre una ficha, y desde ella los archivos. Las imágenes son evidencia complementaria: se enlazan junto con registros o límites cuando corresponda.
-
-Las copias seleccionadas de capturas están en capturas/; no fueron editadas. Los originales completos permanecen fuera del repositorio candidato. Los JSON P08–P10 son salidas compartidas por Jorge, no consultas independientes a la API ni pruebas integrales de producción.
-
-## Mapa de evidencias
+## Catálogo
 
 | ID | Prueba | Evidencia | Tipo |
 |---|---|---|---|
@@ -38,17 +30,15 @@ Las copias seleccionadas de capturas están en capturas/; no fueron editadas. Lo
 | [E-DAT-01](#e-dat-01) | Apoyo | Esquemas y muestra reproducible | Artefactos de instalación |
 | [E-COST-01](#e-cost-01) | P14 | Proyecciones y disponibilidad | Escenarios calculados y declaración del usuario |
 
-## Fichas y archivos
-
 ## E-P01-01
 
 **Caso completo EMP-005** · Conciliación de registros históricos
 
-**Pruebas:** P01. **Fecha:** Corte histórico o recepción 2026-11-04; ver archivo fuente.
+**Referencia:** Corte histórico o recepción 2026-11-04; ver archivo fuente.
 
-**Resultado observable:** YTLSBKE8E tiene cuatro especialistas, decisión de aprobar y una reserva de cuatro días.
+**Observación:** YTLSBKE8E tiene cuatro especialistas, decisión de aprobar y una reserva de cuatro días.
 
-**Límite:** Evidencia del corte histórico; no nueva ejecución de extremo a extremo ni garantía para todos los casos.
+**Alcance:** Evidencia del corte histórico; no nueva ejecución de extremo a extremo ni garantía para todos los casos.
 
 **Archivos:**
 
@@ -59,11 +49,11 @@ Las copias seleccionadas de capturas están en capturas/; no fueron editadas. Lo
 
 **Segundo y tercer caso** · Conciliación de registros históricos
 
-**Pruebas:** P02. **Fecha:** Corte histórico o recepción 2026-11-04; ver archivo fuente.
+**Referencia:** Corte histórico o recepción 2026-11-04; ver archivo fuente.
 
-**Resultado observable:** YTLRX08S4 y YTLS2ZE8C: cuatro especialistas y reserva de cinco días por caso.
+**Observación:** YTLRX08S4 y YTLS2ZE8C: cuatro especialistas y reserva de cinco días por caso.
 
-**Límite:** EMP-001 requirió conciliación del formato de fecha; conservar la incidencia y no presentarlo como recorrido sin fallas.
+**Alcance:** EMP-001 requirió conciliación del formato de fecha; conservar la incidencia y no presentarlo como recorrido sin fallas.
 
 **Archivos:**
 
@@ -74,11 +64,11 @@ Las copias seleccionadas de capturas están en capturas/; no fueron editadas. Lo
 
 **Consultas del widget desde Pages** · Metadata recuperada de sesión existente
 
-**Pruebas:** P03. **Fecha:** Corte histórico o recepción 2026-11-04; ver archivo fuente.
+**Referencia:** Corte histórico o recepción 2026-11-04; ver archivo fuente.
 
-**Resultado observable:** Herramientas de folio y saldo responden ok: YTLSBKE8E Aprobada V1, cuatro días; EMP-005 saldo seis días.
+**Observación:** Herramientas de folio y saldo responden ok: YTLSBKE8E Aprobada V1, cuatro días; EMP-005 saldo seis días.
 
-**Límite:** Sesión de texto, no voz hablada. Sus consultas VOZ-188/191 son posteriores al corte del CSV histórico.
+**Alcance:** Sesión de texto, no voz hablada. Sus consultas VOZ-188/191 son posteriores al corte del CSV histórico.
 
 **Archivos:**
 
@@ -88,11 +78,11 @@ Las copias seleccionadas de capturas están en capturas/; no fueron editadas. Lo
 
 **Consulta hablada histórica** · Metadata y resultado de herramienta
 
-**Pruebas:** P03, P14. **Fecha:** Corte histórico o recepción 2026-11-04; ver archivo fuente.
+**Referencia:** Corte histórico o recepción 2026-11-04; ver archivo fuente.
 
-**Resultado observable:** Sesión de 67 segundos con audio de usuario y respuesta; consulta de saldo EMP-005 ok y periodo correcto.
+**Observación:** Sesión de 67 segundos con audio de usuario y respuesta; consulta de saldo EMP-005 ok y periodo correcto.
 
-**Límite:** No transcripción completa ni repetición reciente de la prueba; no confundirla con E-P03-01.
+**Alcance:** No transcripción completa ni repetición reciente de la prueba; no confundirla con E-P03-01.
 
 **Archivos:**
 
@@ -102,11 +92,11 @@ Las copias seleccionadas de capturas están en capturas/; no fueron editadas. Lo
 
 **Rechazo de versión no vigente** · Resumen de capturas aportadas
 
-**Pruebas:** P04. **Fecha:** Corte histórico o recepción 2026-11-04; ver archivo fuente.
+**Referencia:** Corte histórico o recepción 2026-11-04; ver archivo fuente.
 
-**Resultado observable:** Propuesta V1; intento V2 rechazado; consulta posterior conserva Pendiente de aprobación V1.
+**Observación:** Propuesta V1; intento V2 rechazado; consulta posterior conserva Pendiente de aprobación V1.
 
-**Límite:** Las capturas completas de conversación se conservan en revisión privada; fecha del evento no explícita en imagen. No demuestra por sí solo ausencia de todas las escrituras.
+**Alcance:** Las capturas completas de conversación se conservan en revisión privada; fecha del evento no explícita en imagen. No demuestra por sí solo ausencia de todas las escrituras.
 
 **Archivos:**
 
@@ -116,11 +106,11 @@ Las copias seleccionadas de capturas están en capturas/; no fueron editadas. Lo
 
 **Consulta de reserva sin coincidencias** · Captura y confirmación del filtro por Jorge
 
-**Pruebas:** P04. **Fecha:** Corte histórico o recepción 2026-11-04; ver archivo fuente.
+**Referencia:** Corte histórico o recepción 2026-11-04; ver archivo fuente.
 
-**Resultado observable:** No rows / Total 0 para la consulta de reserva V1 solicitada, según confirmación del usuario.
+**Observación:** No rows / Total 0 para la consulta de reserva V1 solicitada, según confirmación del usuario.
 
-**Límite:** El operador y valor del filtro no aparecen desplegados; no acredita todas las versiones ni saldo efectivo del empleado.
+**Alcance:** El operador y valor del filtro no aparecen desplegados; no acredita todas las versiones ni saldo efectivo del empleado.
 
 **Archivos:**
 
@@ -131,11 +121,11 @@ Las copias seleccionadas de capturas están en capturas/; no fueron editadas. Lo
 
 **Entrada incompleta** · Resumen de respuesta y capturas de recorrido
 
-**Pruebas:** P05. **Fecha:** Corte histórico o recepción 2026-11-04; ver archivo fuente.
+**Referencia:** Corte histórico o recepción 2026-11-04; ver archivo fuente.
 
-**Resultado observable:** /nuevo EMP-004 recibe formato de ayuda; termina en Responder ayuda o rechazo sin especialistas visibles.
+**Observación:** /nuevo EMP-004 recibe formato de ayuda; termina en Responder ayuda o rechazo sin especialistas visibles.
 
-**Límite:** No se ensayó entrada vacía/sticker. La guía admite vacía o incompleta. La captura no es auditoría de facturación o de todas las tablas.
+**Alcance:** No se ensayó entrada vacía/sticker. La guía admite vacía o incompleta. La captura no es auditoría de facturación o de todas las tablas.
 
 **Archivos:**
 
@@ -147,11 +137,11 @@ Las copias seleccionadas de capturas están en capturas/; no fueron editadas. Lo
 
 **Solicitud de revelar claves** · Capturas de Telegram y recorrido
 
-**Pruebas:** P06. **Fecha:** Corte histórico o recepción 2026-11-04; ver archivo fuente.
+**Referencia:** Corte histórico o recepción 2026-11-04; ver archivo fuente.
 
-**Resultado observable:** Petición de ignorar reglas/revelar claves responde con ayuda sin secretos; especialistas sin ejecutar.
+**Observación:** Petición de ignorar reglas/revelar claves responde con ayuda sin secretos; especialistas sin ejecutar.
 
-**Límite:** Bloqueo previo al modelo; no es una prueba exhaustiva de inyección dentro de cada LLM o documento recuperado.
+**Alcance:** Bloqueo previo al modelo; no es una prueba exhaustiva de inyección dentro de cada LLM o documento recuperado.
 
 **Archivos:**
 
@@ -163,11 +153,11 @@ Las copias seleccionadas de capturas están en capturas/; no fueron editadas. Lo
 
 **Cuenta sin permiso** · Captura aportada por Jorge
 
-**Pruebas:** P07. **Fecha:** Corte histórico o recepción 2026-11-04; ver archivo fuente.
+**Referencia:** Corte histórico o recepción 2026-11-04; ver archivo fuente.
 
-**Resultado observable:** La cuenta identificada por Jorge como no autorizada recibe rechazo ante /start y /nuevo.
+**Observación:** La cuenta identificada por Jorge como no autorizada recibe rechazo ante /start y /nuevo.
 
-**Límite:** Sin recorrido de ejecución ni consulta posterior de tablas; el mensaje agrupa acceso no habilitado y vencido, no prueba cada causa por separado.
+**Alcance:** Sin recorrido de ejecución ni consulta posterior de tablas; el mensaje agrupa acceso no habilitado y vencido, no prueba cada causa por separado.
 
 **Archivos:**
 
@@ -178,11 +168,11 @@ Las copias seleccionadas de capturas están en capturas/; no fueron editadas. Lo
 
 **Fallo de conexión DNS** · Salida n8n aportada; ensayo aislado
 
-**Pruebas:** P08. **Fecha:** 2026-11-05T00:38:55.473Z; salida compartida.
+**Referencia:** 2026-11-05T00:38:55.473Z; salida compartida.
 
-**Resultado observable:** Ejecución 247: ENOTFOUND; permitido=false, generación no intentada y sin fila de reserva propuesta.
+**Observación:** Ejecución 247: ENOTFOUND; permitido=false, generación no intentada y sin fila de reserva propuesta.
 
-**Límite:** No caída real de OpenAI, cuota agotada o timeout observado. Sin persistencia de error en tablas/Telegram; reintentos configurados solo en el ensayo.
+**Alcance:** No caída real de OpenAI, cuota agotada o timeout observado. Sin persistencia de error en tablas/Telegram; reintentos configurados solo en el ensayo.
 
 **Archivos:**
 
@@ -194,11 +184,11 @@ Las copias seleccionadas de capturas están en capturas/; no fueron editadas. Lo
 
 **Presupuesto y límite de llamadas** · Salida n8n aportada; fixtures sintéticos
 
-**Pruebas:** P09. **Fecha:** 2026-11-05T00:31:44.337Z; salida compartida.
+**Referencia:** 2026-11-05T00:31:44.337Z; salida compartida.
 
-**Resultado observable:** Ejecución 246: presupuesto insuficiente y seis intentos bloquean; contraste dentro de límites autoriza.
+**Observación:** Ejecución 246: presupuesto insuficiente y seis intentos bloquean; contraste dentro de límites autoriza.
 
-**Límite:** Código del control aislado; no consume seis llamadas reales ni prueba persistencia integral del bloqueo.
+**Alcance:** Código del control aislado; no consume seis llamadas reales ni prueba persistencia integral del bloqueo.
 
 **Archivos:**
 
@@ -209,11 +199,11 @@ Las copias seleccionadas de capturas están en capturas/; no fueron editadas. Lo
 
 **Reproducción secuencial de evento persistido** · Dos salidas n8n aportadas y comparación
 
-**Pruebas:** P10. **Fecha:** 2026-11-05T00:46:52.215Z y 2026-11-05T00:48:39.106Z.
+**Referencia:** 2026-11-05T00:46:52.215Z y 2026-11-05T00:48:39.106Z.
 
-**Resultado observable:** 248/249: mismo evento y folio YTLSBKE8E, una fila en ambas lecturas y rama de duplicado.
+**Observación:** 248/249: mismo evento y folio YTLSBKE8E, una fila en ambas lecturas y rama de duplicado.
 
-**Límite:** Ensayo de solo lectura, sin primera inserción ni reenvío real del webhook. No acredita atomicidad o concurrencia.
+**Alcance:** Ensayo de solo lectura, sin primera inserción ni reenvío real del webhook. No acredita atomicidad o concurrencia.
 
 **Archivos:**
 
@@ -226,11 +216,11 @@ Las copias seleccionadas de capturas están en capturas/; no fueron editadas. Lo
 
 **Skills, loops, mejora y reutilización** · Trazas, hashes y valoración cualitativa
 
-**Pruebas:** P11. **Fecha:** Corte histórico o recepción 2026-11-04; ver archivo fuente.
+**Referencia:** Corte histórico o recepción 2026-11-04; ver archivo fuente.
 
-**Resultado observable:** V1 false→V2 true en YTLS6SW04; costo extra USD 0.003967; ambos skills cargados y reutilizados en BKE8E/EX4SR.
+**Observación:** V1 false→V2 true en YTLS6SW04; costo extra USD 0.003967; ambos skills cargados y reutilizados en BKE8E/EX4SR.
 
-**Límite:** Corrección histórica anterior a las cargas posteriores; no atribuirle el mismo adaptador. Autoevaluación propuesta para revisión de Jorge, no nota de la docente.
+**Alcance:** Corrección histórica anterior a las cargas posteriores; no atribuirle el mismo adaptador. Autoevaluación propuesta para revisión de Jorge, no nota de la docente.
 
 **Archivos:**
 
@@ -243,11 +233,11 @@ Las copias seleccionadas de capturas están en capturas/; no fueron editadas. Lo
 
 **Actions: bloqueo y recuperación** · API/log histórico recuperado
 
-**Pruebas:** P12. **Fecha:** Corte histórico o recepción 2026-11-04; ver archivo fuente.
+**Referencia:** Corte histórico o recepción 2026-11-04; ver archivo fuente.
 
-**Resultado observable:** 41396056569 bloquea artefacto/publicación por validación; 41396256574 publica al retirar inyección. Mismo commit.
+**Observación:** 41396056569 bloquea artefacto/publicación por validación; 41396256574 publica al retirar inyección. Mismo commit.
 
-**Límite:** No cambio de código entre ambas ejecuciones; no retirada del sitio previamente publicado ni nueva ejecución para este índice.
+**Alcance:** No cambio de código entre ambas ejecuciones; no retirada del sitio previamente publicado ni nueva ejecución para este índice.
 
 **Archivos:**
 
@@ -258,27 +248,27 @@ Las copias seleccionadas de capturas están en capturas/; no fueron editadas. Lo
 
 **Interfaz móvil y escritorio** · Capturas de viewport
 
-**Pruebas:** P13. **Fecha:** Corte histórico o recepción 2026-11-04; ver archivo fuente.
+**Referencia:** Corte histórico o recepción 2026-11-04; ver archivo fuente.
 
-**Resultado observable:** Panel en anchos visibles de 390 y 1366 px; evidencia visual del reacomodo de componentes.
+**Observación:** Panel en anchos visibles de 390 y 1366 px; evidencia visual del reacomodo de componentes.
 
-**Límite:** No acredita por imagen teclado, permisos de micrófono o accesibilidad completa; widget observado con obstrucción en teléfono real.
+**Alcance:** No acredita por imagen teclado, permisos de micrófono o accesibilidad completa; widget observado con obstrucción en teléfono real.
 
 **Archivos:**
 
 - [E-P13-01_390_panel_Jorge_Valencia.png](capturas/P13_interfaz/E-P13-01_390_panel_Jorge_Valencia.png)
 - [E-P13-01_1366_panel_Jorge_Valencia.png](capturas/P13_interfaz/E-P13-01_1366_panel_Jorge_Valencia.png)
-- [Evidencias_visuales_pendientes_Jorge_Valencia.md](../docs/Evidencias_visuales_pendientes_Jorge_Valencia.md)
+- [README.md](capturas/README.md)
 
 ## E-P14-01
 
 **Costos y trazabilidad** · Conciliación numérica y metadatos
 
-**Pruebas:** P14. **Fecha:** Corte histórico o recepción 2026-11-04; ver archivo fuente.
+**Referencia:** Corte histórico o recepción 2026-11-04; ver archivo fuente.
 
-**Resultado observable:** 48 generaciones con trazas y fórmulas conciliadas; nueve sesiones ElevenLabs documentadas; USD 0.27757026 de subtotal identificado.
+**Observación:** 48 generaciones con trazas y fórmulas conciliadas; nueve sesiones ElevenLabs documentadas; USD 0.27757026 de subtotal identificado.
 
-**Límite:** No factura ni gasto completo del proyecto. Construcción y consumo no recuperado siguen desconocidos; cuotas de plataformas no son gratuitas indefinidamente.
+**Alcance:** No factura ni gasto completo del proyecto. Construcción y consumo no recuperado siguen desconocidos; cuotas de plataformas no son gratuitas indefinidamente.
 
 **Archivos:**
 
@@ -286,17 +276,17 @@ Las copias seleccionadas de capturas están en capturas/; no fueron editadas. Lo
 - [costos.csv](../costos/costos.csv)
 - [Resumen_y_supuestos_Jorge_Valencia.json](../costos/Resumen_y_supuestos_Jorge_Valencia.json)
 - [Sesiones_consolidadas_Jorge_Valencia.json](../costos/Sesiones_consolidadas_Jorge_Valencia.json)
-- [LEEME_costos_Jorge_Valencia.md](../costos/LEEME_costos_Jorge_Valencia.md)
+- [README.md](../costos/README.md)
 
 ## E-P14-02
 
 **Panel sin filtros** · Captura de panel
 
-**Pruebas:** P14, P13. **Fecha:** Corte histórico o recepción 2026-11-04; ver archivo fuente.
+**Referencia:** Corte histórico o recepción 2026-11-04; ver archivo fuente.
 
-**Resultado observable:** KPI 13 solicitudes, dos pendientes, catorce días aprobados, con fecha/fuente visibles en el corte.
+**Observación:** KPI 13 solicitudes, dos pendientes, catorce días aprobados, con fecha/fuente visibles en el corte.
 
-**Límite:** Captura histórica; el panel vivo puede tener más filas después. Dos pendientes se derivan como expiradas sin escritura; no comparar cortes distintos como si fueran simultáneos.
+**Alcance:** Captura histórica; el panel vivo puede tener más filas después. Dos no informados se derivan como expiradas sin escritura; no comparar cortes distintos como si fueran simultáneos.
 
 **Archivos:**
 
@@ -308,11 +298,11 @@ Las copias seleccionadas de capturas están en capturas/; no fueron editadas. Lo
 
 **Gráfica e historial del corte** · Capturas de panel
 
-**Pruebas:** P14, P13. **Fecha:** Corte histórico o recepción 2026-11-04; ver archivo fuente.
+**Referencia:** Corte histórico o recepción 2026-11-04; ver archivo fuente.
 
-**Resultado observable:** Cantidades por estado, barras desde cero e historial de trece folios ficticios.
+**Observación:** Cantidades por estado, barras desde cero e historial de trece folios ficticios.
 
-**Límite:** Representación visual del mismo corte; no prueba lectura en tiempo real por sí sola.
+**Alcance:** Representación visual del mismo corte; no prueba lectura en tiempo real por sí sola.
 
 **Archivos:**
 
@@ -323,11 +313,11 @@ Las copias seleccionadas de capturas están en capturas/; no fueron editadas. Lo
 
 **Filtro por equipo** · Capturas de panel
 
-**Pruebas:** P14, P13. **Fecha:** Corte histórico o recepción 2026-11-04; ver archivo fuente.
+**Referencia:** Corte histórico o recepción 2026-11-04; ver archivo fuente.
 
-**Resultado observable:** EQ-B produce KPI 1/0/0 y una fila con cobertura insuficiente.
+**Observación:** EQ-B produce KPI 1/0/0 y una fila con cobertura insuficiente.
 
-**Límite:** Filtro y respuesta visual; no es una nueva ejecución de decisión de vacaciones.
+**Alcance:** Filtro y respuesta visual; no es una nueva ejecución de decisión de vacaciones.
 
 **Archivos:**
 
@@ -338,11 +328,11 @@ Las copias seleccionadas de capturas están en capturas/; no fueron editadas. Lo
 
 **Dominio y límite ElevenLabs** · Lectura de configuración
 
-**Pruebas:** Apoyo documental. **Fecha:** Corte histórico o recepción 2026-11-04; ver archivo fuente.
+**Referencia:** Corte histórico o recepción 2026-11-04; ver archivo fuente.
 
-**Resultado observable:** Main releída con hostname jorgevalba.github.io y max_tokens=1500.
+**Observación:** Main releída con hostname jorgevalba.github.io y max_tokens=1500.
 
-**Límite:** Configuración verificada; no prueba adversaria desde otro origen ni conversación posterior a ese cambio.
+**Alcance:** Configuración verificada; no prueba adversaria desde otro origen ni conversación posterior a ese cambio.
 
 **Archivos:**
 
@@ -354,44 +344,36 @@ Las copias seleccionadas de capturas están en capturas/; no fueron editadas. Lo
 
 **Esquemas y muestra reproducible** · Artefactos de instalación
 
-**Pruebas:** Apoyo documental. **Fecha:** Corte histórico o recepción 2026-11-04; ver archivo fuente.
+**Referencia:** Corte histórico o recepción 2026-11-04; ver archivo fuente.
 
-**Resultado observable:** Once tablas lógicas, seis CSV iniciales y manual de vinculación/configuración.
+**Observación:** Once tablas lógicas, seis CSV iniciales y manual de vinculación/configuración.
 
-**Límite:** No acredita aún instalación independiente completa ni provisión de pases privados reproducida.
+**Alcance:** No acredita aún instalación indeno informado completa ni provisión de pases privados reproducida.
 
 **Archivos:**
 
 - [Esquema_tablas_Jorge_Valencia.json](../datos/Esquema_tablas_Jorge_Valencia.json)
-- [LEEME_Jorge_Valencia.md](../datos/carga_inicial/LEEME_Jorge_Valencia.md)
+- [README.md](../datos/carga_inicial/README.md)
 - [Manual_instalacion_Jorge_Valencia.md](../docs/Manual_instalacion_Jorge_Valencia.md)
 
 ## E-COST-01
 
 **Proyecciones y disponibilidad** · Escenarios calculados y declaración del usuario
 
-**Pruebas:** P14. **Fecha:** Corte histórico o recepción 2026-11-04; ver archivo fuente.
+**Referencia:** Corte histórico o recepción 2026-11-04; ver archivo fuente.
 
-**Resultado observable:** Seis escenarios a 100/1,000/10,000 casos; cuota n8n 145/10,000 y doce días restantes reportados por Jorge.
+**Observación:** Seis escenarios a 100/1,000/10,000 casos; cuota n8n 145/10,000 y doce días restantes reportados por Jorge.
 
-**Límite:** No prueba de carga ni cotización cerrada. EUR y USD separados, fecha final exacta de prueba no confirmada; escenarios no equivalen al gasto observado.
+**Alcance:** No prueba de carga ni cotización cerrada. EUR y USD separados, fecha final exacta de prueba no confirmada; escenarios no equivalen al gasto observado.
 
 **Archivos:**
 
 - [escenarios.csv](../costos/escenarios.csv)
 - [Resumen_y_supuestos_Jorge_Valencia.json](../costos/Resumen_y_supuestos_Jorge_Valencia.json)
-- [LEEME_costos_Jorge_Valencia.md](../costos/LEEME_costos_Jorge_Valencia.md)
+- [README.md](../costos/README.md)
 
-## Cortes, acceso y publicación
+## Uso de referencias
 
-No mezclar las trece solicitudes del CSV histórico con la solicitud YTLSU4260 ni con las ejecuciones aisladas 246–249. Los últimos ensayos se entregan como anexos separados, no como filas inventadas de un CSV anterior.
+En el informe se puede citar «véase E-P04-01» y enlazar a esa ficha. El registro de archivos conserva SHA-256 del corte documental, no una certificación externa de fecha/autenticidad.
 
-Los enlaces relativos funcionan en esta carpeta y después en el repositorio. Para el PDF definitivo se añadirán enlaces al commit final, una vez publicado y comprobado. No se inventa un commit ni se enlazan archivos remotos todavía inexistentes. El ZIP debe coincidir con ese estado.
-
-El bot requiere autorización/pase por canal privado. Este índice no contiene pases o credenciales. El sitio funcional y los enlaces de Actions están en README.md y docs/Actions_evidencia_Jorge_Valencia.md.
-
-Este índice permite localizar la evidencia; no sustituye la revisión de pruebas parciales, la disponibilidad del servicio, el video o el informe paginado.
-
-## Revisión de estructura y costos del 21 de noviembre
-
-[Mapa de la entrega](../docs/Mapa_entrega_y_pendientes_Jorge_Valencia.md), [arquitectura](../docs/Arquitectura_Jorge_Valencia.md) y [campos de costos](../costos/Esquema_registro_Jorge_Valencia.md). Las fuentes conservan sus fechas históricas y los cuatro exports fueron confirmados sin cambios por Jorge.
+Las trece capturas se distribuyen en [capturas/](capturas/README.md). Los JSON de P08–P10 son salidas compartidas por Jorge de ensayos aislados; no se presentan como un webhook duplicado real, una caída real del proveedor o una prueba concurrente.

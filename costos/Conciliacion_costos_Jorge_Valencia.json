@@ -134,12 +134,5 @@
     "duracion_voz_registrada_filas": 0,
     "filas_elevenlabs": 0,
     "subtotal_no_generaciones_con_importe": []
-  },
-  "pendientes": [
-    "Consolidar conversaciones/consumo ElevenLabs con su desglose, no solo eventos n8n de voz.",
-    "Separar desarrollo/pruebas y operación: grupo_costo=operacion no convierte pruebas históricas en operación productiva.",
-    "Documentar construcción con IA y cargos/condiciones de plataformas.",
-    "Completar escenarios base/mayor consumo y comparación costo/calidad.",
-    "No inferir costo cero para filas/casos con consumo no informado."
-  ]
+  }
 }

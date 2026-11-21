@@ -16,7 +16,7 @@ Referencia: guía del estudiante, página 7, y fila P11 de la página 12. Se req
 | Mejora V1→V2 | Caso VAC-20261102-YTLS6SW04; L3/L4 y L5/L6 | Primera revisión negativa; segunda positiva; mismo caso, seis generaciones. |
 | Reutilización con mismas versiones | VAC-20261102-YTLSBKE8E y VAC-20261102-YTLSEX4SR | Ambos cargan negocio 1.0.1 y seguridad 1.0.0; hashes coincidentes. |
 
-Los textos finales de Carga y uso dentro de los SKILL.md conservan notas históricas de integración pendiente. Se preservan porque sus bytes coinciden con los snapshots y hashes ejecutados. La integración posterior se acredita en esta consolidación y en las trazas. No editar esos archivos sin versionar, recompilar y volver a comprobar sus hashes.
+Los snapshots probados conservan negocio 1.0.1 y seguridad 1.0.0. Los SKILL.md actuales corrigen únicamente notas documentales de carga; sus versiones/hashes se distinguen en skills/Snapshots_n8n_Jorge_Valencia.json. No se modificó el runtime n8n ni se atribuye a una traza una revisión documental posterior.
 
 ## Mejora observada en el mismo caso
 
@@ -58,9 +58,9 @@ Escala aplicada: 0 ausente, 1 insuficiente, 2 parcial con brecha material en el 
 - **Loop de calidad:** cuatro trazas L3–L6 enlazan diagnóstico, corrección, versiones y resultado, con costo conciliado. Control 3 porque existe límite y salida definida, pero no se ha documentado aquí un caso que agote la corrección y falle de nuevo.
 - **Loop de seguridad/costo:** trazas de pasos y costos medidos respaldan la secuencia; el ensayo 246 confirma decisiones del guardrail. Evidencia/control 3 por falta de prueba integral de persistencia del bloqueo y de todos los caminos de error.
 
-Los cuatro superan el umbral en esta valoración propuesta. Ese resultado no convierte en aprobadas las filas P07/P08/P09 todavía parciales ni elimina sus limitaciones. Jorge debe revisar la valoración para su entrega individual; la evaluación final corresponde a la docente.
+La valoración propuesta supera el umbral de diseño documentado; no constituye una calificación de la docente ni acredita un alcance mayor que las evidencias citadas.
 
-## Referencias y cierre de alcance
+## Referencias y alcance
 
 - Guía del estudiante, página 7: mínimos, mejora/reutilización y autoevaluación; página 12: P11.
 - agentes/Contratos_Jorge_Valencia.json; n8n/01_principal_Jorge_Valencia.json y 02_llm_Jorge_Valencia.json.

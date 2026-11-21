@@ -1,36 +1,39 @@
-# HR assistant BYD — configuración activa documentada
-Elaborado por: Jorge Valencia. Lectura del agente: 4 de noviembre de 2026.
+# HR assistant BYD en ElevenLabs
+Elaborado por: Jorge Valencia.
 
-Se recuperó por consulta de la plataforma la configuración de la rama principal: nombre HR assistant BYD, idioma español, modelo principal gpt-5-mini y TTS eleven_v3_conversational. El agent_id/branch_id/version_id del corte están en Configuracion_activa_Jorge_Valencia.json. El prompt activo está en prompt_activo.txt; el encabezado documental del archivo no debe pegarse como parte del prompt.
+## Propósito y relación con la guía
 
-## Función y herramientas
+Guía p.5 y p.13: propósito, conocimiento, herramientas, conexión y configuración documentada.
 
-Explica información recuperada de la base LFT y consulta folios/saldos ficticios; no aprueba, rechaza, reserva ni paga. Dos herramientas webhook POST usan el receptor autenticado de n8n: consultar_estado_rh y consultar_saldo_rh. Operación es constante por herramienta; folio/empleado se recogen del usuario; conversacion_id usa system__conversation_id. Timeout de cada herramienta: 20 s. El secreto de cabecera se configura del lado servidor; su referencia se sustituyó por un marcador en la copia de entrega.
+## Qué contiene y en qué formato
 
-La base de conocimiento observada es 1044_Ley_Federal_del_Trabajo.pdf con RAG habilitado. Esta lectura acredita su asociación, no su vigencia jurídica ni precisión de todas las respuestas posibles. Para recreación, subir la fuente autorizada y comprobar su versión/documentación; el ID de documento de esta cuenta no se importa como contenido.
+| Archivo o carpeta | Formato | Qué contiene y qué hacer con él |
+|---|---|---|
+| [Configuracion_activa_Jorge_Valencia.json](Configuracion_activa_Jorge_Valencia.json) | JSON (.json) | Lecturas fechadas del agente, configuración y actualización posterior verificada. |
+| [prompt_activo.txt](prompt_activo.txt) | Texto (.txt) | Instrucciones del asistente de voz; no contiene el valor de secretos. |
 
-## Evidencia de consulta desde Pages
+## Cómo utilizarlo
 
-La sesión conv_0401m6jmbw18f9g9hvbekqwqecsk proviene de widget, text_only=true. Su consulta consultar_estado_rh obtuvo Aprobada, versión 1 y cuatro días para VAC-20261102-YTLSBKE8E. consultar_saldo_rh obtuvo seis días para EMP-005, periodo 2026-10-01 a 2027-09-30. Ambas devolvieron ok=true, sin error ni bloqueo, con consulta_id VOZ-188 y VOZ-191 y fecha 4 de noviembre de 2026. Los resultados concuerdan con las capturas y registros anteriores.
+Usar prompt_activo.txt como instrucciones de agente, omitiendo su encabezado documental. Configuracion_activa es una lectura documentada, no un importador universal de cuenta. Configurar idioma español, base LFT y dos herramientas de lectura como se indica abajo.
 
-La sesión se recuperó retrospectivamente, sin generar conversación. El anexo evidencias/Pages_herramientas_verificadas_Jorge_Valencia.json conserva resultados/consumo seleccionados, no transcripción completa, cabeceras ni datos personales. Sus nuevos consulta_id son posteriores al CSV de trazas recibido: no se afirma que figuren en ese corte.
+## Entorno y configuración
 
-Se conserva por separado una prueba hablada histórica ya recuperada. La sesión reciente de Pages es de texto: no presentar sus 601 s de duración abierta como voz hablada; TTS/ASR reportan cero segundos. Reporta 88 créditos y cost_fiat 0.00881365, con llm_price 0.00281365 y platform_price 0.006. Moneda no explícita en esta respuesta: no confundir el importe de referencia con factura adicional ni sumarlo dos veces.
+ElevenLabs presta conversación/voz; herramientas POST consultan n8n con X-RH-Voz-Key en secreto de servidor. El navegador usa solo agent_id público.
 
-## Controles observados y pendientes
+## Validación y resultado esperado
 
-- El prompt pide respuestas breves, fuentes y uso de herramienta; prohíbe acciones y divulgación de secretos. Son instrucciones, no una prueba adversaria por sí solas.
-- La lectura devuelve max_tokens=-1. No hay un límite numérico positivo de salida declarado en ese campo; el límite 1500 del workflow GPT-5 no aplica automáticamente al agente ElevenLabs.
-- Hay modelos de respaldo configurados. Documentarlos: no prometer que toda respuesta de voz usa siempre el modelo principal. En esta sesión el consumo reportó gpt-5-mini.
-- platform_settings.auth devuelve enable_auth=false, allowlist vacía y require_origin_header=false. Es un agente público ficticio; no afirmar que existe una restricción de dominio configurada en el agente. Falta configurar/revisar los dominios admitidos de Pages para la ruta de widget prevista por la guía.
-- El widget observado es variant=full, placement=bottom-right, supports_text_only=true, mobile_fullscreen=true. La superposición móvil de capturas sigue por revisar, al igual que la secuencia de consentimiento en sesión nueva.
+La lectura posterior verificada mostró max_tokens=1500 y dominio jorgevalba.github.io. E-P03-01 es texto del widget; E-P03-02 es voz hablada histórica. Son evidencias distintas.
 
-No se cambió ninguno de esos valores con esta recuperación. Estos pendientes deben resolverse antes de declarar completos los controles de voz. No requieren por sí mismos iniciar nuevas conversaciones pagadas; primero revisar configuración y documentación.
+## Relaciones con el proyecto
 
-## Actualización tras publicación informada por Jorge
+- [Guía general](../../README.md): requisitos, instalación, inicio, credenciales, parada y solución de problemas.
+- [Índice de evidencias](../../evidencias/indice.md): resultados y archivos relacionados.
+- [Matriz de pruebas](../../tests/pruebas.csv): entradas, esperados y resultados observados.
 
-La lectura posterior de la rama Main verificó max_tokens=1500 y modelo gpt-5-mini en la nueva versión. La allowlist sigue vacía: falta añadir jorgevalba.github.io. La captura de Guardrails muestra Manipulation activo y cinco filtros de Content activos; es evidencia de configuración, no una prueba de bloqueo. El snapshot previo con max_tokens=-1 se conserva como corte histórico; la verificación nueva está en ../../evidencias/ElevenLabs_limites_publicados_Jorge_Valencia.json. No se inició conversación.
+## Herramientas de servidor
 
-## Dominio configurado posteriormente
+Ambas usan POST a la Production URL del workflow 03_voz, cabecera X-RH-Voz-Key como Secret y timeout de herramienta de 20 s. El valor no se pega al prompt ni al HTML.
 
-Se añadió jorgevalba.github.io a la allowlist de Main y se verificó por lectura posterior. max_tokens conserva 1500, enable_auth=false y modelo gpt-5-mini. Nueva versión de esa lectura: agtvrsn_8601m6me8xxrekrt4txf7f0zq6h9. Los dos pendientes de configuración quedan resueltos; no se inició conversación ni se afirma probada una denegación desde otro origen. Evidencia: ../../evidencias/ElevenLabs_dominio_configurado_Jorge_Valencia.json. Los párrafos anteriores preservan los valores del corte previo.
+consultar_estado_rh envía operación consultar_estado, folio proporcionado y conversacion_id del sistema; consultar_saldo_rh envía operación consultar_saldo, empleado_id ficticio y la misma referencia de sesión. El receptor valida esquema, permisos de herramienta y auditoría.
+
+La base de conocimiento documentada es 1044_Ley_Federal_del_Trabajo.pdf con RAG. Para otra cuenta, cargar una fuente autorizada y asociarla; el ID de conocimiento de la cuenta de Jorge no es el archivo PDF importable. El agente informa y consulta; no aprueba vacaciones.

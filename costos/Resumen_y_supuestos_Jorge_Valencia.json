@@ -42,11 +42,10 @@
     "cambio_aplicado": false,
     "calidad": "La caché cambia tratamiento contable de entrada, no prueba causal de calidad; menor frecuencia del panel reduce frescura. Mantener revalidación de aprobación."
   },
-  "faltantes": [
-    "Costo de construcción con IA/herramientas de desarrollo no recuperado.",
-    "Las nueve sesiones no son el consumo completo de ElevenLabs; otros costos desconocidos.",
-    "Cotización n8n por encima de 10,000 ejecuciones; modalidad mensual vs anual y tipo de cambio.",
-    "Medición A/B de optimización y calidad; prueba de carga y concurrencia.",
-    "Fecha final exacta y disponibilidad n8n durante evaluación; no inferir vigencia del pase como disponibilidad del servicio."
+  "limites_del_total": [
+    "Los importes de construcción con IA y consumos fuera del corte no forman parte del subtotal identificado.",
+    "Las proyecciones no son una cotización superior de n8n ni una conversión monetaria de EUR a USD.",
+    "El contrafactual de caché/polling no es una prueba A/B de calidad.",
+    "Las cuotas de la cuenta son declaraciones fechadas del usuario, no verificación actual de facturación."
   ]
 }

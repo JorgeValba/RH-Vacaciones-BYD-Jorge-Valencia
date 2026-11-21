@@ -17,11 +17,6 @@
   ],
   "resultado": "Entrada incompleta rechazada con formato de ayuda; no se observa ejecución de especialistas en el recorrido aportado.",
   "alcance": "Capturas aportadas por Jorge de la misma ejecución, según su confirmación. No se inspeccionó API/log completo ni se consultaron tablas para probar ausencia de escritura.",
-  "pendientes": [
-    "Entrada realmente vacía/no textual no ensayada en esta evidencia.",
-    "ID y cabecera completa de ejecución no visibles; no inventarlos.",
-    "No inferir costo total cero por ausencia de especialistas."
-  ],
   "capturas_privadas": [
     {
       "archivo": "codex-clipboard-19d689bb-9949-4124-a4ac-2ae7a52671d8.jpg",
@@ -35,5 +30,10 @@
       "archivo": "codex-clipboard-ef5c792e-e9d7-4b1d-9e48-f08d17a1b47e.png",
       "sha256": "f7bd008d18afe98b2ea002930d9543a0969b702b10412084c4eba5189e6728ca"
     }
+  ],
+  "limites": [
+    "Se ensayó entrada incompleta, no mensaje vacío/no textual.",
+    "ID de ejecución no visible en las capturas.",
+    "Ausencia de especialistas visibles no equivale a costo total de plataforma cero."
   ]
 }

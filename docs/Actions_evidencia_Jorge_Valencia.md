@@ -21,7 +21,6 @@ En la segunda ejecución el paso de falla deliberada quedó omitido, pasaron las
 
 ## Relación con la versión preparada
 
-La ejecución de identidad visual publicó el commit 79697893d19d9d2142dc28af2e2b5987411018ee, utilizado como base de la carpeta local. Las adiciones documentales posteriores todavía no están en ese commit: falta publicarlas y verificar su propia ejecución cuando se cierre la integración.
 
 P12 queda documentada históricamente por enlaces, estados de trabajos y extracto de log. Las pruebas de consultas de voz dentro de Actions son locales; que pasen no acredita una conversación nueva con ElevenLabs ni la disponibilidad de n8n. Las evidencias remotas de conversación se mantienen separadas.
 
