@@ -1,9 +1,11 @@
 # Costos, tokens y escenarios
 Elaborado por: Jorge Valencia.
 
-## Propósito y relación con la guía
+## Referencia a la Guía del estudiante
 
-Guía pp.9–10: uso por llamada/etapa/caso, tarifas fechadas, voz y escenarios base/mayor consumo.
+De acuerdo con la **Guía del estudiante, páginas 9–10 y 13**, se pide registrar consumo, tarifas, costos por llamada y etapa y proyecciones, diferenciando medición de estimación.
+
+Los CSV permiten filtrar y recalcular; los JSON conservan conciliaciones y supuestos. Un dato desconocido no se trata como costo cero. La referencia identifica el requisito; su cumplimiento se contrasta con los archivos y resultados enlazados, no solamente con la existencia de la carpeta.
 
 ## Qué contiene y en qué formato
 
@@ -33,7 +35,7 @@ Conciliar 48 generaciones con trazas; no sumar de nuevo componentes ElevenLabs, 
 ## Relaciones con el proyecto
 
 - [Guía general](../README.md): requisitos, instalación, inicio, credenciales, parada y solución de problemas.
-- [Índice de evidencias](../evidencias/indice.md): resultados y archivos relacionados.
+- [Índice de evidencias](../evidencias/README.md): resultados y archivos relacionados.
 - [Matriz de pruebas](../tests/pruebas.csv): entradas, esperados y resultados observados.
 
 

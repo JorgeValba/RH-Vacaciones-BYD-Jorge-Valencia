@@ -1,9 +1,11 @@
 # Adaptador local de skills
 Elaborado por: Jorge Valencia.
 
-## Propósito y relación con la guía
+## Referencia a la Guía del estudiante
 
-Guía p.7: aplicar instrucciones del SKILL.md y registrar su carga cuando no hay carga nativa.
+De acuerdo con la **Guía del estudiante, página 7**, se pide demostrar cómo se carga y aplica un skill; conservar un archivo por sí solo no demuestra su uso.
+
+Este adaptador permite leer los SKILL.md en Node; n8n utiliza snapshots compilados. La carpeta es una decisión de implementación, no un nombre exigido. La referencia identifica el requisito; su cumplimiento se contrasta con los archivos y resultados enlazados, no solamente con la existencia de la carpeta.
 
 ## Qué contiene y en qué formato
 
@@ -26,5 +28,5 @@ node tests/skills.test.mjs comprueba dos casos, hashes y rechazo de identificado
 ## Relaciones con el proyecto
 
 - [Guía general](../README.md): requisitos, instalación, inicio, credenciales, parada y solución de problemas.
-- [Índice de evidencias](../evidencias/indice.md): resultados y archivos relacionados.
+- [Índice de evidencias](../evidencias/README.md): resultados y archivos relacionados.
 - [Matriz de pruebas](../tests/pruebas.csv): entradas, esperados y resultados observados.

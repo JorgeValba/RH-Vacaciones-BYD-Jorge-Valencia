@@ -1,9 +1,11 @@
 # Datos de muestra y esquema de tablas
 Elaborado por: Jorge Valencia.
 
-## Propósito y relación con la guía
+## Referencia a la Guía del estudiante
 
-Guía pp.4, 6 y 13: persistencia privada, muestra sanitizada y diccionario.
+De acuerdo con la **Guía del estudiante, páginas 2, 6 y 13**, se pide identificar fuentes y reglas, separar datos públicos y privados y entregar diccionario y muestra reproducible.
+
+Se conservan esquemas, muestra sanitizada y archivos de carga inicial; la base privada de operación no se publica. La referencia identifica el requisito; su cumplimiento se contrasta con los archivos y resultados enlazados, no solamente con la existencia de la carpeta.
 
 ## Qué contiene y en qué formato
 
@@ -11,7 +13,7 @@ Guía pp.4, 6 y 13: persistencia privada, muestra sanitizada y diccionario.
 |---|---|---|
 | [Esquema_tablas_Jorge_Valencia.json](Esquema_tablas_Jorge_Valencia.json) | JSON (.json) | Diccionario de once tablas, columnas y tipos para crear/importar la base. |
 | [Solicitudes_sanitizadas_Jorge_Valencia.json](Solicitudes_sanitizadas_Jorge_Valencia.json) | JSON (.json) | Corte de trece solicitudes con campos de muestra públicos; no base operativa. |
-| [carga_inicial/](carga_inicial/README.md) | Carpeta | Abrir su README para formatos, uso y validación de ese componente. |
+| [carga_inicial/](carga_inicial/) | Carpeta | Archivos explicados en esta guía; abrir la carpeta para consultar sus fuentes. |
 
 ## Cómo utilizarlo
 
@@ -28,7 +30,7 @@ Quince empleados, tres equipos y datos ficticios. Mantener fechas de negocio com
 ## Relaciones con el proyecto
 
 - [Guía general](../README.md): requisitos, instalación, inicio, credenciales, parada y solución de problemas.
-- [Índice de evidencias](../evidencias/indice.md): resultados y archivos relacionados.
+- [Índice de evidencias](../evidencias/README.md): resultados y archivos relacionados.
 - [Matriz de pruebas](../tests/pruebas.csv): entradas, esperados y resultados observados.
 
 

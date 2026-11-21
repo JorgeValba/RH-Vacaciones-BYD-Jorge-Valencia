@@ -66,6 +66,6 @@ La valoración propuesta supera el umbral de diseño documentado; no constituye 
 - agentes/Contratos_Jorge_Valencia.json; n8n/01_principal_Jorge_Valencia.json y 02_llm_Jorge_Valencia.json.
 - skills/Snapshots_n8n_Jorge_Valencia.json; loops/LOOPS.md, distinguiendo su especificación histórica de su actualización posterior.
 - evidencias/registros/Evidencia_agentes_loops_Jorge_Valencia.json; costos/Conciliacion_costos_Jorge_Valencia.json.
-- evidencias/P09_ejecucion_246_Jorge_Valencia.json; tests/pruebas.csv.
+- evidencias/registros/P09_ejecucion_246_Jorge_Valencia.json; tests/pruebas.csv.
 
 Esta consolidación utiliza evidencia ya recibida; no genera nuevas llamadas ni modifica los servicios. Actualización posterior: Jorge aportó la captura de P07; /start y /nuevo recibieron denegación sin pase vigente. Véase evidencias/P07_usuario_sin_permiso_Jorge_Valencia.json. No se inspeccionaron ejecución o tablas de esa petición. Los CSV originales son un corte histórico: los ensayos posteriores se mantienen como evidencias separadas.

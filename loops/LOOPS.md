@@ -23,6 +23,6 @@ Las trazas de YTLSBKE8E y YTLSEX4SR documentan los controles. La ejecución aisl
 
 ## Evidencia y autoevaluación
 
-La [consolidación P11](../docs/P11_Skills_loops_Jorge_Valencia.md) relaciona versiones, diagnóstico, costos y reutilización. Los registros están en [Evidencia_agentes_loops](../evidencias/registros/Evidencia_agentes_loops_Jorge_Valencia.json) y el [índice](../evidencias/indice.md#e-p11-01). La autoevaluación cualitativa asistida utiliza cinco aspectos 0–4 y conserva sus justificaciones; no es una calificación de la docente.
+La [consolidación P11](../docs/P11_Skills_loops_Jorge_Valencia.md) relaciona versiones, diagnóstico, costos y reutilización. Los registros están en [Evidencia_agentes_loops](../evidencias/registros/Evidencia_agentes_loops_Jorge_Valencia.json) y el [índice](../evidencias/README.md#e-p11-01). La autoevaluación cualitativa asistida utiliza cinco aspectos 0–4 y conserva sus justificaciones; no es una calificación de la docente.
 
 Estos loops ya están implementados en el workflow principal y el subworkflow de llamada controlada. LOOPS.md describe su operación; no se instala como si fuera un workflow JSON ni reemplaza los nodos ejecutables.

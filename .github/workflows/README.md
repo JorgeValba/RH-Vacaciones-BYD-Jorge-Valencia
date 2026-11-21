@@ -1,9 +1,11 @@
 # Validación y despliegue de Pages
 Elaborado por: Jorge Valencia.
 
-## Propósito y relación con la guía
+## Referencia a la Guía del estudiante
 
-Guía p.6: publicar solo después de controles y conservar bloqueo/recuperación.
+De acuerdo con la **Guía del estudiante, páginas 6 y 13**, se pide validar antes de publicar y mostrar bloqueo por fallo y recuperación.
+
+El YAML define la validación y el despliegue de web/; los enlaces de evidencia permiten revisar los resultados históricos. La referencia identifica el requisito; su cumplimiento se contrasta con los archivos y resultados enlazados, no solamente con la existencia de la carpeta.
 
 ## Qué contiene y en qué formato
 
@@ -26,5 +28,5 @@ En Actions, validar/publicar deben terminar en success para un despliegue válid
 ## Relaciones con el proyecto
 
 - [Guía general](../../README.md): requisitos, instalación, inicio, credenciales, parada y solución de problemas.
-- [Índice de evidencias](../../evidencias/indice.md): resultados y archivos relacionados.
+- [Índice de evidencias](../../evidencias/README.md): resultados y archivos relacionados.
 - [Matriz de pruebas](../../tests/pruebas.csv): entradas, esperados y resultados observados.

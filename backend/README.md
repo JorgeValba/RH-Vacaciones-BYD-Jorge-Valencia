@@ -1,9 +1,11 @@
 # Proyección pública del panel
 Elaborado por: Jorge Valencia.
 
-## Propósito y relación con la guía
+## Referencia a la Guía del estudiante
 
-Guía pp.5–6: campos públicos sanitizados, actualización y coherencia de indicadores.
+De acuerdo con la **Guía del estudiante, páginas 5–6**, se pide publicar información sanitizada y conectar el panel con registros del proceso.
+
+Aquí se conserva la función de proyección pública reutilizada en n8n; la carpeta es una decisión de implementación y no un servicio adicional desplegado. La referencia identifica el requisito; su cumplimiento se contrasta con los archivos y resultados enlazados, no solamente con la existencia de la carpeta.
 
 ## Qué contiene y en qué formato
 
@@ -26,5 +28,5 @@ node tests/panel_actualizado.test.mjs comprueba privacidad, filtros, vigencia, c
 ## Relaciones con el proyecto
 
 - [Guía general](../README.md): requisitos, instalación, inicio, credenciales, parada y solución de problemas.
-- [Índice de evidencias](../evidencias/indice.md): resultados y archivos relacionados.
+- [Índice de evidencias](../evidencias/README.md): resultados y archivos relacionados.
 - [Matriz de pruebas](../tests/pruebas.csv): entradas, esperados y resultados observados.

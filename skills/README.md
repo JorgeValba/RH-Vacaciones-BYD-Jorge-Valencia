@@ -1,17 +1,19 @@
 # Skills descargables y su carga
 Elaborado por: Jorge Valencia.
 
-## Propósito y relación con la guía
+## Referencia a la Guía del estudiante
 
-Guía p.7: dos SKILL.md específicos, ejemplos, versión, carga y reutilización trazadas.
+De acuerdo con la **Guía del estudiante, página 7**, se pide entregar dos skills específicos, sus entradas, procedimiento, límites, aceptación, ejemplos y versión, y demostrar su carga y reutilización.
+
+Cada skill está en un archivo SKILL.md descargable; el adaptador y los snapshots distinguen la versión documental de la verificada en n8n. La referencia identifica el requisito; su cumplimiento se contrasta con los archivos y resultados enlazados, no solamente con la existencia de la carpeta.
 
 ## Qué contiene y en qué formato
 
 | Archivo o carpeta | Formato | Qué contiene y qué hacer con él |
 |---|---|---|
 | [Snapshots_n8n_Jorge_Valencia.json](Snapshots_n8n_Jorge_Valencia.json) | JSON (.json) | Versiones/hashes del runtime probado y revisiones documentales de SKILL.md. |
-| [evaluar_vacaciones/](evaluar_vacaciones/README.md) | Carpeta | Abrir su README para formatos, uso y validación de ese componente. |
-| [seguridad_y_costo/](seguridad_y_costo/README.md) | Carpeta | Abrir su README para formatos, uso y validación de ese componente. |
+| [evaluar_vacaciones/SKILL.md](evaluar_vacaciones/SKILL.md) | Markdown | Skill de negocio: valida días, saldo, cobertura y cálculo; descargar el archivo o leer sus instrucciones. |
+| [seguridad_y_costo/SKILL.md](seguridad_y_costo/SKILL.md) | Markdown | Skill de calidad, seguridad y costo: revisa salidas, permisos y límites; descargar el archivo o leer sus instrucciones. |
 
 ## Cómo utilizarlo
 
@@ -28,7 +30,7 @@ Ejecutar node tests/skills.test.mjs y consultar E-P11-01. El JSON diferencia la 
 ## Relaciones con el proyecto
 
 - [Guía general](../README.md): requisitos, instalación, inicio, credenciales, parada y solución de problemas.
-- [Índice de evidencias](../evidencias/indice.md): resultados y archivos relacionados.
+- [Índice de evidencias](../evidencias/README.md): resultados y archivos relacionados.
 - [Matriz de pruebas](../tests/pruebas.csv): entradas, esperados y resultados observados.
 
 ## Descargar los dos archivos Markdown

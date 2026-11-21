@@ -1,0 +1,897 @@
+{
+  "autor": "Jorge Valencia",
+  "estado": "Material documental del repositorio",
+  "fecha_consolidacion": "2026-11-04",
+  "evidencias": [
+    {
+      "autor": "Jorge Valencia",
+      "evidencia_id": "E-P01-01",
+      "pruebas": [
+        "P01"
+      ],
+      "titulo": "Caso completo EMP-005",
+      "tipo": "Conciliación de registros históricos",
+      "fecha_referencia": "Corte histórico o recepción 2026-11-04; ver archivo fuente",
+      "rutas": [
+        "evidencias/registros/Evidencia_agentes_loops_Jorge_Valencia.json",
+        "evidencias/registros/Conciliacion_reservas_Jorge_Valencia.json"
+      ],
+      "resultado_observable": "YTLSBKE8E tiene cuatro especialistas, decisión de aprobar y una reserva de cuatro días.",
+      "limite": "Evidencia del corte histórico; no nueva ejecución de extremo a extremo ni garantía para todos los casos.",
+      "estado": "Evidencia documentada; alcance descrito en la ficha"
+    },
+    {
+      "autor": "Jorge Valencia",
+      "evidencia_id": "E-P02-01",
+      "pruebas": [
+        "P02"
+      ],
+      "titulo": "Segundo y tercer caso",
+      "tipo": "Conciliación de registros históricos",
+      "fecha_referencia": "Corte histórico o recepción 2026-11-04; ver archivo fuente",
+      "rutas": [
+        "evidencias/registros/Evidencia_agentes_loops_Jorge_Valencia.json",
+        "evidencias/registros/Conciliacion_reservas_Jorge_Valencia.json"
+      ],
+      "resultado_observable": "YTLRX08S4 y YTLS2ZE8C: cuatro especialistas y reserva de cinco días por caso.",
+      "limite": "EMP-001 requirió conciliación del formato de fecha; conservar la incidencia y no presentarlo como recorrido sin fallas.",
+      "estado": "Evidencia documentada; alcance descrito en la ficha"
+    },
+    {
+      "autor": "Jorge Valencia",
+      "evidencia_id": "E-P03-01",
+      "pruebas": [
+        "P03"
+      ],
+      "titulo": "Consultas del widget desde Pages",
+      "tipo": "Metadata recuperada de sesión existente",
+      "fecha_referencia": "Corte histórico o recepción 2026-11-04; ver archivo fuente",
+      "rutas": [
+        "evidencias/registros/Pages_herramientas_verificadas_Jorge_Valencia.json"
+      ],
+      "resultado_observable": "Herramientas de folio y saldo responden ok: YTLSBKE8E Aprobada V1, cuatro días; EMP-005 saldo seis días.",
+      "limite": "Sesión de texto, no voz hablada. Sus consultas VOZ-188/191 son posteriores al corte del CSV histórico.",
+      "estado": "Evidencia documentada; alcance descrito en la ficha"
+    },
+    {
+      "autor": "Jorge Valencia",
+      "evidencia_id": "E-P03-02",
+      "pruebas": [
+        "P03",
+        "P14"
+      ],
+      "titulo": "Consulta hablada histórica",
+      "tipo": "Metadata y resultado de herramienta",
+      "fecha_referencia": "Corte histórico o recepción 2026-11-04; ver archivo fuente",
+      "rutas": [
+        "evidencias/registros/Prueba_voz_confirmada_Jorge_Valencia.json"
+      ],
+      "resultado_observable": "Sesión de 67 segundos con audio de usuario y respuesta; consulta de saldo EMP-005 ok y periodo correcto.",
+      "limite": "No transcripción completa ni repetición reciente de la prueba; no confundirla con E-P03-01.",
+      "estado": "Evidencia documentada; alcance descrito en la ficha"
+    },
+    {
+      "autor": "Jorge Valencia",
+      "evidencia_id": "E-P04-01",
+      "pruebas": [
+        "P04"
+      ],
+      "titulo": "Rechazo de versión no vigente",
+      "tipo": "Resumen de capturas aportadas",
+      "fecha_referencia": "Corte histórico o recepción 2026-11-04; ver archivo fuente",
+      "rutas": [
+        "evidencias/registros/P04_version_incorrecta_Jorge_Valencia.json"
+      ],
+      "resultado_observable": "Propuesta V1; intento V2 rechazado; consulta posterior conserva Pendiente de aprobación V1.",
+      "limite": "Las capturas completas de conversación se conservan en revisión privada; fecha del evento no explícita en imagen. No demuestra por sí solo ausencia de todas las escrituras.",
+      "estado": "Evidencia documentada; alcance descrito en la ficha"
+    },
+    {
+      "autor": "Jorge Valencia",
+      "evidencia_id": "E-P04-02",
+      "pruebas": [
+        "P04"
+      ],
+      "titulo": "Consulta de reserva sin coincidencias",
+      "tipo": "Captura y confirmación del filtro por Jorge",
+      "fecha_referencia": "Corte histórico o recepción 2026-11-04; ver archivo fuente",
+      "rutas": [
+        "evidencias/capturas/P04_version_incorrecta/E-P04-02_Cero_filas_Jorge_Valencia.png",
+        "evidencias/registros/P04_version_incorrecta_Jorge_Valencia.json"
+      ],
+      "resultado_observable": "No rows / Total 0 para la consulta de reserva V1 solicitada, según confirmación del usuario.",
+      "limite": "El operador y valor del filtro no aparecen desplegados; no acredita todas las versiones ni saldo efectivo del empleado.",
+      "estado": "Evidencia documentada; alcance descrito en la ficha"
+    },
+    {
+      "autor": "Jorge Valencia",
+      "evidencia_id": "E-P05-01",
+      "pruebas": [
+        "P05"
+      ],
+      "titulo": "Entrada incompleta",
+      "tipo": "Resumen de respuesta y capturas de recorrido",
+      "fecha_referencia": "Corte histórico o recepción 2026-11-04; ver archivo fuente",
+      "rutas": [
+        "evidencias/registros/P05_entrada_incompleta_Jorge_Valencia.json",
+        "evidencias/capturas/P05_entrada_incompleta/E-P05-01_Recorrido_A_Jorge_Valencia.png",
+        "evidencias/capturas/P05_entrada_incompleta/E-P05-01_Recorrido_B_Jorge_Valencia.png"
+      ],
+      "resultado_observable": "/nuevo EMP-004 recibe formato de ayuda; termina en Responder ayuda o rechazo sin especialistas visibles.",
+      "limite": "No se ensayó entrada vacía/sticker. La guía admite vacía o incompleta. La captura no es auditoría de facturación o de todas las tablas.",
+      "estado": "Evidencia documentada; alcance descrito en la ficha"
+    },
+    {
+      "autor": "Jorge Valencia",
+      "evidencia_id": "E-P06-01",
+      "pruebas": [
+        "P06"
+      ],
+      "titulo": "Solicitud de revelar claves",
+      "tipo": "Capturas de Telegram y recorrido",
+      "fecha_referencia": "Corte histórico o recepción 2026-11-04; ver archivo fuente",
+      "rutas": [
+        "evidencias/registros/P06_peticion_secretos_Jorge_Valencia.json",
+        "evidencias/capturas/P06_peticion_secretos/E-P06-01_Peticion_rechazada_Jorge_Valencia.jpg",
+        "evidencias/capturas/P06_peticion_secretos/E-P06-01_Recorrido_Jorge_Valencia.png"
+      ],
+      "resultado_observable": "Petición de ignorar reglas/revelar claves responde con ayuda sin secretos; especialistas sin ejecutar.",
+      "limite": "Bloqueo previo al modelo; no es una prueba exhaustiva de inyección dentro de cada LLM o documento recuperado.",
+      "estado": "Evidencia documentada; alcance descrito en la ficha"
+    },
+    {
+      "autor": "Jorge Valencia",
+      "evidencia_id": "E-P07-01",
+      "pruebas": [
+        "P07"
+      ],
+      "titulo": "Cuenta sin permiso",
+      "tipo": "Captura aportada por Jorge",
+      "fecha_referencia": "Corte histórico o recepción 2026-11-04; ver archivo fuente",
+      "rutas": [
+        "evidencias/registros/P07_usuario_sin_permiso_Jorge_Valencia.json",
+        "evidencias/capturas/P07_usuario_sin_permiso/E-P07-01_Acceso_denegado_Jorge_Valencia.png"
+      ],
+      "resultado_observable": "La cuenta identificada por Jorge como no autorizada recibe rechazo ante /start y /nuevo.",
+      "limite": "Sin recorrido de ejecución ni consulta posterior de tablas; el mensaje agrupa acceso no habilitado y vencido, no prueba cada causa por separado.",
+      "estado": "Evidencia documentada; alcance descrito en la ficha"
+    },
+    {
+      "autor": "Jorge Valencia",
+      "evidencia_id": "E-P08-01",
+      "pruebas": [
+        "P08"
+      ],
+      "titulo": "Fallo de conexión DNS",
+      "tipo": "Salida n8n aportada; ensayo aislado",
+      "fecha_referencia": "2026-11-05T00:38:55.473Z; salida compartida",
+      "rutas": [
+        "evidencias/registros/P08_ejecucion_247_Jorge_Valencia.json",
+        "tests/Prueba_P08_conexion_Jorge_Valencia.json",
+        "tests/Prueba_P08_alcance_Jorge_Valencia.json"
+      ],
+      "resultado_observable": "Ejecución 247: ENOTFOUND; permitido=false, generación no intentada y sin fila de reserva propuesta.",
+      "limite": "No caída real de OpenAI, cuota agotada o timeout observado. Sin persistencia de error en tablas/Telegram; reintentos configurados solo en el ensayo.",
+      "estado": "Evidencia documentada; alcance descrito en la ficha"
+    },
+    {
+      "autor": "Jorge Valencia",
+      "evidencia_id": "E-P09-01",
+      "pruebas": [
+        "P09"
+      ],
+      "titulo": "Presupuesto y límite de llamadas",
+      "tipo": "Salida n8n aportada; fixtures sintéticos",
+      "fecha_referencia": "2026-11-05T00:31:44.337Z; salida compartida",
+      "rutas": [
+        "evidencias/registros/P09_ejecucion_246_Jorge_Valencia.json",
+        "tests/Prueba_P09_limites_Jorge_Valencia.json"
+      ],
+      "resultado_observable": "Ejecución 246: presupuesto insuficiente y seis intentos bloquean; contraste dentro de límites autoriza.",
+      "limite": "Código del control aislado; no consume seis llamadas reales ni prueba persistencia integral del bloqueo.",
+      "estado": "Evidencia documentada; alcance descrito en la ficha"
+    },
+    {
+      "autor": "Jorge Valencia",
+      "evidencia_id": "E-P10-01",
+      "pruebas": [
+        "P10"
+      ],
+      "titulo": "Reproducción secuencial de evento persistido",
+      "tipo": "Dos salidas n8n aportadas y comparación",
+      "fecha_referencia": "2026-11-05T00:46:52.215Z y 2026-11-05T00:48:39.106Z",
+      "rutas": [
+        "evidencias/registros/P10_comparacion_248_249_Jorge_Valencia.json",
+        "evidencias/registros/P10_ejecucion_248_Jorge_Valencia.json",
+        "evidencias/registros/P10_ejecucion_249_Jorge_Valencia.json",
+        "tests/Prueba_P10_evento_duplicado_Jorge_Valencia.md"
+      ],
+      "resultado_observable": "248/249: mismo evento y folio YTLSBKE8E, una fila en ambas lecturas y rama de duplicado.",
+      "limite": "Ensayo de solo lectura, sin primera inserción ni reenvío real del webhook. No acredita atomicidad o concurrencia.",
+      "estado": "Evidencia documentada; alcance descrito en la ficha"
+    },
+    {
+      "autor": "Jorge Valencia",
+      "evidencia_id": "E-P11-01",
+      "pruebas": [
+        "P11"
+      ],
+      "titulo": "Skills, loops, mejora y reutilización",
+      "tipo": "Trazas, hashes y valoración cualitativa",
+      "fecha_referencia": "Corte histórico o recepción 2026-11-04; ver archivo fuente",
+      "rutas": [
+        "docs/P11_Skills_loops_Jorge_Valencia.md",
+        "evidencias/registros/P11_consolidacion_Jorge_Valencia.json",
+        "evidencias/registros/Evidencia_agentes_loops_Jorge_Valencia.json",
+        "skills/Snapshots_n8n_Jorge_Valencia.json"
+      ],
+      "resultado_observable": "V1 false→V2 true en YTLS6SW04; costo extra USD 0.003967; ambos skills cargados y reutilizados en BKE8E/EX4SR.",
+      "limite": "Corrección histórica anterior a las cargas posteriores; no atribuirle el mismo adaptador. Autoevaluación propuesta para revisión de Jorge, no nota de la docente.",
+      "estado": "Evidencia documentada; alcance descrito en la ficha"
+    },
+    {
+      "autor": "Jorge Valencia",
+      "evidencia_id": "E-P12-01",
+      "pruebas": [
+        "P12"
+      ],
+      "titulo": "Actions: bloqueo y recuperación",
+      "tipo": "API/log histórico recuperado",
+      "fecha_referencia": "Corte histórico o recepción 2026-11-04; ver archivo fuente",
+      "rutas": [
+        "evidencias/registros/Actions_verificados_Jorge_Valencia.json",
+        "docs/Actions_evidencia_Jorge_Valencia.md"
+      ],
+      "resultado_observable": "41396056569 bloquea artefacto/publicación por validación; 41396256574 publica al retirar inyección. Mismo commit.",
+      "limite": "No cambio de código entre ambas ejecuciones; no retirada del sitio previamente publicado ni nueva ejecución para este índice.",
+      "estado": "Evidencia documentada; alcance descrito en la ficha"
+    },
+    {
+      "autor": "Jorge Valencia",
+      "evidencia_id": "E-P13-01",
+      "pruebas": [
+        "P13"
+      ],
+      "titulo": "Interfaz móvil y escritorio",
+      "tipo": "Capturas de viewport",
+      "fecha_referencia": "Corte histórico o recepción 2026-11-04; ver archivo fuente",
+      "rutas": [
+        "evidencias/capturas/P13_interfaz/E-P13-01_390_panel_Jorge_Valencia.png",
+        "evidencias/capturas/P13_interfaz/E-P13-01_1366_panel_Jorge_Valencia.png",
+        "evidencias/capturas/README.md"
+      ],
+      "resultado_observable": "Panel en anchos visibles de 390 y 1366 px; evidencia visual del reacomodo de componentes.",
+      "limite": "No acredita por imagen teclado, permisos de micrófono o accesibilidad completa; widget observado con obstrucción en teléfono real.",
+      "estado": "Evidencia documentada; alcance descrito en la ficha"
+    },
+    {
+      "autor": "Jorge Valencia",
+      "evidencia_id": "E-P14-01",
+      "pruebas": [
+        "P14"
+      ],
+      "titulo": "Costos y trazabilidad",
+      "tipo": "Conciliación numérica y metadatos",
+      "fecha_referencia": "Corte histórico o recepción 2026-11-04; ver archivo fuente",
+      "rutas": [
+        "costos/Conciliacion_costos_Jorge_Valencia.json",
+        "costos/costos.csv",
+        "costos/Resumen_y_supuestos_Jorge_Valencia.json",
+        "costos/Sesiones_consolidadas_Jorge_Valencia.json",
+        "costos/README.md"
+      ],
+      "resultado_observable": "48 generaciones con trazas y fórmulas conciliadas; nueve sesiones ElevenLabs documentadas; USD 0.27757026 de subtotal identificado.",
+      "limite": "No factura ni gasto completo del proyecto. Construcción y consumo no recuperado siguen desconocidos; cuotas de plataformas no son gratuitas indefinidamente.",
+      "estado": "Evidencia documentada; alcance descrito en la ficha"
+    },
+    {
+      "autor": "Jorge Valencia",
+      "evidencia_id": "E-P14-02",
+      "pruebas": [
+        "P14",
+        "P13"
+      ],
+      "titulo": "Panel sin filtros",
+      "tipo": "Captura de panel",
+      "fecha_referencia": "Corte histórico o recepción 2026-11-04; ver archivo fuente",
+      "rutas": [
+        "evidencias/capturas/E05_panel/E-P14-02_KPI_Jorge_Valencia.png",
+        "evidencias/registros/Inventario_solicitudes_Jorge_Valencia.json",
+        "evidencias/registros/Conciliacion_reservas_Jorge_Valencia.json"
+      ],
+      "resultado_observable": "KPI 13 solicitudes, dos pendientes, catorce días aprobados, con fecha/fuente visibles en el corte.",
+      "limite": "Captura histórica; el panel vivo puede tener más filas después. Dos no informados se derivan como expiradas sin escritura; no comparar cortes distintos como si fueran simultáneos.",
+      "estado": "Evidencia documentada; alcance descrito en la ficha"
+    },
+    {
+      "autor": "Jorge Valencia",
+      "evidencia_id": "E-P14-03",
+      "pruebas": [
+        "P14",
+        "P13"
+      ],
+      "titulo": "Gráfica e historial del corte",
+      "tipo": "Capturas de panel",
+      "fecha_referencia": "Corte histórico o recepción 2026-11-04; ver archivo fuente",
+      "rutas": [
+        "evidencias/capturas/E05_panel/E-P14-03_Grafica_Jorge_Valencia.png",
+        "evidencias/capturas/E05_panel/E-P14-03_Historial_Jorge_Valencia.png"
+      ],
+      "resultado_observable": "Cantidades por estado, barras desde cero e historial de trece folios ficticios.",
+      "limite": "Representación visual del mismo corte; no prueba lectura en tiempo real por sí sola.",
+      "estado": "Evidencia documentada; alcance descrito en la ficha"
+    },
+    {
+      "autor": "Jorge Valencia",
+      "evidencia_id": "E-P14-04",
+      "pruebas": [
+        "P14",
+        "P13"
+      ],
+      "titulo": "Filtro por equipo",
+      "tipo": "Capturas de panel",
+      "fecha_referencia": "Corte histórico o recepción 2026-11-04; ver archivo fuente",
+      "rutas": [
+        "evidencias/capturas/E05_panel/E-P14-04_Filtro_EQ_B_Jorge_Valencia.png",
+        "evidencias/capturas/E05_panel/E-P14-04_Fila_EQ_B_Jorge_Valencia.png"
+      ],
+      "resultado_observable": "EQ-B produce KPI 1/0/0 y una fila con cobertura insuficiente.",
+      "limite": "Filtro y respuesta visual; no es una nueva ejecución de decisión de vacaciones.",
+      "estado": "Evidencia documentada; alcance descrito en la ficha"
+    },
+    {
+      "autor": "Jorge Valencia",
+      "evidencia_id": "E-CFG-01",
+      "pruebas": [],
+      "titulo": "Dominio y límite ElevenLabs",
+      "tipo": "Lectura de configuración",
+      "fecha_referencia": "Corte histórico o recepción 2026-11-04; ver archivo fuente",
+      "rutas": [
+        "evidencias/registros/ElevenLabs_dominio_configurado_Jorge_Valencia.json",
+        "evidencias/registros/ElevenLabs_limites_publicados_Jorge_Valencia.json",
+        "agentes/voz/Configuracion_activa_Jorge_Valencia.json"
+      ],
+      "resultado_observable": "Main releída con hostname jorgevalba.github.io y max_tokens=1500.",
+      "limite": "Configuración verificada; no prueba adversaria desde otro origen ni conversación posterior a ese cambio.",
+      "estado": "Evidencia documentada; alcance descrito en la ficha"
+    },
+    {
+      "autor": "Jorge Valencia",
+      "evidencia_id": "E-DAT-01",
+      "pruebas": [],
+      "titulo": "Esquemas y muestra reproducible",
+      "tipo": "Artefactos de instalación",
+      "fecha_referencia": "Corte histórico o recepción 2026-11-04; ver archivo fuente",
+      "rutas": [
+        "datos/Esquema_tablas_Jorge_Valencia.json",
+        "datos/README.md",
+        "docs/Manual_instalacion_Jorge_Valencia.md"
+      ],
+      "resultado_observable": "Once tablas lógicas, seis CSV iniciales y manual de vinculación/configuración.",
+      "limite": "No acredita aún instalación indeno informado completa ni provisión de pases privados reproducida.",
+      "estado": "Evidencia documentada; alcance descrito en la ficha"
+    },
+    {
+      "autor": "Jorge Valencia",
+      "evidencia_id": "E-COST-01",
+      "pruebas": [
+        "P14"
+      ],
+      "titulo": "Proyecciones y disponibilidad",
+      "tipo": "Escenarios calculados y declaración del usuario",
+      "fecha_referencia": "Corte histórico o recepción 2026-11-04; ver archivo fuente",
+      "rutas": [
+        "costos/escenarios.csv",
+        "costos/Resumen_y_supuestos_Jorge_Valencia.json",
+        "costos/README.md"
+      ],
+      "resultado_observable": "Seis escenarios a 100/1,000/10,000 casos; cuota n8n 145/10,000 y doce días restantes reportados por Jorge.",
+      "limite": "No prueba de carga ni cotización cerrada. EUR y USD separados, fecha final exacta de prueba no confirmada; escenarios no equivalen al gasto observado.",
+      "estado": "Evidencia documentada; alcance descrito en la ficha"
+    }
+  ],
+  "archivos_referenciados": [
+    {
+      "autor": "Jorge Valencia",
+      "evidencia_id": "E-P01-01",
+      "ruta": "evidencias/registros/Evidencia_agentes_loops_Jorge_Valencia.json",
+      "sha256": "4f64b155eaed2584378522148d3479716d4f557ff9c2673c19c259235338ef79",
+      "bytes": 17367
+    },
+    {
+      "autor": "Jorge Valencia",
+      "evidencia_id": "E-P01-01",
+      "ruta": "evidencias/registros/Conciliacion_reservas_Jorge_Valencia.json",
+      "sha256": "015d4c0c850789dcac44b619202ba467961f8947242337178a956b3299345f08",
+      "bytes": 3085
+    },
+    {
+      "autor": "Jorge Valencia",
+      "evidencia_id": "E-P02-01",
+      "ruta": "evidencias/registros/Evidencia_agentes_loops_Jorge_Valencia.json",
+      "sha256": "4f64b155eaed2584378522148d3479716d4f557ff9c2673c19c259235338ef79",
+      "bytes": 17367
+    },
+    {
+      "autor": "Jorge Valencia",
+      "evidencia_id": "E-P02-01",
+      "ruta": "evidencias/registros/Conciliacion_reservas_Jorge_Valencia.json",
+      "sha256": "015d4c0c850789dcac44b619202ba467961f8947242337178a956b3299345f08",
+      "bytes": 3085
+    },
+    {
+      "autor": "Jorge Valencia",
+      "evidencia_id": "E-P03-01",
+      "ruta": "evidencias/registros/Pages_herramientas_verificadas_Jorge_Valencia.json",
+      "sha256": "d570c54f372addbdc8aacec7db9f3b495fc86abf0f1ef43273ac0f2399468d4c",
+      "bytes": 3967
+    },
+    {
+      "autor": "Jorge Valencia",
+      "evidencia_id": "E-P03-02",
+      "ruta": "evidencias/registros/Prueba_voz_confirmada_Jorge_Valencia.json",
+      "sha256": "118f0de8bd2a9613287301980dc13a27be094e068703c081fcc1f2f7a03849aa",
+      "bytes": 874
+    },
+    {
+      "autor": "Jorge Valencia",
+      "evidencia_id": "E-P04-01",
+      "ruta": "evidencias/registros/P04_version_incorrecta_Jorge_Valencia.json",
+      "sha256": "e57751e3e16a3107d2215685b4523d3d12234fa795e18a0a353668d5639d26f7",
+      "bytes": 2906
+    },
+    {
+      "autor": "Jorge Valencia",
+      "evidencia_id": "E-P04-02",
+      "ruta": "evidencias/capturas/P04_version_incorrecta/E-P04-02_Cero_filas_Jorge_Valencia.png",
+      "sha256": "96912e4c4ceba84cddbc614018036683a4e7fdeeab3806fd832f557393d21df9",
+      "bytes": 19489
+    },
+    {
+      "autor": "Jorge Valencia",
+      "evidencia_id": "E-P04-02",
+      "ruta": "evidencias/registros/P04_version_incorrecta_Jorge_Valencia.json",
+      "sha256": "e57751e3e16a3107d2215685b4523d3d12234fa795e18a0a353668d5639d26f7",
+      "bytes": 2906
+    },
+    {
+      "autor": "Jorge Valencia",
+      "evidencia_id": "E-P05-01",
+      "ruta": "evidencias/registros/P05_entrada_incompleta_Jorge_Valencia.json",
+      "sha256": "b5559d8404c928698d5d54ffbc0fbaffb42fbb1d004bfa765b792ec2f01c46ff",
+      "bytes": 1674
+    },
+    {
+      "autor": "Jorge Valencia",
+      "evidencia_id": "E-P05-01",
+      "ruta": "evidencias/capturas/P05_entrada_incompleta/E-P05-01_Recorrido_A_Jorge_Valencia.png",
+      "sha256": "7f41bb8ec9bcf49bf453de928b4eb4996f03fc8f495a02571c8b45c16dccbc7c",
+      "bytes": 192454
+    },
+    {
+      "autor": "Jorge Valencia",
+      "evidencia_id": "E-P05-01",
+      "ruta": "evidencias/capturas/P05_entrada_incompleta/E-P05-01_Recorrido_B_Jorge_Valencia.png",
+      "sha256": "f7bd008d18afe98b2ea002930d9543a0969b702b10412084c4eba5189e6728ca",
+      "bytes": 208500
+    },
+    {
+      "autor": "Jorge Valencia",
+      "evidencia_id": "E-P06-01",
+      "ruta": "evidencias/registros/P06_peticion_secretos_Jorge_Valencia.json",
+      "sha256": "551911a87ccc981a632a96210e9424addf63206b7a35ecaedbb1c4ae2a1f8cfe",
+      "bytes": 1514
+    },
+    {
+      "autor": "Jorge Valencia",
+      "evidencia_id": "E-P06-01",
+      "ruta": "evidencias/capturas/P06_peticion_secretos/E-P06-01_Peticion_rechazada_Jorge_Valencia.jpg",
+      "sha256": "e7162ba5b3d17a4b91936297dd47130a208d494edd71d3d8bb1106bddcfcdcd4",
+      "bytes": 204369
+    },
+    {
+      "autor": "Jorge Valencia",
+      "evidencia_id": "E-P06-01",
+      "ruta": "evidencias/capturas/P06_peticion_secretos/E-P06-01_Recorrido_Jorge_Valencia.png",
+      "sha256": "625d80cd51eb2e009ee8be45d0a56bb7e0eb6bed118c7e76160c07850da0f629",
+      "bytes": 117991
+    },
+    {
+      "autor": "Jorge Valencia",
+      "evidencia_id": "E-P07-01",
+      "ruta": "evidencias/registros/P07_usuario_sin_permiso_Jorge_Valencia.json",
+      "sha256": "d193ada4bc1f5587028bbdecf37b264eefb392a094caabce3a6b6097e3fc8728",
+      "bytes": 1343
+    },
+    {
+      "autor": "Jorge Valencia",
+      "evidencia_id": "E-P07-01",
+      "ruta": "evidencias/capturas/P07_usuario_sin_permiso/E-P07-01_Acceso_denegado_Jorge_Valencia.png",
+      "sha256": "3a4720c08be155a6d9894fdc2372e47a168fda70bc76a4eb574144997e629a28",
+      "bytes": 358815
+    },
+    {
+      "autor": "Jorge Valencia",
+      "evidencia_id": "E-P08-01",
+      "ruta": "evidencias/registros/P08_ejecucion_247_Jorge_Valencia.json",
+      "sha256": "60943837230d588f77699e69c21764d9e864da0f19544a4541d615854050a55d",
+      "bytes": 2103
+    },
+    {
+      "autor": "Jorge Valencia",
+      "evidencia_id": "E-P08-01",
+      "ruta": "tests/Prueba_P08_conexion_Jorge_Valencia.json",
+      "sha256": "ea2ea8b4dad11c3b5869664f7d8ac08d453c83b5159dce0d8fbf9a7c10847492",
+      "bytes": 40106
+    },
+    {
+      "autor": "Jorge Valencia",
+      "evidencia_id": "E-P08-01",
+      "ruta": "tests/Prueba_P08_alcance_Jorge_Valencia.json",
+      "sha256": "2b54dcaee4b1bb47ce44b3d89cb1b669ef2ee6c2125f6ef642ae5175e1daf95a",
+      "bytes": 1078
+    },
+    {
+      "autor": "Jorge Valencia",
+      "evidencia_id": "E-P09-01",
+      "ruta": "evidencias/registros/P09_ejecucion_246_Jorge_Valencia.json",
+      "sha256": "68f349183c2a5e9843291ebacc1b780afa93cc0d5f7a596e9b429573d8f66154",
+      "bytes": 3098
+    },
+    {
+      "autor": "Jorge Valencia",
+      "evidencia_id": "E-P09-01",
+      "ruta": "tests/Prueba_P09_limites_Jorge_Valencia.json",
+      "sha256": "d35b1c06447da48ba7dce8f5f4ab696fad7804131e428249dd5093e18616955f",
+      "bytes": 24133
+    },
+    {
+      "autor": "Jorge Valencia",
+      "evidencia_id": "E-P10-01",
+      "ruta": "evidencias/registros/P10_comparacion_248_249_Jorge_Valencia.json",
+      "sha256": "2717769da3a22d713073a2c5af00b8a6920e368dabee8ffa7741edde7a72ac58",
+      "bytes": 971
+    },
+    {
+      "autor": "Jorge Valencia",
+      "evidencia_id": "E-P10-01",
+      "ruta": "evidencias/registros/P10_ejecucion_248_Jorge_Valencia.json",
+      "sha256": "fae473ca96a2bb7c16fcb6f959dee98157a88cfa20a67cb2004bf63237287c16",
+      "bytes": 801
+    },
+    {
+      "autor": "Jorge Valencia",
+      "evidencia_id": "E-P10-01",
+      "ruta": "evidencias/registros/P10_ejecucion_249_Jorge_Valencia.json",
+      "sha256": "1099e2ef5f5e757081b503f9d7c045000a2f16458d79cc57797661c06bc5d1b4",
+      "bytes": 807
+    },
+    {
+      "autor": "Jorge Valencia",
+      "evidencia_id": "E-P10-01",
+      "ruta": "tests/Prueba_P10_evento_duplicado_Jorge_Valencia.md",
+      "sha256": "6435a44e709eb195f21439229b86f50df3b94b5a7e7ef64af7e7cc1b9d53201d",
+      "bytes": 1641
+    },
+    {
+      "autor": "Jorge Valencia",
+      "evidencia_id": "E-P11-01",
+      "ruta": "docs/P11_Skills_loops_Jorge_Valencia.md",
+      "sha256": "ea1cdca45ecc2f049d18b401d9c2ebf11cf4b44c6a15c46e2294030a2ecc9596",
+      "bytes": 8665
+    },
+    {
+      "autor": "Jorge Valencia",
+      "evidencia_id": "E-P11-01",
+      "ruta": "evidencias/registros/P11_consolidacion_Jorge_Valencia.json",
+      "sha256": "d11b5e12c77be932bf3aa654743870e8400a9b1232484c72f9209ae31bc0f897",
+      "bytes": 771
+    },
+    {
+      "autor": "Jorge Valencia",
+      "evidencia_id": "E-P11-01",
+      "ruta": "evidencias/registros/Evidencia_agentes_loops_Jorge_Valencia.json",
+      "sha256": "4f64b155eaed2584378522148d3479716d4f557ff9c2673c19c259235338ef79",
+      "bytes": 17367
+    },
+    {
+      "autor": "Jorge Valencia",
+      "evidencia_id": "E-P11-01",
+      "ruta": "skills/Snapshots_n8n_Jorge_Valencia.json",
+      "sha256": "933a3e4a5a5a1495bfd58aecc626933c1a5b229aefa1259635b6cc8f43152bc8",
+      "bytes": 1460
+    },
+    {
+      "autor": "Jorge Valencia",
+      "evidencia_id": "E-P12-01",
+      "ruta": "evidencias/registros/Actions_verificados_Jorge_Valencia.json",
+      "sha256": "018cc503be6f4034db6572af658147998cc17b8832200e662832a1ba25b19c00",
+      "bytes": 10238
+    },
+    {
+      "autor": "Jorge Valencia",
+      "evidencia_id": "E-P12-01",
+      "ruta": "docs/Actions_evidencia_Jorge_Valencia.md",
+      "sha256": "0ced8a1b5c26f55f24da7b6171cce875a8903bdb680b8bcd5c0721513bb0e6e0",
+      "bytes": 3059
+    },
+    {
+      "autor": "Jorge Valencia",
+      "evidencia_id": "E-P13-01",
+      "ruta": "evidencias/capturas/P13_interfaz/E-P13-01_390_panel_Jorge_Valencia.png",
+      "sha256": "f78ad9c4c1d76435fbaabaae48a9983adc70f217b1061c7ea3bc1d8d12c89a54",
+      "bytes": 119721
+    },
+    {
+      "autor": "Jorge Valencia",
+      "evidencia_id": "E-P13-01",
+      "ruta": "evidencias/capturas/P13_interfaz/E-P13-01_1366_panel_Jorge_Valencia.png",
+      "sha256": "b47f87bd22f8e0260bdd9db076ac00407a76587bad56c3f529683e462f2b7fa5",
+      "bytes": 143152
+    },
+    {
+      "autor": "Jorge Valencia",
+      "evidencia_id": "E-P13-01",
+      "ruta": "evidencias/capturas/README.md",
+      "sha256": "4f5054a3d90d60afc9ed885021cae00736015c3eacbca8df0fedb34a683e5b20",
+      "bytes": 2196
+    },
+    {
+      "autor": "Jorge Valencia",
+      "evidencia_id": "E-P14-01",
+      "ruta": "costos/Conciliacion_costos_Jorge_Valencia.json",
+      "sha256": "b29e9f9b378411fe9eb9b8d37fc33ef363dec742bc857c8655bb60eac1708254",
+      "bytes": 3687
+    },
+    {
+      "autor": "Jorge Valencia",
+      "evidencia_id": "E-P14-01",
+      "ruta": "costos/costos.csv",
+      "sha256": "1b8b2f21a0610a3bedc5d3e2900ce59623cbad8d535f66b87aca51f7c52829ab",
+      "bytes": 81296
+    },
+    {
+      "autor": "Jorge Valencia",
+      "evidencia_id": "E-P14-01",
+      "ruta": "costos/Resumen_y_supuestos_Jorge_Valencia.json",
+      "sha256": "905c9a4797af3d2352a3314c10000fb6ffafea77b8807da9547a8c64871478be",
+      "bytes": 2324
+    },
+    {
+      "autor": "Jorge Valencia",
+      "evidencia_id": "E-P14-01",
+      "ruta": "costos/Sesiones_consolidadas_Jorge_Valencia.json",
+      "sha256": "549f7fe3b136542bfc24e94df91fc1783d43a0e2b8767162c9c152899a521f11",
+      "bytes": 5125
+    },
+    {
+      "autor": "Jorge Valencia",
+      "evidencia_id": "E-P14-01",
+      "ruta": "costos/README.md",
+      "sha256": "987b3acfe83d52ab3c646f34d49bfe0896484410ebd472c72a242a4b412af809",
+      "bytes": 5938
+    },
+    {
+      "autor": "Jorge Valencia",
+      "evidencia_id": "E-P14-02",
+      "ruta": "evidencias/capturas/E05_panel/E-P14-02_KPI_Jorge_Valencia.png",
+      "sha256": "c1a1b283ca3f93bc9f26d0b7debf92cdfe67a90133a3b5e199f8156006511abb",
+      "bytes": 104389
+    },
+    {
+      "autor": "Jorge Valencia",
+      "evidencia_id": "E-P14-02",
+      "ruta": "evidencias/registros/Inventario_solicitudes_Jorge_Valencia.json",
+      "sha256": "4dc464ac57b988239aa51b4820923876b63a7d3c35ec9abb033316feec3727d2",
+      "bytes": 971
+    },
+    {
+      "autor": "Jorge Valencia",
+      "evidencia_id": "E-P14-02",
+      "ruta": "evidencias/registros/Conciliacion_reservas_Jorge_Valencia.json",
+      "sha256": "015d4c0c850789dcac44b619202ba467961f8947242337178a956b3299345f08",
+      "bytes": 3085
+    },
+    {
+      "autor": "Jorge Valencia",
+      "evidencia_id": "E-P14-03",
+      "ruta": "evidencias/capturas/E05_panel/E-P14-03_Grafica_Jorge_Valencia.png",
+      "sha256": "b8ae892a5bbff70f96d2ea888b5d5eb6f170e3a7f0f86f392b4ec372762fd1ec",
+      "bytes": 90593
+    },
+    {
+      "autor": "Jorge Valencia",
+      "evidencia_id": "E-P14-03",
+      "ruta": "evidencias/capturas/E05_panel/E-P14-03_Historial_Jorge_Valencia.png",
+      "sha256": "7c6c94ee336b0bef36e405ba9b1d241d271ec51fd59e5c8afa6bc78f68b13f87",
+      "bytes": 91897
+    },
+    {
+      "autor": "Jorge Valencia",
+      "evidencia_id": "E-P14-04",
+      "ruta": "evidencias/capturas/E05_panel/E-P14-04_Filtro_EQ_B_Jorge_Valencia.png",
+      "sha256": "d9d2904370da884ff2b666e4d02ef0b8e48459e52361fd9c62fe5c66cf26567f",
+      "bytes": 77520
+    },
+    {
+      "autor": "Jorge Valencia",
+      "evidencia_id": "E-P14-04",
+      "ruta": "evidencias/capturas/E05_panel/E-P14-04_Fila_EQ_B_Jorge_Valencia.png",
+      "sha256": "e8707239ede9d42e3ed12fce484e11022fe854170b4ec93928879ea3b87566a5",
+      "bytes": 20625
+    },
+    {
+      "autor": "Jorge Valencia",
+      "evidencia_id": "E-CFG-01",
+      "ruta": "evidencias/registros/ElevenLabs_dominio_configurado_Jorge_Valencia.json",
+      "sha256": "8060aaa4afbeb9b74a8c97e96fda7558d7bce1a251948eb19fef2c81ef81fba4",
+      "bytes": 930
+    },
+    {
+      "autor": "Jorge Valencia",
+      "evidencia_id": "E-CFG-01",
+      "ruta": "evidencias/registros/ElevenLabs_limites_publicados_Jorge_Valencia.json",
+      "sha256": "87f49fb3db3fdf9b30c111b0822c98a4daef502f6bbaf643691e0e7f67455357",
+      "bytes": 1003
+    },
+    {
+      "autor": "Jorge Valencia",
+      "evidencia_id": "E-CFG-01",
+      "ruta": "agentes/voz/Configuracion_activa_Jorge_Valencia.json",
+      "sha256": "b537de2d96d53888605a5e1224c17ed517d2c956af520f6aec23ceaf2fa2fab5",
+      "bytes": 9353
+    },
+    {
+      "autor": "Jorge Valencia",
+      "evidencia_id": "E-DAT-01",
+      "ruta": "datos/Esquema_tablas_Jorge_Valencia.json",
+      "sha256": "97efad376ff89b2f1669859f1522d8ac69a0d091c5e5f4d1bd7533a08d401650",
+      "bytes": 5260
+    },
+    {
+      "autor": "Jorge Valencia",
+      "evidencia_id": "E-DAT-01",
+      "ruta": "datos/README.md",
+      "sha256": "c8f6a9e87d399f90393c9a96f5b6077652bb294483916eabe157d575643bbf24",
+      "bytes": 3381
+    },
+    {
+      "autor": "Jorge Valencia",
+      "evidencia_id": "E-DAT-01",
+      "ruta": "docs/Manual_instalacion_Jorge_Valencia.md",
+      "sha256": "16b8fa8020ad04c82ca9737f44857b8640acba9b89727bc8cdcf0951b402de2e",
+      "bytes": 13871
+    },
+    {
+      "autor": "Jorge Valencia",
+      "evidencia_id": "E-COST-01",
+      "ruta": "costos/escenarios.csv",
+      "sha256": "b4e72c4548ca6bd38757cd430fa37fdd51e394104d1ab9f9f2adfe2e56ee3b3c",
+      "bytes": 2702
+    },
+    {
+      "autor": "Jorge Valencia",
+      "evidencia_id": "E-COST-01",
+      "ruta": "costos/Resumen_y_supuestos_Jorge_Valencia.json",
+      "sha256": "905c9a4797af3d2352a3314c10000fb6ffafea77b8807da9547a8c64871478be",
+      "bytes": 2324
+    },
+    {
+      "autor": "Jorge Valencia",
+      "evidencia_id": "E-COST-01",
+      "ruta": "costos/README.md",
+      "sha256": "987b3acfe83d52ab3c646f34d49bfe0896484410ebd472c72a242a4b412af809",
+      "bytes": 5938
+    }
+  ],
+  "capturas_copiadas_sin_editar": [
+    {
+      "autor": "Jorge Valencia",
+      "ruta": "evidencias/capturas/E05_panel/E-P14-02_KPI_Jorge_Valencia.png",
+      "sha256": "c1a1b283ca3f93bc9f26d0b7debf92cdfe67a90133a3b5e199f8156006511abb",
+      "origen_privado": "E05_panel/Panel_KPI_2026_11_04_Jorge_Valencia.png",
+      "tratamiento": "Copia literal; sin recorte ni edición.",
+      "criterio_revision": "Campos sanitizados del panel, fecha/fuente y KPI; sin perfil del navegador ni credenciales visibles."
+    },
+    {
+      "autor": "Jorge Valencia",
+      "ruta": "evidencias/capturas/E05_panel/E-P14-03_Grafica_Jorge_Valencia.png",
+      "sha256": "b8ae892a5bbff70f96d2ea888b5d5eb6f170e3a7f0f86f392b4ec372762fd1ec",
+      "origen_privado": "E05_panel/Grafica_estados_Jorge_Valencia.png",
+      "tratamiento": "Copia literal; sin recorte ni edición.",
+      "criterio_revision": "Gráfica de estados y KPI ficticios agregados; sin datos de acceso."
+    },
+    {
+      "autor": "Jorge Valencia",
+      "ruta": "evidencias/capturas/E05_panel/E-P14-03_Historial_Jorge_Valencia.png",
+      "sha256": "7c6c94ee336b0bef36e405ba9b1d241d271ec51fd59e5c8afa6bc78f68b13f87",
+      "origen_privado": "E05_panel/Historial_13_registros_Jorge_Valencia.png",
+      "tratamiento": "Copia literal; sin recorte ni edición.",
+      "criterio_revision": "Folios ficticios y estados; sin salarios, usuario/chat o códigos de acceso."
+    },
+    {
+      "autor": "Jorge Valencia",
+      "ruta": "evidencias/capturas/E05_panel/E-P14-04_Filtro_EQ_B_Jorge_Valencia.png",
+      "sha256": "d9d2904370da884ff2b666e4d02ef0b8e48459e52361fd9c62fe5c66cf26567f",
+      "origen_privado": "E05_panel/Filtro_EQ_B_Jorge_Valencia.png",
+      "tratamiento": "Copia literal; sin recorte ni edición.",
+      "criterio_revision": "Filtro del panel y cantidades agregadas del equipo ficticio."
+    },
+    {
+      "autor": "Jorge Valencia",
+      "ruta": "evidencias/capturas/E05_panel/E-P14-04_Fila_EQ_B_Jorge_Valencia.png",
+      "sha256": "e8707239ede9d42e3ed12fce484e11022fe854170b4ec93928879ea3b87566a5",
+      "origen_privado": "E05_panel/Historial_filtrado_EQ_B_Jorge_Valencia.png",
+      "tratamiento": "Copia literal; sin recorte ni edición.",
+      "criterio_revision": "Una fila ficticia del filtro de equipo, sin datos personales."
+    },
+    {
+      "autor": "Jorge Valencia",
+      "ruta": "evidencias/capturas/P04_version_incorrecta/E-P04-02_Cero_filas_Jorge_Valencia.png",
+      "sha256": "96912e4c4ceba84cddbc614018036683a4e7fdeeab3806fd832f557393d21df9",
+      "origen_privado": "P04_version_incorrecta/codex-clipboard-4e3dc49e-ce36-4115-8702-bf85d387640b.png",
+      "tratamiento": "Copia literal; sin recorte ni edición.",
+      "criterio_revision": "Tabla vacía, sin información individual; el filtro no aparece desplegado y se declara esa limitación."
+    },
+    {
+      "autor": "Jorge Valencia",
+      "ruta": "evidencias/capturas/P05_entrada_incompleta/E-P05-01_Recorrido_A_Jorge_Valencia.png",
+      "sha256": "7f41bb8ec9bcf49bf453de928b4eb4996f03fc8f495a02571c8b45c16dccbc7c",
+      "origen_privado": "P05_entrada_incompleta/codex-clipboard-9c94f1b6-52f5-447a-8aa1-46bef575a699.png",
+      "tratamiento": "Copia literal; sin recorte ni edición.",
+      "criterio_revision": "Lienzo de nodos con ejecución; no muestra JSON de usuario ni claves."
+    },
+    {
+      "autor": "Jorge Valencia",
+      "ruta": "evidencias/capturas/P05_entrada_incompleta/E-P05-01_Recorrido_B_Jorge_Valencia.png",
+      "sha256": "f7bd008d18afe98b2ea002930d9543a0969b702b10412084c4eba5189e6728ca",
+      "origen_privado": "P05_entrada_incompleta/codex-clipboard-ef5c792e-e9d7-4b1d-9e48-f08d17a1b47e.png",
+      "tratamiento": "Copia literal; sin recorte ni edición.",
+      "criterio_revision": "Complemento del recorrido de autorización y ayuda, sin credenciales visibles."
+    },
+    {
+      "autor": "Jorge Valencia",
+      "ruta": "evidencias/capturas/P06_peticion_secretos/E-P06-01_Peticion_rechazada_Jorge_Valencia.jpg",
+      "sha256": "e7162ba5b3d17a4b91936297dd47130a208d494edd71d3d8bb1106bddcfcdcd4",
+      "origen_privado": "P06_peticion_secretos/codex-clipboard-034638b4-1244-4170-bde3-0db5a40cfb3b.jpg",
+      "tratamiento": "Copia literal; sin recorte ni edición.",
+      "criterio_revision": "Extracto de prueba: pide claves pero no contiene sus valores ni códigos reales de acceso; respuesta de ayuda."
+    },
+    {
+      "autor": "Jorge Valencia",
+      "ruta": "evidencias/capturas/P06_peticion_secretos/E-P06-01_Recorrido_Jorge_Valencia.png",
+      "sha256": "625d80cd51eb2e009ee8be45d0a56bb7e0eb6bed118c7e76160c07850da0f629",
+      "origen_privado": "P06_peticion_secretos/codex-clipboard-dc1e955f-925c-46f2-aae7-cfdfef538b07.png",
+      "tratamiento": "Copia literal; sin recorte ni edición.",
+      "criterio_revision": "Recorrido n8n sin valores de credenciales ni perfiles personales visibles."
+    },
+    {
+      "autor": "Jorge Valencia",
+      "ruta": "evidencias/capturas/P07_usuario_sin_permiso/E-P07-01_Acceso_denegado_Jorge_Valencia.png",
+      "sha256": "3a4720c08be155a6d9894fdc2372e47a168fda70bc76a4eb574144997e629a28",
+      "origen_privado": "P07_usuario_sin_permiso/codex-clipboard-55276453-be8a-4f8c-aa19-183498f2f6dd.png",
+      "tratamiento": "Copia literal; sin recorte ni edición.",
+      "criterio_revision": "Mensajes de prueba y rechazo; no se muestra identidad personal de la cuenta ni un pase real."
+    },
+    {
+      "autor": "Jorge Valencia",
+      "ruta": "evidencias/capturas/P13_interfaz/E-P13-01_390_panel_Jorge_Valencia.png",
+      "sha256": "f78ad9c4c1d76435fbaabaae48a9983adc70f217b1061c7ea3bc1d8d12c89a54",
+      "origen_privado": "P13_interfaz/Responsive_390_panel_Jorge_Valencia.png",
+      "tratamiento": "Copia literal; sin recorte ni edición.",
+      "criterio_revision": "Viewport 390 visible y panel ficticio; DevTools sin perfil ni secretos visibles."
+    },
+    {
+      "autor": "Jorge Valencia",
+      "ruta": "evidencias/capturas/P13_interfaz/E-P13-01_1366_panel_Jorge_Valencia.png",
+      "sha256": "b47f87bd22f8e0260bdd9db076ac00407a76587bad56c3f529683e462f2b7fa5",
+      "origen_privado": "P13_interfaz/Responsive_1366_panel_Jorge_Valencia.png",
+      "tratamiento": "Copia literal; sin recorte ni edición.",
+      "criterio_revision": "Viewport 1366 visible con panel sanitizado; no incluye perfil de Chrome."
+    }
+  ],
+  "regla_hash": "SHA-256 del archivo en este corte; volver a generar si cambia el contenido. No se hashea este mismo manifiesto.",
+  "fuera_del_repositorio": "Originales en revisión privada; no subir la carpeta completa por defecto.",
+  "revision_estructura": "2026-11-21",
+  "revision_documental": "2026-11-21"
+}

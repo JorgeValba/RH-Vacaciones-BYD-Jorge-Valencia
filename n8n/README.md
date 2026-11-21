@@ -1,9 +1,11 @@
 # Automatizaciones importables
 Elaborado por: Jorge Valencia.
 
-## Propósito y relación con la guía
+## Referencia a la Guía del estudiante
 
-Guía p.4 y p.13: exports JSON sin secretos y manual de importación.
+De acuerdo con la **Guía del estudiante, páginas 4 y 13**, se pide exportar workflows JSON sin secretos e indicar cómo importar, vincular credenciales y ejecutar un caso.
+
+Se incluyen cuatro exportaciones sanitizadas y un mapa de configuración; el manual explica el orden de importación. La referencia identifica el requisito; su cumplimiento se contrasta con los archivos y resultados enlazados, no solamente con la existencia de la carpeta.
 
 ## Qué contiene y en qué formato
 
@@ -30,7 +32,7 @@ Esperar 121/17/20/5 nodos en principal/LLM/voz/panel. Mantener un solo Telegram 
 ## Relaciones con el proyecto
 
 - [Guía general](../README.md): requisitos, instalación, inicio, credenciales, parada y solución de problemas.
-- [Índice de evidencias](../evidencias/indice.md): resultados y archivos relacionados.
+- [Índice de evidencias](../evidencias/README.md): resultados y archivos relacionados.
 - [Matriz de pruebas](../tests/pruebas.csv): entradas, esperados y resultados observados.
 
 

@@ -1,9 +1,11 @@
 # HR assistant BYD en ElevenLabs
 Elaborado por: Jorge Valencia.
 
-## Propósito y relación con la guía
+## Referencia a la Guía del estudiante
 
-Guía p.5 y p.13: propósito, conocimiento, herramientas, conexión y configuración documentada.
+De acuerdo con la **Guía del estudiante, páginas 5 y 13**, se pide documentar propósito, idioma, conocimiento, herramientas, conexión y pruebas del agente de voz.
+
+Se conservan instrucciones y configuración sanitizada para recrear el agente; las pruebas enlazadas distinguen texto, voz y lectura de configuración. La referencia identifica el requisito; su cumplimiento se contrasta con los archivos y resultados enlazados, no solamente con la existencia de la carpeta.
 
 ## Qué contiene y en qué formato
 
@@ -27,7 +29,7 @@ La lectura posterior verificada mostró max_tokens=1500 y dominio jorgevalba.git
 ## Relaciones con el proyecto
 
 - [Guía general](../../README.md): requisitos, instalación, inicio, credenciales, parada y solución de problemas.
-- [Índice de evidencias](../../evidencias/indice.md): resultados y archivos relacionados.
+- [Índice de evidencias](../../evidencias/README.md): resultados y archivos relacionados.
 - [Matriz de pruebas](../../tests/pruebas.csv): entradas, esperados y resultados observados.
 
 ## Herramientas de servidor

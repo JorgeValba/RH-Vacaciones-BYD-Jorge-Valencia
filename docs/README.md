@@ -1,9 +1,11 @@
 # Documentación del sistema
 Elaborado por: Jorge Valencia.
 
-## Propósito y relación con la guía
+## Referencia a la Guía del estudiante
 
-Guía pp. 2–3, 11 y 13: caso, arquitectura, manual e instrucciones de recreación.
+De acuerdo con la **Guía del estudiante, páginas 2–3, 13 y 15**, se pide definir el caso y la arquitectura, entregar el informe de 8–12 páginas sin anexos y explicar las decisiones y la reflexión individual.
+
+Los documentos de esta carpeta desarrollan el caso, la arquitectura, el manual y análisis específicos; cada archivo conserva una función distinta. La referencia identifica el requisito; su cumplimiento se contrasta con los archivos y resultados enlazados, no solamente con la existencia de la carpeta.
 
 ## Qué contiene y en qué formato
 
@@ -31,5 +33,5 @@ La lectura debe permitir localizar tablas, credenciales y pasos sin tener que de
 ## Relaciones con el proyecto
 
 - [Guía general](../README.md): requisitos, instalación, inicio, credenciales, parada y solución de problemas.
-- [Índice de evidencias](../evidencias/indice.md): resultados y archivos relacionados.
+- [Índice de evidencias](../evidencias/README.md): resultados y archivos relacionados.
 - [Matriz de pruebas](../tests/pruebas.csv): entradas, esperados y resultados observados.

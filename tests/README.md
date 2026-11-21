@@ -1,9 +1,11 @@
 # Pruebas y matriz de evidencia
 Elaborado por: Jorge Valencia.
 
-## Propósito y relación con la guía
+## Referencia a la Guía del estudiante
 
-Guía p.12: matriz mínima, entradas, resultados, versión y ruta a evidencia; fallas controladas también se documentan.
+De acuerdo con la **Guía del estudiante, página 12**, se pide registrar P01–P14 con fecha, versión, caso, entrada, esperado, observado, estado y ruta de evidencia.
+
+pruebas.csv es la matriz de resultados; los scripts locales comprueban el código y no sustituyen las pruebas de servicios. La referencia identifica el requisito; su cumplimiento se contrasta con los archivos y resultados enlazados, no solamente con la existencia de la carpeta.
 
 ## Qué contiene y en qué formato
 
@@ -36,7 +38,7 @@ Código de salida 0 indica que las aserciones locales pasaron. Revisar el result
 ## Relaciones con el proyecto
 
 - [Guía general](../README.md): requisitos, instalación, inicio, credenciales, parada y solución de problemas.
-- [Índice de evidencias](../evidencias/indice.md): resultados y archivos relacionados.
+- [Índice de evidencias](../evidencias/README.md): resultados y archivos relacionados.
 - [Matriz de pruebas](../tests/pruebas.csv): entradas, esperados y resultados observados.
 
 

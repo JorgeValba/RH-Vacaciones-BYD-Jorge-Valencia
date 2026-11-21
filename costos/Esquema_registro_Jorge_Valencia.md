@@ -21,6 +21,6 @@ La guía (pp. 9–10) exige registro por llamada, fuente/fecha de tarifa, resume
 
 Fórmula GPT-5: ((entrada−caché)×1.25+caché×0.125+salida×10)/1,000,000 USD, con tarifas del corte. Las 48 generaciones suman USD 0.13586950. Cada resumen se reconcilia con ese importe; no se agrega como gasto nuevo al ledger.
 
-Fuentes de tokens: usage de la API; no conteo de palabras ni tokenización del mensaje visible. Se mantienen 53,918 entrada, 2,176 caché y 7,092 salida. La versión interna del tokenizer no está informada. El detalle de gpt-5-mini de una sesión está en [metadata](../evidencias/Pages_herramientas_verificadas_Jorge_Valencia.json); no convertir las categorías del proveedor en otra generación.
+Fuentes de tokens: usage de la API; no conteo de palabras ni tokenización del mensaje visible. Se mantienen 53,918 entrada, 2,176 caché y 7,092 salida. La versión interna del tokenizer no está informada. El detalle de gpt-5-mini de una sesión está en [metadata](../evidencias/registros/Pages_herramientas_verificadas_Jorge_Valencia.json); no convertir las categorías del proveedor en otra generación.
 
 Límites de la medición: construcción con IA no recuperada; otros consumos fuera del corte; cargo efectivamente pagado e incluidos por plan no conciliados; cotización n8n superior a 10,000 ejecuciones y tipo de cambio no fijados; el contrafactual de optimización no constituye una comparación A/B de calidad. No presentar el subtotal de USD 0.27757026 como gasto total o factura.

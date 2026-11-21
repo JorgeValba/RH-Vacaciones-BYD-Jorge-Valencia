@@ -16,6 +16,6 @@ No se publican razonamientos internos, conversaciones completas, claves, pases n
 - BYD México: escenario de demostración independiente; no se afirma afiliación ni políticas oficiales. Los datos de personal y reglas son sintéticos.
 - LFT: documento de conocimiento informativo del agente; conservar referencia y fecha de la fuente oficial usada en la cuenta. El archivo de configuración identifica el conocimiento, pero no redistribuye automáticamente el PDF.
 - Telegram, n8n, OpenAI, GitHub y ElevenLabs: servicios de terceros, sujetos a sus términos. Sus credenciales se vinculan del lado servidor.
-- Capturas: aportadas por Jorge durante pruebas; selección en [índice](../evidencias/indice.md), con originales de revisión fuera del repositorio.
+- Capturas: aportadas por Jorge durante pruebas; selección en [índice](../evidencias/README.md), con originales de revisión fuera del repositorio.
 
 El repositorio no concede por esta declaración una licencia general de software que Jorge no haya elegido. La licencia OFL de la fuente no se extiende automáticamente al código o a las marcas.

@@ -47,7 +47,7 @@ Dos skills versionados se cargan como snapshots compilados y se proyectan por ro
 
 Solo datos ficticios sanitizados y registros seleccionados están en este repositorio público. Credenciales, códigos, IDs personales, tabla de accesos y conversaciones completas permanecen privados. El estado de negocio se modifica mediante n8n, no editando el JSON de respaldo del panel.
 
-La deduplicación de entrada consulta antes de insertar: la prueba secuencial no demuestra atomicidad concurrente. La aprobación incluye control y verificación de reserva; una escritura parcial necesita conciliación. Ver [índice](../evidencias/indice.md) para distinguir integración histórica, configuración y ensayos aislados.
+La deduplicación de entrada consulta antes de insertar: la prueba secuencial no demuestra atomicidad concurrente. La aprobación incluye control y verificación de reserva; una escritura parcial necesita conciliación. Ver [índice](../evidencias/README.md) para distinguir integración histórica, configuración y ensayos aislados.
 
 ## Operación de los servicios
 

@@ -1,9 +1,11 @@
 # Loops de calidad y seguridad
 Elaborado por: Jorge Valencia.
 
-## Propósito y relación con la guía
+## Referencia a la Guía del estudiante
 
-Guía p.7: dos secuencias ejecutables con entrada, responsable, retorno, límites y estado de salida.
+De acuerdo con la **Guía del estudiante, página 7**, se pide definir dos loops con responsables, criterios, retorno, iteraciones, tiempo y presupuesto, y demostrar corrección V1 fallida a V2 validada.
+
+LOOPS.md reúne las reglas; los enlaces identifican la corrección histórica y las cargas de skills sin atribuirles una ejecución común inexistente. La referencia identifica el requisito; su cumplimiento se contrasta con los archivos y resultados enlazados, no solamente con la existencia de la carpeta.
 
 ## Qué contiene y en qué formato
 
@@ -26,5 +28,5 @@ Contrastar propuesta V1, revisión negativa, V2 y revisión positiva del mismo c
 ## Relaciones con el proyecto
 
 - [Guía general](../README.md): requisitos, instalación, inicio, credenciales, parada y solución de problemas.
-- [Índice de evidencias](../evidencias/indice.md): resultados y archivos relacionados.
+- [Índice de evidencias](../evidencias/README.md): resultados y archivos relacionados.
 - [Matriz de pruebas](../tests/pruebas.csv): entradas, esperados y resultados observados.

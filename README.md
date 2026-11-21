@@ -3,6 +3,14 @@ Elaborado por: Jorge Valencia.
 
 Guía para utilizar, revisar y recrear el sistema de vacaciones de RH. El escenario contiene quince empleados ficticios (EMP-001 a EMP-015) en tres equipos de cinco. Las APIs y servicios son reales; solicitudes, decisiones, reservas y primas son operaciones SIMULADAS. No se realizan pagos ni se representan políticas oficiales de BYD México.
 
+
+## Referencia a la Guía del estudiante
+
+De acuerdo con la **Guía del estudiante, páginas 13**, se pide el README debe permitir repetir una ejecución y detallar requisitos, configuración, credenciales por nombre, importación, inicio, prueba, validación, parada y solución de problemas.
+
+Este README organiza esos pasos; los resultados se enlazan a la matriz y a sus evidencias, con sus límites. La referencia identifica el requisito; su cumplimiento se contrasta con los archivos y resultados enlazados, no solamente con la existencia de la carpeta.
+
+
 ## 1. Objetivo y alcance
 
 Una persona de RH registra empleado y fechas desde Telegram; n8n valida acceso y datos, calcula días/saldo/cobertura/prima y coordina cuatro especialistas. La propuesta revisada se presenta a RH para aprobación o rechazo con folio y versión. El resultado se conserva en tablas; el panel y el asistente HR assistant BYD consultan información del mismo sistema.
@@ -30,7 +38,7 @@ Pages no mantiene n8n en ejecución. Actions se ejecuta por eventos de GitHub y 
 - [Sitio](https://jorgevalba.github.io/RH-Vacaciones-BYD-Jorge-Valencia/).
 - [Bot HR_BYD_bot](https://t.me/HR_BYD_bot).
 - [Ejecuciones de Actions](https://github.com/JorgeValba/RH-Vacaciones-BYD-Jorge-Valencia/actions).
-- [Índice de evidencia](evidencias/indice.md) y [matriz de pruebas](tests/pruebas.csv).
+- [Índice de evidencia](evidencias/README.md) y [matriz de pruebas](tests/pruebas.csv).
 
 Solicitar un pase a Jorge por el canal privado del curso. Enviar `/acceso CODIGO_PRIVADO` y después `/ayuda`. El código real no se publica. El sistema de pases permite treinta días para canjear y treinta días de acceso desde el canje, según la configuración documentada. Los usuarios autorizados comparten los casos ficticios; el acceso no es un expediente personal aislado por invitado.
 
@@ -69,7 +77,7 @@ Los límites exportados son 1,500 tokens de salida, seis generaciones, 120,000 m
 | [backend/](backend/README.md) | JS | Proyección sanitizada del panel reutilizada en el workflow |
 | [.env.example](.env.example) | Texto de variables sin valores | Catálogo orientativo; no se inyecta automáticamente en n8n |
 
-Cada carpeta tiene un README que explica sus archivos, formato, uso, comprobación y relación con el resto. Las fotos están en evidencias/capturas/; no se colocan en web/ ni se usan como sustituto del registro estructurado.
+Cada carpeta principal tiene una guía de uso. Las subcarpetas pequeñas se explican desde su carpeta principal para evitar repetir instrucciones. Las fotos están en evidencias/capturas/; no se colocan en web/ ni se usan como sustituto del registro estructurado.
 
 ## 6. Credenciales por nombre y lugar
 
@@ -87,7 +95,7 @@ La cabecera de herramienta es X-RH-Voz-Key. No poner su valor en web/config.json
 ## 7. Instalación e importación desde cero
 
 1. Obtener una copia completa del repositorio, conservando carpetas. Preparar cuentas y bot propios. No importar otra copia encima del workflow operativo de Jorge.
-2. Crear un proyecto n8n e importar los seis CSV de [datos/carga_inicial](datos/carga_inicial/README.md). Usar [Esquema_tablas](datos/Esquema_tablas_Jorge_Valencia.json) para los tipos y las tablas de salida.
+2. Crear un proyecto n8n e importar los seis CSV de [datos/carga_inicial](datos/README.md). Usar [Esquema_tablas](datos/Esquema_tablas_Jorge_Valencia.json) para los tipos y las tablas de salida.
 3. Crear vacías rh_solicitudes, rh_trazas y rh_costos. Crear rh_control_aprobaciones y rh_accesos con los nombres lógicos del esquema. En control debe existir una fila GLOBAL: estado Libre, propietario vacío, revision 0, verificado 0, autor Jorge Valencia. No poner verificado=1 manualmente.
 4. Crear las tres credenciales de n8n de la tabla anterior. El propietario de una recreación puede autorizar sus propios IDs privados en Configuración; esos IDs no se publican.
 5. Crear cuatro workflows vacíos. En cada uno, menú ⋯ → Import from File: 02_llm, 01_principal, 03_voz, 04_panel, respectivamente. Se esperan 17, 121, 20 y 5 nodos, antes de cualquier cambio propio.
@@ -166,6 +174,6 @@ Una decisión interrumpida puede haber escrito una reserva antes de fallar. Ante
 
 ## 13. Evidencias, formatos y autoría
 
-El [índice](evidencias/indice.md) usa E-Pxx-nn: cada ficha enlaza archivos, origen, observación y alcance. Las trece fotos seleccionadas se conservan como archivos PNG/JPG en evidencias/capturas/, con nombres estables. Las salidas JSON de ensayos no se presentan como ejecuciones integrales: P08 es fallo DNS aislado; P09 usa fixtures; P10 consulta un evento persistido de forma secuencial.
+El [índice](evidencias/README.md) usa E-Pxx-nn: cada ficha enlaza archivos, origen, observación y alcance. Las trece fotos seleccionadas se conservan como archivos PNG/JPG en evidencias/capturas/, con nombres estables. Las salidas JSON de ensayos no se presentan como ejecuciones integrales: P08 es fallo DNS aislado; P09 usa fixtures; P10 consulta un evento persistido de forma secuencial.
 
 [Uso de IA y licencias](docs/Uso_IA_y_licencias_Jorge_Valencia.md) declara las herramientas empleadas. Conservar la licencia OFL de Montserrat. No publicar .env real, claves, pases, IDs personales o conversaciones completas. Las condiciones y límites de los resultados medidos acompañan sus evidencias; la organización de tareas de cierre se mantiene fuera de este repositorio.

@@ -1,9 +1,11 @@
 # Sitio publicado en GitHub Pages
 Elaborado por: Jorge Valencia.
 
-## Propósito y relación con la guía
+## Referencia a la Guía del estudiante
 
-Guía pp.5–6: HTML, voz embebida, tres KPI, gráfica, historial, filtros y estados.
+De acuerdo con la **Guía del estudiante, páginas 5–6**, se pide publicar un panel con tres KPI, gráfica, historial, filtros, estados de interfaz e integración ElevenLabs; desplegar mediante Actions.
+
+web/ contiene el sitio y sus recursos; la matriz y las capturas documentan las verificaciones efectuadas. La referencia identifica el requisito; su cumplimiento se contrasta con los archivos y resultados enlazados, no solamente con la existencia de la carpeta.
 
 ## Qué contiene y en qué formato
 
@@ -14,8 +16,8 @@ Guía pp.5–6: HTML, voz embebida, tres KPI, gráfica, historial, filtros y est
 | [index.html](index.html) | HTML (.html) | Entrada HTML del sitio: presentación, panel, instrucciones y sección del asistente. |
 | [metrics.js](metrics.js) | JavaScript (.js) | Funciones de indicadores, selección y representación de datos del panel. |
 | [styles.css](styles.css) | CSS (.css) | Estilos y reglas responsive con paleta roja/gris/blanca del proyecto. |
-| [data/](data/README.md) | Carpeta | Abrir su README para formatos, uso y validación de ese componente. |
-| [fonts/](fonts/README.md) | Carpeta | Abrir su README para formatos, uso y validación de ese componente. |
+| [data/](data/) | Carpeta | Archivos explicados en esta guía; abrir la carpeta para consultar sus fuentes. |
+| [fonts/](fonts/) | Carpeta | Archivos explicados en esta guía; abrir la carpeta para consultar sus fuentes. |
 
 ## Cómo utilizarlo
 
@@ -32,7 +34,7 @@ Ejecutar node tests/validar_panel.mjs desde la raíz y revisar campos públicos,
 ## Relaciones con el proyecto
 
 - [Guía general](../README.md): requisitos, instalación, inicio, credenciales, parada y solución de problemas.
-- [Índice de evidencias](../evidencias/indice.md): resultados y archivos relacionados.
+- [Índice de evidencias](../evidencias/README.md): resultados y archivos relacionados.
 - [Matriz de pruebas](../tests/pruebas.csv): entradas, esperados y resultados observados.
 
 

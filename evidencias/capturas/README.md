@@ -1,35 +1,22 @@
-# Capturas de las pruebas
+# Capturas de pruebas
 Elaborado por: Jorge Valencia.
 
-## Propósito y relación con la guía
+De acuerdo con la **Guía del estudiante, página 12**, las capturas complementan los registros y el acceso funcional. Se conservaron trece imágenes PNG/JPG sin edición; los nombres incluyen el ID de la ficha. La clasificación por carpetas es una decisión de organización.
 
-Guía p.12 y p.13: fotos como complemento de registros, índice y resultados verificables.
+Abrir la [ficha de evidencia](../README.md) para leer qué demuestra cada imagen y sus límites. Las imágenes no se ejecutan ni instalan; pueden verse en GitHub o descargarse. El catálogo técnico conserva sus hashes y procedencia.
 
-## Qué contiene y en qué formato
-
-| Archivo o carpeta | Formato | Qué contiene y qué hacer con él |
-|---|---|---|
-| [E05_panel/](E05_panel/README.md) | Carpeta | Abrir su README para formatos, uso y validación de ese componente. |
-| [P04_version_incorrecta/](P04_version_incorrecta/README.md) | Carpeta | Abrir su README para formatos, uso y validación de ese componente. |
-| [P05_entrada_incompleta/](P05_entrada_incompleta/README.md) | Carpeta | Abrir su README para formatos, uso y validación de ese componente. |
-| [P06_peticion_secretos/](P06_peticion_secretos/README.md) | Carpeta | Abrir su README para formatos, uso y validación de ese componente. |
-| [P07_usuario_sin_permiso/](P07_usuario_sin_permiso/README.md) | Carpeta | Abrir su README para formatos, uso y validación de ese componente. |
-| [P13_interfaz/](P13_interfaz/README.md) | Carpeta | Abrir su README para formatos, uso y validación de ese componente. |
-
-## Cómo utilizarlo
-
-Elegir una carpeta por prueba/componente y usar el ID E-Pxx-nn del nombre del archivo para localizar la ficha en ../indice.md.
-
-## Entorno y configuración
-
-Archivos PNG/JPG originales seleccionados; no se ejecutan, no son mockups ni respuestas prefijadas.
-
-## Validación y resultado esperado
-
-Trece capturas agrupadas. Se preservan sin edición; los originales completos no seleccionados se conservan fuera del repositorio. El valor/operador de filtro no visible en una captura se declara en la ficha.
-
-## Relaciones con el proyecto
-
-- [Guía general](../../README.md): requisitos, instalación, inicio, credenciales, parada y solución de problemas.
-- [Índice de evidencias](../../evidencias/indice.md): resultados y archivos relacionados.
-- [Matriz de pruebas](../../tests/pruebas.csv): entradas, esperados y resultados observados.
+| Grupo | Archivo para consultar |
+|---|---|
+| E05_panel | [E-P14-02_KPI_Jorge_Valencia.png](E05_panel/E-P14-02_KPI_Jorge_Valencia.png) |
+| E05_panel | [E-P14-03_Grafica_Jorge_Valencia.png](E05_panel/E-P14-03_Grafica_Jorge_Valencia.png) |
+| E05_panel | [E-P14-03_Historial_Jorge_Valencia.png](E05_panel/E-P14-03_Historial_Jorge_Valencia.png) |
+| E05_panel | [E-P14-04_Fila_EQ_B_Jorge_Valencia.png](E05_panel/E-P14-04_Fila_EQ_B_Jorge_Valencia.png) |
+| E05_panel | [E-P14-04_Filtro_EQ_B_Jorge_Valencia.png](E05_panel/E-P14-04_Filtro_EQ_B_Jorge_Valencia.png) |
+| P04_version_incorrecta | [E-P04-02_Cero_filas_Jorge_Valencia.png](P04_version_incorrecta/E-P04-02_Cero_filas_Jorge_Valencia.png) |
+| P05_entrada_incompleta | [E-P05-01_Recorrido_A_Jorge_Valencia.png](P05_entrada_incompleta/E-P05-01_Recorrido_A_Jorge_Valencia.png) |
+| P05_entrada_incompleta | [E-P05-01_Recorrido_B_Jorge_Valencia.png](P05_entrada_incompleta/E-P05-01_Recorrido_B_Jorge_Valencia.png) |
+| P06_peticion_secretos | [E-P06-01_Peticion_rechazada_Jorge_Valencia.jpg](P06_peticion_secretos/E-P06-01_Peticion_rechazada_Jorge_Valencia.jpg) |
+| P06_peticion_secretos | [E-P06-01_Recorrido_Jorge_Valencia.png](P06_peticion_secretos/E-P06-01_Recorrido_Jorge_Valencia.png) |
+| P07_usuario_sin_permiso | [E-P07-01_Acceso_denegado_Jorge_Valencia.png](P07_usuario_sin_permiso/E-P07-01_Acceso_denegado_Jorge_Valencia.png) |
+| P13_interfaz | [E-P13-01_1366_panel_Jorge_Valencia.png](P13_interfaz/E-P13-01_1366_panel_Jorge_Valencia.png) |
+| P13_interfaz | [E-P13-01_390_panel_Jorge_Valencia.png](P13_interfaz/E-P13-01_390_panel_Jorge_Valencia.png) |
