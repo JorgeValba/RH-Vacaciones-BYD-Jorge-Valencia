@@ -682,8 +682,8 @@
       "autor": "Jorge Valencia",
       "evidencia_id": "E-P14-01",
       "ruta": "costos/Resumen_y_supuestos_Jorge_Valencia.json",
-      "sha256": "8b13ccd9e7020a4099937c0928bef92c7ae50d1f0b021e5f59dd1580e0380669",
-      "bytes": 7007
+      "sha256": "f37f70acbc4584256699f3434a4f91ec1eb9fc0a633efb6d7211f803ae5957b0",
+      "bytes": 7310
     },
     {
       "autor": "Jorge Valencia",
@@ -696,8 +696,8 @@
       "autor": "Jorge Valencia",
       "evidencia_id": "E-P14-01",
       "ruta": "costos/README.md",
-      "sha256": "08c1b61cf5acd392743f1421f2b589cd1206555e38baf20a596996b7da9018b0",
-      "bytes": 19667
+      "sha256": "e18fb85d4c491c8a800d58106cb3efaf6df901ea0c8e0236c20e9695e19b5107",
+      "bytes": 20748
     },
     {
       "autor": "Jorge Valencia",
@@ -801,15 +801,15 @@
       "autor": "Jorge Valencia",
       "evidencia_id": "E-COST-01",
       "ruta": "costos/Resumen_y_supuestos_Jorge_Valencia.json",
-      "sha256": "8b13ccd9e7020a4099937c0928bef92c7ae50d1f0b021e5f59dd1580e0380669",
-      "bytes": 7007
+      "sha256": "f37f70acbc4584256699f3434a4f91ec1eb9fc0a633efb6d7211f803ae5957b0",
+      "bytes": 7310
     },
     {
       "autor": "Jorge Valencia",
       "evidencia_id": "E-COST-01",
       "ruta": "costos/README.md",
-      "sha256": "08c1b61cf5acd392743f1421f2b589cd1206555e38baf20a596996b7da9018b0",
-      "bytes": 19667
+      "sha256": "e18fb85d4c491c8a800d58106cb3efaf6df901ea0c8e0236c20e9695e19b5107",
+      "bytes": 20748
     },
     {
       "autor": "Jorge Valencia",
@@ -857,8 +857,8 @@
       "autor": "Jorge Valencia",
       "evidencia_id": "E-P14-01",
       "ruta": "costos/Costos_auditables_Jorge_Valencia.xlsx",
-      "sha256": "f3c090e3961039eb9f330a88c0acf3309d5e43d150f7b9b8b21b55211a2005f8",
-      "bytes": 61129
+      "sha256": "babd5fe2167ee8181fae5b3f0a1007cbadb764a4052aa1a770112ee2ab9006b2",
+      "bytes": 61151
     },
     {
       "autor": "Jorge Valencia",
@@ -871,8 +871,8 @@
       "autor": "Jorge Valencia",
       "evidencia_id": "E-COST-01",
       "ruta": "costos/Costos_auditables_Jorge_Valencia.xlsx",
-      "sha256": "f3c090e3961039eb9f330a88c0acf3309d5e43d150f7b9b8b21b55211a2005f8",
-      "bytes": 61129
+      "sha256": "babd5fe2167ee8181fae5b3f0a1007cbadb764a4052aa1a770112ee2ab9006b2",
+      "bytes": 61151
     },
     {
       "autor": "Jorge Valencia",
@@ -899,8 +899,8 @@
       "autor": "Jorge Valencia",
       "evidencia_id": "E-COST-01",
       "ruta": "costos/Resumen_general_costos_Jorge_Valencia.png",
-      "sha256": "c6123af07ce79b8a6ade1d90d75f286a7ed736b1154bbbb75b11dc77ae2adb9a",
-      "bytes": 95625
+      "sha256": "6a2f66303da105ef7dd7407aa90f2bcdba81298ea1155b6819355f6b001e74ad",
+      "bytes": 94471
     }
   ],
   "capturas_copiadas_sin_editar": [

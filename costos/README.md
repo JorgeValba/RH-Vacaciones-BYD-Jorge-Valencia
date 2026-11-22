@@ -99,7 +99,7 @@ La **página 10 de la Guía del estudiante** permite **costos.csv o costos.xlsx*
 
 | Hoja | Contenido y uso |
 |---|---|
-| Presentación | Tabla para diapositiva: presupuesto estimado de un mes USD 45 y desembolso reportado USD 25, diferenciados |
+| Presentación | Tabla compacta: creación, promedio por solicitud, operación de 100 solicitudes/mes y primer mes; importes calculados |
 | Resumen | Uso GPT-5/ElevenLabs, desembolso, promedio de tres aprobados, rechazo separado y alcance de optimización |
 | Desarrollo | Estimación por texto, supuestos editables, fórmula de la guía, agregación por etapa y referencia de suscripción Plus |
 | Casos y etapas | Trece folios y cuatro especialistas; agrupaciones calculadas desde Registro |
@@ -148,17 +148,19 @@ La entrada usa tarifa regular sin descuento como supuesto de comparación. Cach�
 
 Para verificar de forma independiente la estimación desde la raíz del repositorio: `python costos/verificar_desarrollo.py`. Debe devolver veinte unidades y USD 1.37607250; si cambia un artefacto, el hash o conteo deja de coincidir y el script se detiene, en lugar de presentar un resultado antiguo como actualizado.
 
-## Tabla para diapositiva: presupuesto de un mes
+## Tabla para diapositiva: inversión, costo por uso y operación
 
-La hoja Presentación enlaza las fuentes Pagos y Desarrollo mediante fórmulas. La imagen PNG es su exportación para compartir, no una nueva prueba del sistema. Elaborado por Jorge Valencia.
+La hoja Presentación muestra cuatro indicadores para un escenario base de **100 solicitudes mensuales**. Sus valores enlazan Desarrollo, Pagos y Escenarios mediante fórmulas. La imagen PNG permite insertarla directamente en una diapositiva. Elaborado por Jorge Valencia.
 
-| Concepto | USD | Base |
+| Indicador | USD | Interpretación |
 |---|---:|---|
-| ChatGPT Plus | 20.00 | Referencia pública de un mes, atribución hipotética 100% al proyecto |
-| n8n | 20.00 | Mensualidad reportada por el autor |
-| OpenAI API | 5.00 | Recarga de saldo reportada; no costo de tokens consumidos |
-| ElevenLabs | 0.00 | Hipótesis Free y sin pago identificado; no significa uso cero |
-| Total estimado del proyecto para un mes | 45.00 | Presupuesto de demostración, no factura total comprobada |
-| Desembolso identificado reportado | 25.00 | Solo n8n y recarga API; Plus sigue como estimación de referencia |
+| Creación: prompts, skills y código | 20.00 | Un mes Plus de referencia, asignado al desarrollo; incluye los artefactos estimados |
+| Operación mensual de 100 solicitudes | 27.51 | n8n USD 20 + plan voz Starter proyectado USD 6 + variable estimado USD 1.50840814 |
+| Costo promedio por solicitud | 0.28 | USD 27.50840814 / 100; incluye plataforma e IA, no solo tokens |
+| Primer mes: creación + operación | 47.51 | USD 20 de creación + USD 27.50840814 de operación, sin redondear antes de sumar |
 
-El equivalente de desarrollo USD 1.37607250 no se suma a los USD 45: el autor utilizó el uso incluido de Plus. La tabla aproxima financiación/desembolso de un mes, no un costo contable exacto de todo el historial. La parte no consumida de la recarga sigue siendo saldo; no se presenta como gasto íntegro de tokens. Para otro periodo cambiar meses/proporción en Desarrollo y regenerar la tabla.
+El costo variable aproximado por solicitud es USD 0.01508408 y ya está incluido en el promedio completo. La base declara 20 sesiones de voz de 67 segundos y 60 mensajes de texto por cada 100 casos. Se proyecta Starter de ElevenLabs porque 22.33 minutos de voz superan los 15 de Free; no se presenta esa suscripción como un pago ya realizado. La demanda estimada n8n 1722 ejecuciones/mes cabe en la referencia de 2500, que no es confirmación del plan de la cuenta.
+
+**Creación:** el mes de Plus de referencia se atribuye una vez al desarrollo de prompts, skills, código y workflows. Su equivalente API estimado USD 1.37607250 está incluido como comparación y no se suma. No se valoran horas humanas, impuestos ni otras partidas no informadas. La operación automática no requiere cargar otra mensualidad Plus al proyecto; si se mantiene Plus para desarrollo continuo, su atribución adicional debe declararse.
+
+**Recarga y costo:** los USD 5 pagados a la API son saldo prepago. El costo operativo variable utiliza el consumo estimado y no vuelve a sumar la recarga. Los USD 25 reportados previamente siguen siendo desembolsos identificados de n8n y saldo; los USD 47.51 son un escenario de costo económico del primer mes con creación y operación, no una factura ni la misma medida de caja. Los escenarios 1000/10000 y las limitaciones de capacidad se conservan detallados en Escenarios.
