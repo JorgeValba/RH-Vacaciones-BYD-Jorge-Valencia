@@ -43,3 +43,7 @@ Esta guía de lectura es una ayuda documental añadida por Jorge Valencia para r
 
 Los Markdown son documentos explicativos: caso, arquitectura, manual, uso de IA y análisis de P11/Actions. Se distinguen afirmaciones de diseño de resultados observados enlazados. La arquitectura describe relaciones; el manual explica reproducción; las pruebas están en tests y evidencias, no se deducen del diagrama.
 <!-- FIN LECTURA SEMANTICA -->
+
+## Nomenclatura para el informe
+
+Usar los [nombres documentales y su correspondencia técnica](../agentes/README.md#nombres-documentales-de-los-agentes): Kurt Lewin (Orquestador), Carl Rogers (Recepción), Jean Piaget (Consulta), Abraham Maslow (Propuesta), Daniel Kahneman (Revisión) y Albert Bandura (canal HR assistant BYD). Mantener el rol técnico junto al nombre al citar nodos, contratos y trazas.

@@ -1,6 +1,22 @@
 # Roles e instrucciones
 Elaborado por: Jorge Valencia.
 
+
+## Nombres documentales de los agentes
+
+Elaborado por: Jorge Valencia. Para las descripciones del repositorio y el informe se utilizan estos nombres de psicólogos reconocidos, siempre acompañados del rol técnico para conservar la trazabilidad:
+
+| Nombre documental | Rol técnico que conserva | Función en el proyecto |
+|---|---|---|
+| **Kurt Lewin** | Orquestador | Coordina etapas, permisos, límites y decisión humana mediante lógica n8n |
+| **Carl Rogers** | Agente 1 — Recepción | Revisa empleado, fechas y campos faltantes |
+| **Jean Piaget** | Agente 2 — Consulta | Examina suficiencia de datos y fuentes permitidas |
+| **Abraham Maslow** | Agente 3 — Propuesta | Explica cálculos y prepara la propuesta de vacaciones |
+| **Daniel Kahneman** | Agente 4 — Revisión | Contrasta la propuesta y devuelve correcciones o validación |
+| **Albert Bandura** | Canal de voz/texto — HR assistant BYD | Consulta estado y saldo mediante las herramientas del mismo sistema |
+
+Son alias de documentación. Los identificadores de nodos, contratos, prompts, trazas y configuraciones conservan sus nombres técnicos. Kurt Lewin identifica al orquestador determinista; Albert Bandura identifica el canal adicional, cuya interfaz conserva el nombre HR assistant BYD. En el informe usar la forma «Carl Rogers — Agente 1, Recepción», y el mismo criterio para los demás roles.
+
 ## Referencia a la Guía del estudiante
 
 De acuerdo con la **Guía del estudiante, página 3**, se pide distinguir orquestador y cuatro especialistas, documentar instrucciones y contratos y conservar trazas de sus aportaciones.

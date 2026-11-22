@@ -4,6 +4,22 @@ Elaborado por: Jorge Valencia.
 Guía para utilizar, revisar y recrear el sistema de vacaciones de RH. El escenario contiene quince empleados ficticios (EMP-001 a EMP-015) en tres equipos de cinco. Las APIs y servicios son reales; solicitudes, decisiones, reservas y primas son operaciones SIMULADAS. No se realizan pagos ni se representan políticas oficiales de BYD México.
 
 
+
+## Nombres documentales de los agentes
+
+Elaborado por: Jorge Valencia. Para las descripciones del repositorio y el informe se utilizan estos nombres de psicólogos reconocidos, siempre acompañados del rol técnico para conservar la trazabilidad:
+
+| Nombre documental | Rol técnico que conserva | Función en el proyecto |
+|---|---|---|
+| **Kurt Lewin** | Orquestador | Coordina etapas, permisos, límites y decisión humana mediante lógica n8n |
+| **Carl Rogers** | Agente 1 — Recepción | Revisa empleado, fechas y campos faltantes |
+| **Jean Piaget** | Agente 2 — Consulta | Examina suficiencia de datos y fuentes permitidas |
+| **Abraham Maslow** | Agente 3 — Propuesta | Explica cálculos y prepara la propuesta de vacaciones |
+| **Daniel Kahneman** | Agente 4 — Revisión | Contrasta la propuesta y devuelve correcciones o validación |
+| **Albert Bandura** | Canal de voz/texto — HR assistant BYD | Consulta estado y saldo mediante las herramientas del mismo sistema |
+
+Son alias de documentación. Los identificadores de nodos, contratos, prompts, trazas y configuraciones conservan sus nombres técnicos. Kurt Lewin identifica al orquestador determinista; Albert Bandura identifica el canal adicional, cuya interfaz conserva el nombre HR assistant BYD. En el informe usar la forma «Carl Rogers — Agente 1, Recepción», y el mismo criterio para los demás roles.
+
 ## Referencia a la Guía del estudiante
 
 De acuerdo con la **Guía del estudiante, página 13**, el README debe permitir repetir una ejecución y detallar requisitos, configuración, credenciales por nombre, importación, inicio, prueba, validación, parada y solución de problemas.
