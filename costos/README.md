@@ -11,10 +11,11 @@ Los CSV permiten filtrar y recalcular; los JSON conservan conciliaciones y supue
 
 | Archivo o carpeta | Formato | Qué contiene y qué hacer con él |
 |---|---|---|
-| [Costos_auditables_Jorge_Valencia.xlsx](Costos_auditables_Jorge_Valencia.xlsx) | Excel (.xlsx) | Seis hojas con registro, fórmulas auditables, casos/etapas, fuentes, pagos y proyecciones. Abrir primero Resumen. |
+| [Costos_auditables_Jorge_Valencia.xlsx](Costos_auditables_Jorge_Valencia.xlsx) | Excel (.xlsx) | Siete hojas con registro, fórmulas auditables, casos/etapas, fuentes, pagos y proyecciones. Abrir primero Resumen. |
 | [tarifas.csv](tarifas.csv) | CSV UTF-8 (.csv) | Tarifas históricas GPT-5, referencias públicas de plataforma y mensualidad reportada, con fuente y fecha. |
 | [Conciliacion_costos_Jorge_Valencia.json](Conciliacion_costos_Jorge_Valencia.json) | JSON (.json) | Recalculo de 48 generaciones, cruce con trazas y costo incremental del loop. |
 | [costos.csv](costos.csv) | CSV UTF-8 (.csv) | Ledger de 144 registros: 135 de n8n y nueve sesiones de ElevenLabs, sin duplicar componentes. |
+| [desarrollo_estimado.csv](desarrollo_estimado.csv) | CSV UTF-8 (.csv) | Veinte unidades de desarrollo estimadas con todos los campos de registro, fuente y método; no son llamadas reales de API. |
 | [pagos_reportados.csv](pagos_reportados.csv) | CSV UTF-8 (.csv) | Recarga OpenAI y mensualidad n8n declaradas por el autor; separadas del consumo por llamada. |
 | [escenarios.csv](escenarios.csv) | CSV UTF-8 (.csv) | Seis proyecciones: base/mayor consumo a 100, 1,000 y 10,000 casos mensuales. |
 | [Esquema_registro_Jorge_Valencia.md](Esquema_registro_Jorge_Valencia.md) | Markdown (.md) | Interpretación de cada campo de costos y reglas contra dobles conteos. |
@@ -97,6 +98,7 @@ La **página 10 de la Guía del estudiante** permite **costos.csv o costos.xlsx*
 | Hoja | Contenido y uso |
 |---|---|
 | Resumen | Uso GPT-5/ElevenLabs, desembolso, promedio de tres aprobados, rechazo separado y alcance de optimización |
+| Desarrollo | Estimación por texto, supuestos editables, fórmula de la guía, agregación por etapa y referencia de suscripción Plus |
 | Casos y etapas | Trece folios y cuatro especialistas; agrupaciones calculadas desde Registro |
 | Registro | Los 144 registros de costos.csv con sus 43 campos; dos columnas adicionales recalculan y contrastan las 48 generaciones |
 | Tarifas | Entradas, caché, salida, cuota/plataformas, fuentes y fechas. Los datos históricos y las referencias actuales se distinguen |
@@ -115,4 +117,28 @@ Los escenarios históricos ya seleccionan planes de voz de pago cuando sus minut
 
 **Inversión de construcción y operación:** las llamadas del escenario de demostración se clasifican como desarrollo/pruebas. El uso de IA para crear prompts, código y skills fuera de esas ejecuciones no se recuperó en los registros recibidos. Se presenta no disponible, separado del consumo medido y de los pagos. La recarga no reconstruye ese uso ni la mensualidad n8n acredita un costo completo del proyecto.
 
-**Validación realizada:** sumas y agrupaciones recalculadas, reconciliación con CSV, revisión de fórmulas sin errores de celda, prueba de cambio/restauración de la mensualidad y revisión visual de las seis hojas. El libro guardado conserva fórmulas y resultados calculados. Su edición nativa en Microsoft Excel no se ha ensayado desde este entorno. Para actualizar el corte, reemplazar de forma coherente los CSV y regenerar el libro; no editar un subtotal para forzar coincidencia.
+**Validación realizada:** sumas y agrupaciones recalculadas, reconciliación con CSV, revisión de fórmulas sin errores de celda, prueba de cambio/restauración de la mensualidad y revisión visual de las siete hojas. El libro guardado conserva fórmulas y resultados calculados. Su edición nativa en Microsoft Excel no se ha ensayado desde este entorno. Para actualizar el corte, reemplazar de forma coherente los CSV y regenerar el libro; no editar un subtotal para forzar coincidencia.
+
+## Estimación de prompts, skills y código con ChatGPT Plus
+
+Las **páginas 9–10 de la guía** piden separar inversión de desarrollo y uso operativo, e identificar las estimaciones cuando no existe usage del proveedor. A petición de Jorge Valencia se agregó desarrollo_estimado.csv y la hoja Desarrollo. El uso de ChatGPT Plus fue confirmado por el autor; no se reconstruyen como hechos sus mensajes, modelo exacto, reintentos ni historial de tokens.
+
+**Base contada:** veinte unidades: seis archivos de instrucciones/prompts, dos skills, estructura y código de cuatro workflows y cuatro archivos web. Se cuentan 518025 caracteres después de separar código y estructura, excluir el snapshot compilado de skills contado por separado y omitir doce copias de biblioteca común. Se conservan rutas y SHA-256 del texto contado. Los IDs EST-DEV-001… son unidades de estimación; no identificadores de solicitudes reales. La fecha/hora corresponde al cálculo, no a una ejecución histórica de generación.
+
+**Método editable:** salida estimada = redondear hacia arriba(caracteres / 4); entrada estimada = redondear hacia arriba(salida × 0.5). Una reconstrucción por unidad. Es un proxy por caracteres, no tokenización nativa. Los supuestos de longitud de entrada y número de reconstrucciones no fueron observados. No incluye todo el chat, borradores descartados ni razonamiento interno y no certifica el consumo real del proyecto.
+
+La fórmula de la guía se aplica como equivalente GPT-5:
+
+```text
+C_equivalente = (Tentrada_estimada × 1.25 + Tsalida_estimada × 10) / 1000000
+             = (64762 × 1.25 + 129512 × 10) / 1000000
+             = USD 1.37607250
+```
+
+La entrada usa tarifa regular sin descuento como supuesto de comparación. Caché real, duración de voz y reintentos no se conocen o no aplican y se dejan vacíos con explicación. El costo se presenta separado por etapa de construcción y bajo un caso lógico de desarrollo. La sensibilidad de tres reconstrucciones equivale a USD 4.12821750; tres es un supuesto, no cantidad de llamadas ejecutadas.
+
+**Plus y cobro real:** [OpenAI publica Plus a USD 20/mes y distingue su facturación de la API](https://help.openai.com/en/articles/6950777-what-is-chatgpt-plus). Fuente de tarifa equivalente: [GPT-5](https://developers.openai.com/api/docs/models/gpt-5), consultada el 21 de noviembre de 2026. El autor indica que utilizó las llamadas incluidas: cargo incremental por llamada dentro de ese uso = USD 0, sin confundirlo con consumo cero. La tarifa API solo monetiza un volumen hipotético comparable; no es un cargo de Plus ni se descuenta de la recarga API.
+
+**Atribución de suscripción:** el Excel presenta un escenario explícito de un mes de Plus de referencia, asignado 100% al proyecto: USD 20. Meses y proporción son editables, no se afirman como duración/uso reales. Bajo ese supuesto, USD 25 de desembolsos reportados + USD 20 de Plus de referencia = USD 45 de escenario; no es una factura total comprobada. No sumar además los USD 1.37607250 de equivalente API. El precio realmente pagado, impuestos y otros meses no se inventan.
+
+**Campos de la estimación:** fecha_hora, caso_id, llamada_id, etapa, agente, proveedor, modelo_version (real no identificado y referencia explícita), tokens_entrada, tokens_salida, tokens_cache, duracion_voz_seg, unidad_cobro, tarifas, costo_equivalente_api_usd, moneda, estado, reintento y origen_dato. Se añaden caracteres, artefacto, fuente, hash, método, fuente/fecha de tarifa y tratamiento Plus. El registro medido costos.csv conserva sus 144 filas y no se mezcla con estas veinte estimaciones.

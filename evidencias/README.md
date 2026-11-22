@@ -331,6 +331,8 @@ Para el informe, citar el ID de la ficha y el enlace al archivo del commit de en
 - [Excel auditable de costos](../costos/Costos_auditables_Jorge_Valencia.xlsx).
 - [Tarifas con fuentes y fechas](../costos/tarifas.csv).
 
+- [Estimación de desarrollo separada de consumo y Plus](../costos/desarrollo_estimado.csv).
+
 ## E-P14-02
 
 **Panel sin filtros** · Captura de panel
@@ -428,6 +430,8 @@ Para el informe, citar el ID de la ficha y el enlace al archivo del commit de en
 
 - [Excel auditable de costos](../costos/Costos_auditables_Jorge_Valencia.xlsx).
 - [Tarifas con fuentes y fechas](../costos/tarifas.csv).
+
+- [Estimación de desarrollo separada de consumo y Plus](../costos/desarrollo_estimado.csv).
 
 ## Uso de referencias
 

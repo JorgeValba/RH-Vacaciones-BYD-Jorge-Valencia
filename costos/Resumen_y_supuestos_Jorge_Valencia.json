@@ -90,5 +90,46 @@
       "https://elevenlabs.io/pricing/agents"
     ],
     "tratamiento": "Hipótesis explícitas; costo mensual superior queda no cotizado cuando la capacidad no cubre las ejecuciones."
+  },
+  "estimacion_desarrollo_por_texto": {
+    "autor": "Jorge Valencia",
+    "unidades_estimadas": 20,
+    "caracteres_contados": 518025,
+    "tokens_entrada_estimados": 64762,
+    "tokens_salida_estimados": 129512,
+    "equivalente_api_base_usd": "1.37607250",
+    "deduplicacion": {
+      "bloques_codigo_repetidos_omitidos": 0,
+      "bibliotecas_comunes_omitidas": 12,
+      "nodo_snapshots_skills_excluido": 1
+    },
+    "parametros": {
+      "caracteres_por_token": 4,
+      "ratio_entrada_sobre_salida": 0.5,
+      "generaciones_equivalentes": 1,
+      "sensibilidad_generaciones": 3,
+      "tarifa_entrada_millon_usd": 1.25,
+      "tarifa_salida_millon_usd": 10,
+      "plus_mensual_referencia_usd": 20,
+      "meses_plus_escenario": 1,
+      "proporcion_plus_asignada_escenario": 1
+    },
+    "sin_nuevas_llamadas_api": true,
+    "fuente_datos": "Artefactos sanitizados finales de cuatro workflows n8n, dos SKILL.md, seis instrucciones/prompts y cuatro archivos web. Sin recuperar el historial completo del chat.",
+    "tokens_son_estimados": true,
+    "tokenizer_nativo_usado": false,
+    "metodo": "Salida=ceil(caracteres/4); entrada=ceil(salida*0.5). Modelo equivalente GPT-5, no identificación del modelo real de ChatGPT Plus.",
+    "fecha_hora_es_estimacion_no_llamada_real": true,
+    "cache_real_y_reintentos_no_conocidos": true,
+    "meses_y_porcentaje_plus_son_escenario": true,
+    "plus_usado_segun_autor": true,
+    "plus_mensual_referencia_usd": "20.00",
+    "cargo_incremental_por_llamada_incluida_usd": "0.00",
+    "api_y_plus_facturacion_separada": true,
+    "no_sumar_equivalente_api_a_suscripcion_plus": true,
+    "fuentes": [
+      "https://developers.openai.com/api/docs/models/gpt-5",
+      "https://help.openai.com/en/articles/6950777-what-is-chatgpt-plus"
+    ]
   }
 }
