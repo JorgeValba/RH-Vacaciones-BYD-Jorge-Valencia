@@ -11,6 +11,7 @@ Los documentos de esta carpeta desarrollan el caso, la arquitectura, el manual y
 
 | Archivo o carpeta | Formato | Qué contiene y qué hacer con él |
 |---|---|---|
+| [Informe_tecnico_empresarial_Jorge_Valencia.pdf](Informe_tecnico_empresarial_Jorge_Valencia.pdf) | PDF | Informe final de Jorge Valencia, con análisis, costos, casos y anexos. Abrir en GitHub o descargar; se conserva el archivo entregado por el autor. |
 | [01_Caso_actual_Jorge_Valencia.md](01_Caso_actual_Jorge_Valencia.md) | Markdown (.md) | Empresa, usuario de RH, objetivo, alcance y KPI del escenario ficticio. |
 | [Actions_evidencia_Jorge_Valencia.md](Actions_evidencia_Jorge_Valencia.md) | Markdown (.md) | Enlaces a fallo controlado de publicación y recuperación histórica. |
 | [Arquitectura_Jorge_Valencia.md](Arquitectura_Jorge_Valencia.md) | Markdown (.md) | Diagrama Mermaid y explicación de componentes, datos y límites de acceso. |

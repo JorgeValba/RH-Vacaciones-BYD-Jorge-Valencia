@@ -5,6 +5,11 @@ Guía para utilizar, revisar y recrear el sistema de vacaciones de RH. El escena
 
 
 
+
+## Informe final
+
+El [informe técnico y empresarial de Jorge Valencia](docs/Informe_tecnico_empresarial_Jorge_Valencia.pdf) abre el PDF final con el análisis del proyecto, costos, casos de uso y anexos de reproducción. Se conserva tal como fue entregado por su autor. Está incluido en la carpeta docs/ al descargar el ZIP de esta versión del repositorio.
+
 ## Nombres documentales de los agentes
 
 Elaborado por: Jorge Valencia. Para las descripciones del repositorio y el informe se utilizan estos nombres de psicólogos reconocidos, siempre acompañados del rol técnico para conservar la trazabilidad:
@@ -78,7 +83,7 @@ Los límites exportados son 1,500 tokens de salida, seis generaciones, 120,000 m
 
 | Carpeta o archivo | Formatos | Uso y guía detallada |
 |---|---|---|
-| [docs/](docs/README.md) | Markdown y diagramas Mermaid | Caso, arquitectura, manual y explicación de decisiones |
+| [docs/](docs/README.md) | PDF, Markdown y diagramas Mermaid | Caso, arquitectura, manual y explicación de decisiones |
 | [web/](web/README.md) | HTML, CSS, JS, JSON, WOFF2 | Sitio que publica Pages; campos públicos y recursos |
 | [agentes/](agentes/README.md) | Markdown, TXT, JS, JSON Schema | Cinco roles, instrucciones y contratos; voz separada |
 | [n8n/](n8n/README.md) | JSON | Cuatro exports sanitizados y mapa de vinculación por nodo |
