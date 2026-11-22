@@ -16,9 +16,9 @@ Elaborado por: Jorge Valencia. Para las descripciones del repositorio y el infor
 | **Jean Piaget** | Agente 2 — Consulta | Examina suficiencia de datos y fuentes permitidas |
 | **Abraham Maslow** | Agente 3 — Propuesta | Explica cálculos y prepara la propuesta de vacaciones |
 | **Daniel Kahneman** | Agente 4 — Revisión | Contrasta la propuesta y devuelve correcciones o validación |
-| **Albert Bandura** | Canal de voz/texto — HR assistant BYD | Consulta estado y saldo mediante las herramientas del mismo sistema |
+| **HR assistant BYD** | Canal de voz/texto | Consulta estado y saldo mediante las herramientas del mismo sistema |
 
-Son alias de documentación. Los identificadores de nodos, contratos, prompts, trazas y configuraciones conservan sus nombres técnicos. Kurt Lewin identifica al orquestador determinista; Albert Bandura identifica el canal adicional, cuya interfaz conserva el nombre HR assistant BYD. En el informe usar la forma «Carl Rogers — Agente 1, Recepción», y el mismo criterio para los demás roles.
+Son alias de documentación. Los identificadores de nodos, contratos, prompts, trazas y configuraciones conservan sus nombres técnicos. Kurt Lewin identifica al orquestador determinista; el canal adicional conserva exclusivamente el nombre HR assistant BYD. En el informe usar la forma «Carl Rogers — Agente 1, Recepción», y el mismo criterio para los demás roles.
 
 ## Referencia a la Guía del estudiante
 

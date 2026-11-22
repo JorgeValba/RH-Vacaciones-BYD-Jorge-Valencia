@@ -56,6 +56,6 @@ Esta guía de lectura es una ayuda documental añadida por Jorge Valencia para r
 **Alcance y límite:** El nombre «activa» no actualiza el archivo en vivo. No es una exportación completa instalable ni prueba de una conversación exitosa.
 <!-- FIN LECTURA SEMANTICA -->
 
-## Nombre documental del canal
+## Nombre del canal
 
-**Albert Bandura — HR assistant BYD** es el alias utilizado en las descripciones de GitHub y en el informe. Identifica el canal de consulta por voz/texto; el nombre mostrado en la interfaz sigue siendo HR assistant BYD. La correspondencia completa está en [agentes](../README.md#nombres-documentales-de-los-agentes).
+**HR assistant BYD** es el nombre del canal de consulta por voz/texto, tanto en las descripciones de GitHub como en el informe y la interfaz. La correspondencia de los otros agentes está en [agentes](../README.md#nombres-documentales-de-los-agentes).

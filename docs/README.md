@@ -46,4 +46,4 @@ Los Markdown son documentos explicativos: caso, arquitectura, manual, uso de IA 
 
 ## Nomenclatura para el informe
 
-Usar los [nombres documentales y su correspondencia técnica](../agentes/README.md#nombres-documentales-de-los-agentes): Kurt Lewin (Orquestador), Carl Rogers (Recepción), Jean Piaget (Consulta), Abraham Maslow (Propuesta), Daniel Kahneman (Revisión) y Albert Bandura (canal HR assistant BYD). Mantener el rol técnico junto al nombre al citar nodos, contratos y trazas.
+Usar los [nombres documentales y su correspondencia técnica](../agentes/README.md#nombres-documentales-de-los-agentes): Kurt Lewin (Orquestador), Carl Rogers (Recepción), Jean Piaget (Consulta), Abraham Maslow (Propuesta), Daniel Kahneman (Revisión) y HR assistant BYD (canal de voz/texto). Mantener el rol técnico junto al nombre al citar nodos, contratos y trazas.
