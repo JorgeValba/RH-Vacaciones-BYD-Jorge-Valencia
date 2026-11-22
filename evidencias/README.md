@@ -440,3 +440,5 @@ En el informe se puede citar «véase E-P04-01» y enlazar a esa ficha. El regis
 Las trece capturas se distribuyen en [capturas/](capturas/README.md). Los JSON de P08–P10 son salidas compartidas por Jorge de ensayos aislados; no se presentan como un webhook duplicado real, una caída real del proveedor o una prueba concurrente.
 
 Tabla derivada del Excel para presentación: [escenarios mensuales](../costos/Escenarios_mensuales_presentacion_Jorge_Valencia.png), referencia E-COST-01. No es captura de ejecución.
+
+Comparación de costo y calidad del sondeo: [método y resultados offline](../tests/Optimizacion_panel_Jorge_Valencia.md), E-COST-01. Diez criterios antes/después; no prueba de carga ni ahorro facturado.

@@ -33,20 +33,20 @@
     "contexto": "Reporte histórico de prueba gratuita del 4 de noviembre; no representa la suscripción pagada reportada posteriormente."
   },
   "optimizacion": {
-    "tipo": "Contrafactual, no A/B ejecutado",
+    "tipo": "Panel aplicado y comparado offline; caché sigue contrafactual",
     "gpt5_sin_cache_usd": "0.1383175",
     "gpt5_con_cache_usd": "0.13586950",
     "ahorro_cache_usd": "0.00244800",
-    "panel_intervalo_actual_seg": 60,
+    "panel_intervalo_actual_seg": 300,
     "panel_intervalo_propuesto_seg": 300,
     "reduccion_solo_polling_pct": 80,
-    "cambio_aplicado": false,
-    "calidad": "La caché cambia tratamiento contable de entrada, no prueba causal de calidad; menor frecuencia del panel reduce frescura. Mantener revalidación de aprobación."
+    "cambio_aplicado": true,
+    "calidad": "10 criterios del panel aprobados antes/después con DOM y HTTP simulados; frescura de 60 a 300 s, manual inmediata. No prueba navegador real o carga."
   },
   "limites_del_total": [
     "Los importes de construcción con IA y consumos fuera del corte no forman parte del subtotal identificado.",
     "Proyecciones USD con precios públicos normales de facturación mensual; no factura, carga real ni confirmación del plan contratado.",
-    "El contrafactual de caché/polling no es una prueba A/B de calidad.",
+    "Caché sigue contrafactual; menor sondeo aplicado al panel y comparado offline, sin prueba de navegador ni carga.",
     "Las cuotas de la cuenta son declaraciones fechadas del usuario, no verificación actual de facturación."
   ],
   "fecha_actualizacion_pagos": "2026-11-21",
@@ -94,10 +94,10 @@
   "estimacion_desarrollo_por_texto": {
     "autor": "Jorge Valencia",
     "unidades_estimadas": 20,
-    "caracteres_contados": 518025,
+    "caracteres_contados": 518020,
     "tokens_entrada_estimados": 64762,
-    "tokens_salida_estimados": 129512,
-    "equivalente_api_base_usd": "1.37607250",
+    "tokens_salida_estimados": 129511,
+    "equivalente_api_base_usd": "1.37606250",
     "deduplicacion": {
       "bloques_codigo_repetidos_omitidos": 0,
       "bibliotecas_comunes_omitidas": 12,
@@ -163,11 +163,11 @@
     "n8n_pago_20_reportado_no_sustituido": true,
     "todos_escenarios_usan_planes_pago": true,
     "criterio_plan_voz": "Menor paquete cuyo cupo incluido cubre minutos; no optimización global con sobreconsumo. Texto y LLM aparte. Concurrencia no ensayada.",
-    "n8n_formula": "N*eventos_Telegram + sesiones_voz*1 + mensajes_texto + 22*(horas_panel*3600/60+1)",
+    "n8n_formula": "N*eventos_Telegram + sesiones_voz*1 + mensajes_texto + 22*(horas_panel*3600/300+1)",
     "voz_llm_formula": "sesiones*0.00327175*(segundos/67)",
     "texto_llm_formula": "mensajes*0.0014068249999999998",
     "mezcla": "Base: 20% casos con consulta voz 67 s y 30% con 2 mensajes texto. Mayor: 50% voz 120 s y 40% con 4 mensajes. Todos recorren Telegram; son consultas complementarias.",
-    "panel": "Una sesión visible/día, 22 días; 1 h base, 4 h mayor. Más pantallas incrementan ejecuciones.",
+    "panel": "Una sesión visible/día, 22 días; 1 h base, 4 h mayor. Sondeo 300 s después de optimización offline; más pantallas y retornos incrementan consultas.",
     "github_y_telegram": "Cero condicionado de planes permanentes; no pruebas. Sin paid broadcasts, sin runners mayores. Pages educativo con 2 MB por caso supone 20 GB/mes a 10000; tráfico extra no medido.",
     "sin_reintentos_infra_extra": true,
     "mayor_gpt5_incluye_correccion_observada": true,
@@ -176,18 +176,18 @@
   "tabla_escenarios_presentacion": [
     {
       "casos_mes": 100,
-      "base_usd": "31.50840813636363635163636363636363636364",
-      "mayor_consumo_usd": "84.67840953731343280382089552238805970149"
+      "base_usd": "31.50840813636363635163636364",
+      "mayor_consumo_usd": "48.67840953731343280382089552"
     },
     {
       "casos_mes": 1000,
-      "base_usd": "97.08408136363636351636363636363636363636",
-      "mayor_consumo_usd": "269.7840953731343280382089552238805970149"
+      "base_usd": "97.08408136363636351636363636",
+      "mayor_consumo_usd": "185.7840953731343280382089552"
     },
     {
       "casos_mes": 10000,
-      "base_usd": "593.8408136363636351636363636363636363636",
-      "mayor_consumo_usd": "1455.840953731343280382089552238805970149"
+      "base_usd": "593.8408136363636351636363636",
+      "mayor_consumo_usd": "1447.840953731343280382089552"
     }
   ]
 }

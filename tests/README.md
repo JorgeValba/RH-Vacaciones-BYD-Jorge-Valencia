@@ -63,3 +63,7 @@ Los ensayos manuales P08/P09/P10 se importan en workflows nuevos, sin publicar n
 Resultados recibidos: P08 histórico 247, fallo DNS y generación bloqueada; ampliación 263 y resumen 271, dos timeouts, relectura y Telegram confirmados; P09 ejecución 246, dos bloqueos y un contraste autorizado; P10 ejecuciones 248/249, mismo evento/folio y una fila. Son ensayos aislados con los alcances indicados, no pruebas de caída real de OpenAI o de concurrencia de escritura.
 
 pruebas.csv conserva ID, fecha, versión, caso_id, entrada, esperado, observado, estado, ruta y evidencias_id. Algunas fechas son recepción de captura, no fecha de evento: leer la procedencia. Un estado descriptivo de alcance parcial no equivale a aprobar todos los escenarios de esa categoría.
+
+## Optimización del sondeo del panel
+
+El panel actualiza automáticamente cada cinco minutos; conserva consulta al abrir, al volver a pestaña y manual. [Comparación de costo y calidad](../tests/Optimizacion_panel_Jorge_Valencia.md): diez criterios offline antes/después, con el compromiso de frescura declarado. No es una prueba de navegador o carga.

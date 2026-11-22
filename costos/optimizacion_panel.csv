@@ -1,0 +1,7 @@
+autor,escenario,casos_mes,panel_antes,panel_despues,n8n_antes,n8n_despues,mensual_antes_usd,mensual_despues_usd,ahorro_proyectado_usd,origen
+Jorge Valencia,base,100,1342,286,1722.0,666.0,31.50840813636363635163636363636363636364,31.50840813636363635163636364,0,"Presupuesto calculado, no ahorro facturado; calidad comparada offline con app.js real"
+Jorge Valencia,base,1000,1342,286,5142.0,4086.0,97.08408136363636351636363636363636363636,97.08408136363636351636363636,0,"Presupuesto calculado, no ahorro facturado; calidad comparada offline con app.js real"
+Jorge Valencia,base,10000,1342,286,39342.0,38286.0,593.8408136363636351636363636363636363636,593.8408136363636351636363636,0,"Presupuesto calculado, no ahorro facturado; calidad comparada offline con app.js real"
+Jorge Valencia,mayor_consumo,100,5302,1078,6012.0,1788.0,84.67840953731343280382089552238805970149,48.67840953731343280382089552,36,"Presupuesto calculado, no ahorro facturado; calidad comparada offline con app.js real"
+Jorge Valencia,mayor_consumo,1000,5302,1078,12402.0,8178.0,269.7840953731343280382089552238805970149,185.7840953731343280382089552,84,"Presupuesto calculado, no ahorro facturado; calidad comparada offline con app.js real"
+Jorge Valencia,mayor_consumo,10000,5302,1078,76302.0,72078.0,1455.840953731343280382089552238805970149,1447.840953731343280382089552,8,"Presupuesto calculado, no ahorro facturado; calidad comparada offline con app.js real"

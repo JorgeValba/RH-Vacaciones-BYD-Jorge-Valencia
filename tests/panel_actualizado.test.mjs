@@ -22,7 +22,7 @@ const saved=JSON.parse(fs.readFileSync(new URL('../web/data/panel.json',import.m
 function element(){return {value:'',hidden:false,disabled:false,textContent:'',children:[],dataset:{},style:{},classList:{add(){},remove(){},toggle(){}},append(...n){this.children.push(...n);},replaceChildren(...n){this.children=n;},setAttribute(){},addEventListener(){}};}
 const els=new Map();let failing=false,invalid=false,calls=0,slowResolve;
 const document={hidden:false,getElementById(id){if(!els.has(id))els.set(id,element());return els.get(id);},createElement:element,addEventListener(){}};
-const context=vm.createContext({document,URL,Intl,Date,AbortController,JSON,Promise,console,setTimeout,clearTimeout,setInterval(fn,ms){assert.equal(ms,60000);context.poll=fn;},Option:function(label,value){this.textContent=label;this.value=value;},RHMetrics,fetch:async(url,opts)=>{
+const context=vm.createContext({document,URL,Intl,Date,AbortController,JSON,Promise,console,setTimeout,clearTimeout,setInterval(fn,ms){assert.equal(ms,300000);context.poll=fn;},Option:function(label,value){this.textContent=label;this.value=value;},RHMetrics,fetch:async(url,opts)=>{
  assert.equal(opts.credentials,'omit');
  if(url==='config.json')return {ok:true,json:async()=>config};
  if(url==='data/panel.json')return {ok:true,json:async()=>saved};

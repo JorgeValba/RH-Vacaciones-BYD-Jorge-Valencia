@@ -30,6 +30,8 @@ jobs:
         run: node tests/skills.test.mjs
       - name: Comprobar consultas de voz
         run: node tests/voz.test.mjs
+      - name: Comparar costo y calidad del sondeo
+        run: node tests/optimizacion_panel.test.mjs
       - name: Validar datos, cálculos y privacidad
         run: node tests/validar_panel.mjs
       - name: Falla deliberada de la puerta de publicación

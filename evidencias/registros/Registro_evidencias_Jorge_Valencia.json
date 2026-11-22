@@ -412,10 +412,13 @@
         "costos/tarifas.csv",
         "costos/desarrollo_estimado.csv",
         "costos/Resumen_general_costos_Jorge_Valencia.png",
-        "costos/Escenarios_mensuales_presentacion_Jorge_Valencia.png"
+        "costos/Escenarios_mensuales_presentacion_Jorge_Valencia.png",
+        "tests/Optimizacion_panel_Jorge_Valencia.md",
+        "tests/optimizacion_panel.test.mjs",
+        "costos/optimizacion_panel.csv"
       ],
-      "resultado_observable": "Seis escenarios USD con planes pagados normales, cuotas y extras para 100/1000/10000 casos; tabla de presentación. Pagos reportados USD 25 separados de consumo y proyección.",
-      "limite": "Estimaciones de demanda y uso LLM; no factura, prueba de carga ni verificación del plan contratado. Creación Plus atribuida por supuesto; optimización de caché no ensayada como A/B de calidad.",
+      "resultado_observable": "Seis escenarios USD con planes pagados normales, cuotas y extras para 100/1000/10000 casos; tabla de presentación. Pagos reportados USD 25 separados de consumo y proyección. Panel 60→300 s; comparación offline 10/10 criterios antes/después y efecto monetario por cuota.",
+      "limite": "Estimaciones de demanda, uso LLM y desarrollo; no factura ni prueba de carga. Optimización del panel comparada offline con código real: diez criterios y menor frescura declarada; caché sigue contrafactual.",
       "estado": "Evidencia documentada; alcance descrito en la ficha"
     }
   ],
@@ -683,8 +686,8 @@
       "autor": "Jorge Valencia",
       "evidencia_id": "E-P14-01",
       "ruta": "costos/Resumen_y_supuestos_Jorge_Valencia.json",
-      "sha256": "7028a1291ef86254429b45db35aac1c3150043c724e1f934ff4bf40d7a975e82",
-      "bytes": 9761
+      "sha256": "ddf8856f2b2007269f4a37e0e4d58b14f79c51f0c64da12d92666a0ef551020e",
+      "bytes": 9812
     },
     {
       "autor": "Jorge Valencia",
@@ -697,8 +700,8 @@
       "autor": "Jorge Valencia",
       "evidencia_id": "E-P14-01",
       "ruta": "costos/README.md",
-      "sha256": "7eb8cfa1c26190b8f182bd8ab27ec7fb5c437e5bed2ca4b8590b4d22bd0c171c",
-      "bytes": 17482
+      "sha256": "0e9fd90a682eee13131efe330b69b450a3dd2e7003ec8e6991779a238825759f",
+      "bytes": 18145
     },
     {
       "autor": "Jorge Valencia",
@@ -795,22 +798,22 @@
       "autor": "Jorge Valencia",
       "evidencia_id": "E-COST-01",
       "ruta": "costos/escenarios.csv",
-      "sha256": "2b6a806ca8b33a47e49ed9b9351db68f2a801750068515b89756d59ed47bf22b",
-      "bytes": 6312
+      "sha256": "88a65837e281efbfa5d8733f76ed8c986041020d68bb57784c72e0b07039e2e1",
+      "bytes": 6024
     },
     {
       "autor": "Jorge Valencia",
       "evidencia_id": "E-COST-01",
       "ruta": "costos/Resumen_y_supuestos_Jorge_Valencia.json",
-      "sha256": "7028a1291ef86254429b45db35aac1c3150043c724e1f934ff4bf40d7a975e82",
-      "bytes": 9761
+      "sha256": "ddf8856f2b2007269f4a37e0e4d58b14f79c51f0c64da12d92666a0ef551020e",
+      "bytes": 9812
     },
     {
       "autor": "Jorge Valencia",
       "evidencia_id": "E-COST-01",
       "ruta": "costos/README.md",
-      "sha256": "7eb8cfa1c26190b8f182bd8ab27ec7fb5c437e5bed2ca4b8590b4d22bd0c171c",
-      "bytes": 17482
+      "sha256": "0e9fd90a682eee13131efe330b69b450a3dd2e7003ec8e6991779a238825759f",
+      "bytes": 18145
     },
     {
       "autor": "Jorge Valencia",
@@ -858,8 +861,8 @@
       "autor": "Jorge Valencia",
       "evidencia_id": "E-P14-01",
       "ruta": "costos/Costos_auditables_Jorge_Valencia.xlsx",
-      "sha256": "256a4aafea081dc3cc4d11cf6d63b80480fa33d336802921ca5c2e5d57bdd0bb",
-      "bytes": 67067
+      "sha256": "12577889f99e06905387daaeb4cc278ee7db22d67ea78f12f0d81740165a6cf9",
+      "bytes": 69207
     },
     {
       "autor": "Jorge Valencia",
@@ -872,8 +875,8 @@
       "autor": "Jorge Valencia",
       "evidencia_id": "E-COST-01",
       "ruta": "costos/Costos_auditables_Jorge_Valencia.xlsx",
-      "sha256": "256a4aafea081dc3cc4d11cf6d63b80480fa33d336802921ca5c2e5d57bdd0bb",
-      "bytes": 67067
+      "sha256": "12577889f99e06905387daaeb4cc278ee7db22d67ea78f12f0d81740165a6cf9",
+      "bytes": 69207
     },
     {
       "autor": "Jorge Valencia",
@@ -886,14 +889,14 @@
       "autor": "Jorge Valencia",
       "evidencia_id": "E-P14-01",
       "ruta": "costos/desarrollo_estimado.csv",
-      "sha256": "36fb1e19b39b304542a8b7c7cefe5f76f9499feac479df575d7f0335deb11b3f",
+      "sha256": "1137afc5362c6b122baa2177e947b3aab459580a8f47092ad0a07007ba61ba7b",
       "bytes": 20735
     },
     {
       "autor": "Jorge Valencia",
       "evidencia_id": "E-COST-01",
       "ruta": "costos/desarrollo_estimado.csv",
-      "sha256": "36fb1e19b39b304542a8b7c7cefe5f76f9499feac479df575d7f0335deb11b3f",
+      "sha256": "1137afc5362c6b122baa2177e947b3aab459580a8f47092ad0a07007ba61ba7b",
       "bytes": 20735
     },
     {
@@ -907,8 +910,29 @@
       "autor": "Jorge Valencia",
       "evidencia_id": "E-COST-01",
       "ruta": "costos/Escenarios_mensuales_presentacion_Jorge_Valencia.png",
-      "sha256": "e2ffdc32074d8ee9ab839a78bb0ea492be328943dd3df68554fd9b0524d739be",
-      "bytes": 71946
+      "sha256": "254da64e08d6a234af080b13e55d25f25f8e09f8887f54a9a3c768aa2f1acbbc",
+      "bytes": 71494
+    },
+    {
+      "autor": "Jorge Valencia",
+      "evidencia_id": "E-COST-01",
+      "ruta": "tests/Optimizacion_panel_Jorge_Valencia.md",
+      "sha256": "c9d07c86ff14ebb9b7c7ae31e22bea08836d8e1b341b699633f70aff5898b3cc",
+      "bytes": 4216
+    },
+    {
+      "autor": "Jorge Valencia",
+      "evidencia_id": "E-COST-01",
+      "ruta": "tests/optimizacion_panel.test.mjs",
+      "sha256": "7666fc431d4b3cd010098525351d3f9eb9dd0922327b1370b63619db19bf2b1b",
+      "bytes": 6422
+    },
+    {
+      "autor": "Jorge Valencia",
+      "evidencia_id": "E-COST-01",
+      "ruta": "costos/optimizacion_panel.csv",
+      "sha256": "2d55e0bf116ef42cf54d2500741478fd0378375c81bca1e9f2b0a5859cc15ef9",
+      "bytes": 1444
     }
   ],
   "capturas_copiadas_sin_editar": [

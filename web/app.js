@@ -40,7 +40,7 @@ async function load(){
   const next=RHMetrics.validate(await get(endpoint()));
   if(!next.exportado_en||Math.abs(Date.now()-Date.parse(next.exportado_en))>300000)throw Error('Respuesta sin corte reciente');
   snapshot=next;lastLive=true;describeSnapshot();
-  set('data-notice',snapshot.casos.length?'Datos consultados en n8n. Se actualizan cada 60 segundos mientras esta página esté visible.':'Consulta completada en n8n: todavía no hay solicitudes.');
+  set('data-notice',snapshot.casos.length?'Datos consultados en n8n. Se actualizan cada 5 minutos mientras esta página esté visible.':'Consulta completada en n8n: todavía no hay solicitudes.');
   $('data-notice').classList.remove('warning');
  }catch(e){
   if(!snapshot){try{const saved=RHMetrics.validate(await get('data/panel.json'));if(saved.exportado_en){snapshot=saved;lastLive=false;}}catch{ /* Sin copia válida: mostrar indisponibilidad. */ }}
@@ -51,7 +51,7 @@ async function load(){
 }
 $('filters').addEventListener('submit',e=>e.preventDefault());$('filters').addEventListener('input',draw);$('filters').addEventListener('reset',()=>setTimeout(draw,0));$('retry').addEventListener('click',load);
 $('refresh-data').addEventListener('click',load);
-setInterval(()=>{if(!document.hidden)load();},60000);
+setInterval(()=>{if(!document.hidden)load();},300000);
 document.addEventListener('visibilitychange',()=>{if(!document.hidden)load();});
 $('consent').addEventListener('change',()=>{$('start-voice').disabled=!$('consent').checked||!config;});
 $('start-voice').addEventListener('click',async()=>{

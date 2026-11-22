@@ -59,3 +59,7 @@ Abrir http://localhost:8000 y detener con Ctrl+C. Esta previsualización no inic
 Solicitudes registradas cuenta folios; pendientes cuenta el estado mostrado; días aprobados suma días laborables de casos aprobados. Los filtros de estado/equipo/folio afectan indicadores, gráfica e historial. El corte histórico 13/2/14 se muestra en evidencia, no se fuerza como resultado de cualquier consulta actual.
 
 La lectura dinámica ocurre al abrir, al pulsar Actualizar y cada sesenta segundos visibles. Ante error, el aviso distingue respaldo y fecha; el panel también contempla carga, sin datos y sin coincidencias. La interfaz no debe interpretar una gráfica o una respuesta del modelo como autorización para modificar vacaciones.
+
+## Optimización del sondeo del panel
+
+El panel actualiza automáticamente cada cinco minutos; conserva consulta al abrir, al volver a pestaña y manual. [Comparación de costo y calidad](../tests/Optimizacion_panel_Jorge_Valencia.md): diez criterios offline antes/después, con el compromiso de frescura declarado. No es una prueba de navegador o carga.

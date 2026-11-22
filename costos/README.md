@@ -8,7 +8,7 @@ La **Guía del estudiante, páginas 9–10**, exige uso medido o estimado identi
 
 | Archivo | Formato | Contenido y uso |
 |---|---|---|
-| [Costos_auditables_Jorge_Valencia.xlsx](Costos_auditables_Jorge_Valencia.xlsx) | Excel | Nueve hojas con fórmulas; abrir Resumen y después Escenarios presentación. No ejecuta servicios |
+| [Costos_auditables_Jorge_Valencia.xlsx](Costos_auditables_Jorge_Valencia.xlsx) | Excel | Diez hojas con fórmulas; abrir Resumen y después Escenarios presentación. No ejecuta servicios |
 | [costos.csv](costos.csv) | CSV UTF-8 | 144 registros de uso histórico: 135 de n8n y nueve sesiones ElevenLabs. Fuente del Registro del Excel |
 | [desarrollo_estimado.csv](desarrollo_estimado.csv) | CSV UTF-8 | Veinte unidades de construcción estimadas por texto; separadas de las llamadas reales |
 | [tarifas.csv](tarifas.csv) | CSV UTF-8 | Tarifas de tokens, suscripciones, cuotas, extras y servicios gratuitos condicionados, con fuente y fecha |
@@ -35,6 +35,7 @@ Los CSV pueden abrirse en Excel mediante **Datos → Desde texto/CSV → UTF-8 �
 | Registro | Los 43 campos del ledger y dos columnas que recalculan/contrastan 48 generaciones |
 | Tarifas | Fuente de precios y cuotas normales. Columna E contiene valores editables; fuente y fecha permanecen junto a cada tarifa |
 | Escenarios | Seis filas: mezcla y duración editables, fórmulas de uso, elección de planes, cuotas, extras, totales y promedio integral. Encabezados identifican cada parámetro |
+| Optimización | Comparación monetaria antes/después y calidad offline 10/10; frescura y límites declarados |
 | Pagos | Dos declaraciones de dinero pagado. No convertirlas en consumo por llamada |
 | Presentación | Cuatro indicadores enlazados al escenario base de 100 casos y al desarrollo |
 | Escenarios presentación | Tres filas con costo mensual base y mayor consumo, enlazadas a Escenarios |
@@ -66,10 +67,10 @@ Se conservan los registros históricos y los pagos declarados. **No se inventa u
 
 | Componente | Precio de referencia normal | Aplicación |
 |---|---|---|
-| n8n Starter | USD 24/mes; 2 500 ejecuciones | Escenario base de 100 |
-| n8n Pro-1 | USD 60/mes; 10 000 ejecuciones | Base 1 000 y mayor 100 |
-| n8n Pro-2 | USD 144/mes; 50 000 ejecuciones | Base 10 000 y mayor 1 000/10 000 |
-| n8n extra Pro-2 mensual | USD 2 por bloque de 1 000 | Mayor 10 000 requiere 27 bloques = USD 54; cupo 77 000 |
+| n8n Starter | USD 24/mes; 2 500 ejecuciones | Base y mayor de 100 |
+| n8n Pro-1 | USD 60/mes; 10 000 ejecuciones | Base 1 000 y mayor 1 000 |
+| n8n Pro-2 | USD 144/mes; 50 000 ejecuciones | Base 10 000 y mayor 10 000 |
+| n8n extra Pro-2 mensual | USD 2 por bloque de 1 000 | Mayor 10 000 requiere 23 bloques = USD 46; cupo 73 000 |
 | ElevenLabs Starter / Creator / Pro | USD 6 / 22 / 99; 75 / 275 / 1 238 minutos | Voz con minutos suficientes, texto y LLM aparte |
 | ElevenLabs Scale / Business | USD 299 / 990; 3 738 / 12 375 minutos | Volúmenes altos con minutos suficientes |
 | ElevenLabs texto / minutos extra | USD 0.003/mensaje; USD 0.08/minuto adicional | Solo extras no incluidos. Burst USD 0.16/min no supuesto |
@@ -84,15 +85,15 @@ Se conservan los registros históricos y los pagos declarados. **No se inventa u
 
 **Mezcla complementaria:** todos los casos recorren Telegram; una fracción añade consultas al mismo registro por voz o texto, no una segunda creación. Base: 20% voz de 67 segundos y 30% texto de dos mensajes; mayor: 50% voz de 120 segundos y 40% texto de cuatro mensajes. Cada sesión de voz supone una herramienta n8n; cada mensaje escrito, una consulta. Telegram: tres eventos/caso base y cinco mayor. Son hipótesis editables, no frecuencias observadas.
 
-**Panel:** una pantalla abierta al día, 22 días/mes, una hora base o cuatro mayor, consulta inicial y sondeo cada 60 segundos mientras visible. Son 1 342 o 5 302 ejecuciones/mes. Más pantallas elevan la demanda. Subworkflows no se cuentan otra vez; el presupuesto aproxima invocaciones raíz según [reglas de n8n](https://support.n8n.io/article/can-you-reset-my-executions), no reproduce su contador de facturación.
+**Panel:** una pantalla abierta al día, 22 días/mes, una hora base o cuatro mayor, consulta inicial y sondeo cada 300 segundos mientras visible. Son 286 o 1 078 ejecuciones/mes; antes eran 1 342 o 5 302. Más pantallas elevan la demanda. Subworkflows no se cuentan otra vez; el presupuesto aproxima invocaciones raíz según [reglas de n8n](https://support.n8n.io/article/can-you-reset-my-executions), no reproduce su contador de facturación.
 
 **Uso LLM proyectado:** GPT-5 base = media de once casos con los cuatro agentes, USD 0.01178563636/caso; mayor = caso con corrección, USD 0.01680325. LLM ElevenLabs estimado desde metadata: USD 0.00327175 por sesión hablada de 67 s, escalado por duración; texto USD 0.001406825 por mensaje. No son tarifas unitarias publicadas ni una media representativa; se etiquetan estimaciones. GPT-5 mini de voz se factura aparte del GPT-5 directo. No se vuelve a sumar el total de metadata de sesión, porque duplicaría hosting/minutos incluidos.
 
 | Casos / mes | Base USD | Mayor consumo USD |
 |---:|---:|---:|
-| 100 | 31.51 | 84.68 |
-| 1,000 | 97.08 | 269.78 |
-| 10,000 | 593.84 | 1,455.84 |
+| 100 | 31.51 | 48.68 |
+| 1,000 | 97.08 | 185.78 |
+| 10,000 | 593.84 | 1,447.84 |
 
 Cada total suma plan n8n suficiente, plan ElevenLabs suficiente, GPT-5, LLM de voz/texto, hosting de texto y extras n8n. No escala la suscripción de manera lineal ni usa Free para cubrir demanda. La voz selecciona el menor paquete cuyo cupo incluido cubre los minutos; **no es una optimización de precio mínimo global** combinando todos los posibles sobreconsumos. Concurrencia, seguridad, SLA y ráfagas necesitan dimensionamiento adicional. No se incluye telefonía externa porque el canal previsto es el widget web.
 
@@ -100,31 +101,33 @@ Cada total suma plan n8n suficiente, plan ElevenLabs suficiente, GPT-5, LLM de v
 
 ## Construcción: prompts, skills y código
 
-Veinte unidades: seis instrucciones/prompts, dos SKILL.md, estructura y código de cuatro workflows y cuatro archivos web. Después de excluir snapshots compilados de skills y doce copias de biblioteca común se cuentan **518 025 caracteres**, con fuentes y SHA-256. IDs EST-DEV son unidades sintéticas de estimación, no llamadas históricas. Fecha/hora indica momento del cálculo.
+Veinte unidades: seis instrucciones/prompts, dos SKILL.md, estructura y código de cuatro workflows y cuatro archivos web. Después de excluir snapshots compilados de skills y doce copias de biblioteca común se cuentan **518 020 caracteres**, con fuentes y SHA-256. IDs EST-DEV son unidades sintéticas de estimación, no llamadas históricas. Fecha/hora indica momento del cálculo.
 
 ```text
-Salida estimada = ceil(caracteres/4) = 129 512 tokens
+Salida estimada = ceil(caracteres/4) = 129 511 tokens
 Entrada estimada = ceil(salida por unidad × 0.5) = 64 762 tokens
-Equivalente API = (64 762 × 1.25 + 129 512 × 10)/1 000 000 = USD 1.37607250
-Sensibilidad de tres reconstrucciones = USD 4.12821750
+Equivalente API = (64 762 × 1.25 + 129 511 × 10)/1 000 000 = USD 1.37606250
+Sensibilidad de tres reconstrucciones = USD 4.12818750
 ```
 
 Es proxy por caracteres, no tokenizer nativo ni uso real del chat. No reconstruye borradores, historial completo, razonamiento, modelo real, caché o reintentos. Campos desconocidos permanecen vacíos con explicación. ChatGPT Plus fue usado según el autor, con uso incluido; cargo incremental dentro del plan no implica consumo cero. El equivalente API **no se suma** a Plus ni se descuenta de la recarga API. Meses/proporción del Plus son supuestos, no factura ni duración real comprobada. No se valoran horas humanas.
 
-Verificación offline desde raíz: `python costos/verificar_desarrollo.py`. Resultado esperado: veinte unidades y USD 1.37607250. Un cambio de contenido/hash impide aceptar un cálculo antiguo. Requiere Python 3 con biblioteca estándar; no necesita credenciales.
+Verificación offline desde raíz: `python costos/verificar_desarrollo.py`. Resultado esperado: veinte unidades y USD 1.37606250. Un cambio de contenido/hash impide aceptar un cálculo antiguo. Requiere Python 3 con biblioteca estándar; no necesita credenciales.
 
 ## Pagos reportados, costo y caja
 
 OpenAI USD 5 = una recarga de saldo; n8n USD 20 = un mes reportado: desembolso identificado USD 25. No sumar nuevamente el uso de tokens a esa caja ni inferir saldo actual restando únicamente este corte. No se ha comprobado factura, impuestos o meses adicionales. El escenario de USD 25 reportados + un mes Plus de referencia = USD 45 es una atribución de caja distinta del presupuesto sostenible del primer mes USD 51.51. Todos conservan su alcance; no son tres totales intercambiables.
 
-## Costo y calidad: resultados observados y propuesta
+## Costo y calidad: resultados observados y optimización
 
 YTLS6SW04 proporciona una comparación observable: V1, cuatro llamadas, **USD 0.01283625**, revisión validado=false por explicación salarial/redacción; dos llamadas de corrección añaden **USD 0.00396700**; V2 validado=true, acumulado **USD 0.01680325**. Calidad validada no equivale a aprobación: RH rechazó después. El loop mejora la validación con un costo adicional acotado, no demuestra ahorro.
 
-Optimización propuesta: reutilizar contexto cacheable y reducir sondeo del panel de 60 a 300 s. El mismo uso sin descuento caché costaría USD 0.13831750 frente a USD 0.13586950: diferencia USD 0.00244800. Es un contrafactual contable, no ensayo A/B de una modificación. El sondeo baja de 1 342 a 286 ejecuciones base y de 5 302 a 1 078 mayor para una pantalla; pierde frescura hasta cinco minutos. No se modifica la revalidación de aprobación ni se eliminan guardrails. La calidad observada del loop y el ahorro propuesto se distinguen: no se afirma una validación integral de calidad de la optimización sin ejecutarla.
+Optimización aplicada: reducir sondeo del panel de 60 a 300 s. [Prueba reproducible de costo y calidad](../tests/Optimizacion_panel_Jorge_Valencia.md), ejecutada offline con código real: diez criterios aprobados antes/después, consulta manual conservada y menor frescura automática declarada. [Comparación monetaria](optimizacion_panel.csv). Reutilizar contexto cacheable sigue siendo una propuesta distinta. El mismo uso sin descuento caché costaría USD 0.13831750 frente a USD 0.13586950: diferencia USD 0.00244800. Es un contrafactual contable, no ensayo A/B de una modificación. El sondeo baja de 1 342 a 286 ejecuciones base y de 5 302 a 1 078 mayor para una pantalla; pierde frescura hasta cinco minutos. No se modifica la revalidación de aprobación ni se eliminan guardrails. El ensayo offline no acredita navegador real ni concurrencia; el ahorro no es una factura. El cambio de panel se separa del contrafactual de caché.
 
 ## Validación, actualización y problemas frecuentes
 
 Se verifican fórmulas guardadas, seis totales frente al CSV, sumas por caso/etapa, conservación de 144 registros y veinte estimaciones, cambios/restauración de tarifa y pagos, y revisión visual de las tablas. El libro conserva fórmulas y resultados calculados. No se afirma una prueba en la interfaz nativa de Microsoft Excel. Si un total no actualiza, habilitar cálculo automático; si IDs pierden formato al importar, volver a cargar como texto. Las cifras se redondean a dos decimales solo para presentación.
 
 Para otro corte, actualizar ledger, fuentes, metadata, pagos y proyecciones de forma coherente; nunca editar un subtotal para forzar coincidencia. No se consumen créditos para abrir o revisar estos archivos. La [guía general](../README.md) describe servicios y credenciales por nombre; el [índice de evidencias](../evidencias/README.md) y la [matriz de pruebas](../tests/pruebas.csv) relacionan las evidencias del sistema.
+
+La comparación del sondeo se conserva en [optimizacion_panel.csv](optimizacion_panel.csv), y el método, criterios y resultados en [la prueba de optimización](../tests/Optimizacion_panel_Jorge_Valencia.md).
