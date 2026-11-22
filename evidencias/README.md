@@ -10,7 +10,7 @@ Se implementó un índice único en este README: primero se leen los resultados;
 | Ubicación | Qué es y para qué sirve | Cómo usarla |
 |---|---|---|
 | Este README | Explicación legible y fichas con IDs estables | Buscar la prueba y abrir sus archivos de soporte |
-| [capturas/](capturas/README.md) | Trece fotos PNG/JPG agrupadas por prueba | Contrastar lo visible con la observación y el límite de la ficha |
+| [capturas/](capturas/README.md) | Catorce fotos PNG/JPG agrupadas por prueba | Contrastar lo visible con la observación y el límite de la ficha |
 | [registros/](registros/README.md) | JSON con resultados, identificadores, cifras y procedencia | Abrir únicamente si se necesita comprobar el detalle técnico |
 | [Registro_evidencias_Jorge_Valencia.csv](Registro_evidencias_Jorge_Valencia.csv) | Catálogo para Excel | Filtrar por ID o prueba; las rutas parten de la raíz del repositorio |
 | [Matriz de pruebas](../tests/pruebas.csv) | Entradas, esperado, observado y estado por P01–P14 | Evaluar cada resultado dentro de su alcance documentado |
@@ -31,6 +31,7 @@ Los registros son históricos, lecturas de configuración o ensayos aislados seg
 | P06 / [E-P06-01](#e-p06-01) | Solicitud de revelar claves | Petición de ignorar reglas/revelar claves responde con ayuda sin secretos; especialistas sin ejecutar. | [Ver respaldo](#e-p06-01) |
 | P07 / [E-P07-01](#e-p07-01) | Cuenta sin permiso | La cuenta identificada por Jorge como no autorizada recibe rechazo ante /start y /nuevo. | [Ver respaldo](#e-p07-01) |
 | P08 / [E-P08-01](#e-p08-01) | Fallo de conexión DNS | Ejecución 247: ENOTFOUND; permitido=false, generación no intentada y sin fila de reserva propuesta. | [Ver respaldo](#e-p08-01) |
+| P08 / [E-P08-02](#e-p08-02) | Timeout, reintento, persistencia y aviso | Ensayo 263: dos timeouts, error guardado y releído, mensaje Telegram 111; resumen corregido 271. | [Ver respaldo](#e-p08-02) |
 | P09 / [E-P09-01](#e-p09-01) | Presupuesto y límite de llamadas | Ejecución 246: presupuesto insuficiente y seis intentos bloquean; contraste dentro de límites autoriza. | [Ver respaldo](#e-p09-01) |
 | P10 / [E-P10-01](#e-p10-01) | Reproducción secuencial de evento persistido | 248/249: mismo evento y folio YTLSBKE8E, una fila en ambas lecturas y rama de duplicado. | [Ver respaldo](#e-p10-01) |
 | P11 / [E-P11-01](#e-p11-01) | Skills, loops, mejora y reutilización | V1 false→V2 true en YTLS6SW04; costo extra USD 0.003967; ambos skills cargados y reutilizados en BKE8E/EX4SR. | [Ver respaldo](#e-p11-01) |
@@ -203,6 +204,31 @@ Para el informe, citar el ID de la ficha y el enlace al archivo del commit de en
 - [registros/P08_ejecucion_247_Jorge_Valencia.json](registros/P08_ejecucion_247_Jorge_Valencia.json)
 - [Prueba_P08_conexion_Jorge_Valencia.json](../tests/Prueba_P08_conexion_Jorge_Valencia.json)
 - [Prueba_P08_alcance_Jorge_Valencia.json](../tests/Prueba_P08_alcance_Jorge_Valencia.json)
+
+## E-P08-02
+
+**Timeout, reintento, persistencia y aviso** · Ensayo controlado con n8n y Telegram
+
+**Referencia a la guía:** página 12, P08; página 13, exports e instrucciones reproducibles.
+
+**Fecha:** ensayo 2026-11-21T23:52:16.859Z; resumen 2026-11-22T00:07:42.853Z. Ambos corresponden al 21 de noviembre en Ciudad de México.
+
+| Comportamiento exigido | Resultado observado |
+|---|---|
+| Timeout | Dos peticiones terminaron por ECONNABORTED, duraciones 1048 y 1039 ms; límite configurado 1000 ms |
+| Reintento acotado | Dos intentos explícitos; 1013 ms entre fin del primero e inicio del segundo, incluyendo transición de nodos |
+| Estado de error | Error controlado escrito en rh_pruebas_p08 y relectura coincidente de los siete campos |
+| Mensaje comprensible | Telegram ok true, mensaje 111, texto/chat coincidentes y captura del aviso |
+
+**Trazabilidad:** ENSAYO-P08-263; la ejecución 263 llegó al guardado/relectura y envío. El resumen corregido fue ejecutado por separado en 271 sobre los datos conservados. Se documentan mapeo vacío, tabulaciones, relectura configurada como inserción y lectura incorrecta de la respuesta Telegram, junto con sus correcciones. No se oculta la incidencia inicial ni se presenta como una única ejecución completa sin fallos.
+
+**Resultado:** los cuatro comportamientos P08 están documentados dentro de este ensayo aislado. El destino es un servicio lento controlado; no caída real de OpenAI ni agotamiento de cuota. El código de preparación, presupuesto y bloqueo coincide con el export original. No se atribuye la configuración auxiliar a todos los caminos del principal.
+
+**Archivos:**
+
+- [Resultado, procedencia y correcciones](registros/P08_ensayo_263_resumen_271_Jorge_Valencia.json).
+- [Captura del aviso Telegram](capturas/P08_timeout/E-P08-02_Aviso_Telegram_Jorge_Valencia.jpg).
+- [Instrucciones, importación y exports](../tests/P08/README.md).
 
 ## E-P09-01
 

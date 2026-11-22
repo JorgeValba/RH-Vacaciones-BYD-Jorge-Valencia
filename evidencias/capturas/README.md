@@ -1,7 +1,7 @@
 # Capturas de pruebas
 Elaborado por: Jorge Valencia.
 
-De acuerdo con la **Guía del estudiante, página 12**, las capturas complementan los registros y el acceso funcional. Se conservaron trece imágenes PNG/JPG sin edición; los nombres incluyen el ID de la ficha. La clasificación por carpetas es una decisión de organización.
+De acuerdo con la **Guía del estudiante, página 12**, las capturas complementan los registros y el acceso funcional. Se conservaron catorce imágenes PNG/JPG sin edición; los nombres incluyen el ID de la ficha. La clasificación por carpetas es una decisión de organización.
 
 Abrir la [ficha de evidencia](../README.md) para leer qué demuestra cada imagen y sus límites. Las imágenes no se ejecutan ni instalan; pueden verse en GitHub o descargarse. El catálogo técnico conserva sus hashes y procedencia.
 
@@ -20,3 +20,4 @@ Abrir la [ficha de evidencia](../README.md) para leer qué demuestra cada imagen
 | P07_usuario_sin_permiso | [E-P07-01_Acceso_denegado_Jorge_Valencia.png](P07_usuario_sin_permiso/E-P07-01_Acceso_denegado_Jorge_Valencia.png) |
 | P13_interfaz | [E-P13-01_1366_panel_Jorge_Valencia.png](P13_interfaz/E-P13-01_1366_panel_Jorge_Valencia.png) |
 | P13_interfaz | [E-P13-01_390_panel_Jorge_Valencia.png](P13_interfaz/E-P13-01_390_panel_Jorge_Valencia.png) |
+| P08_timeout | [E-P08-02_Aviso_Telegram_Jorge_Valencia.jpg](P08_timeout/E-P08-02_Aviso_Telegram_Jorge_Valencia.jpg) |

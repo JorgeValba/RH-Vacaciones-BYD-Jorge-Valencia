@@ -1,0 +1,660 @@
+{
+  "name": "RH — P08 timeout y registro — Jorge Valencia",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "54eb06ae-0037-482b-9f31-32151a64724a",
+      "name": "Inicio manual",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        128,
+        -128
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Elaborado por: Jorge Valencia.\nreturn [{json:{autor:'Jorge Valencia', url_prueba:'https://TU_INSTANCIA.n8n.cloud/webhook/rh-p08-lento-jv-20261121-6f572a', chat_id:'CONFIGURAR_CHAT_ID_PROPIO', timeout_ms:1000, max_intentos:2}}];"
+      },
+      "id": "af73d32d-3773-44ed-a41b-1363f6c647b6",
+      "name": "Configuracion P08",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        368,
+        -128
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const c=$('Configuracion P08').first().json; if(!/^-?\\d+$/.test(c.chat_id)) throw new Error('Configurar chat_id propio antes de ejecutar.');\n// Elaborado por: Jorge Valencia. Llamada y registro previo sintéticos.\nconst caso='ENSAYO-P08-'+$execution.id;\nreturn [{json:{autor:'Jorge Valencia',caso_id:caso,datos_sinteticos:true,\nconfig:{modelo:'gpt-5',timeout_ms:120000,timeout_conteo_ms:1000,max_llamadas:6,tope_usd_caso:0.10,tarifa_entrada:1.25,tarifa_salida:10,tarifa_cache:0.125,moneda:'USD'},\nllamada_actual:{llamada_id:caso+'-L1',caso_id:caso,tipo:'especialista',etapa:'recepcion',agente:'Agente 1 - Recepción',grupo_costo:'prueba_aislada',ejecucion_principal:$execution.id,inicio_ms_caso:Date.now(),body:{model:'gpt-5',input:'Prueba de conexión sin datos personales.',instructions:'Ensayo aislado.',max_output_tokens:1500,reasoning:{effort:'minimal'},service_tier:'default'}}}}];\n"
+      },
+      "id": "350e318a-4dc3-4dfd-bdd9-e5dfe580677e",
+      "name": "Recibir llamada",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        608,
+        -128
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// RH-LIB v2 (2026-11-01) — funciones puras compartidas. Sin red, sin secretos.\nconst RH = (function () {\n  const esNum = (v) => typeof v === 'number' && Number.isFinite(v);\n  const esEnteroNoNeg = (v) => esNum(v) && v >= 0 && Math.floor(v) === v;\n  const esListaTxt = (v) => Array.isArray(v) && v.every((x) => typeof x === 'string');\n  const unicos = (a) => Array.from(new Set(a));\n\n  // Lee usage de Responses API sin sustituir ausencias por cero.\n  function leerUsage(usage) {\n    const r = { tokens_entrada: null, tokens_cache: null, tokens_salida: null, tokens_razonamiento: null, cache_informada: false, razonamiento_informado: false, usage_presente: false, errores: [] };\n    if (!usage || typeof usage !== 'object') { r.errores.push('usage ausente'); return r; }\n    r.usage_presente = true;\n    if (esEnteroNoNeg(usage.input_tokens)) r.tokens_entrada = usage.input_tokens; else r.errores.push('usage.input_tokens ausente o inválido');\n    if (esEnteroNoNeg(usage.output_tokens)) r.tokens_salida = usage.output_tokens; else r.errores.push('usage.output_tokens ausente o inválido');\n    const det = usage.input_tokens_details;\n    if (det && det.cached_tokens !== undefined && det.cached_tokens !== null) {\n      if (!esEnteroNoNeg(det.cached_tokens)) r.errores.push('cached_tokens inválido (' + String(det.cached_tokens) + ')');\n      else {\n        r.tokens_cache = det.cached_tokens; r.cache_informada = true;\n        if (r.tokens_entrada !== null && det.cached_tokens > r.tokens_entrada) r.errores.push('Incoherente: cached_tokens (' + det.cached_tokens + ') > input_tokens (' + r.tokens_entrada + ')');\n      }\n    }\n    const od = usage.output_tokens_details;\n    if (od && od.reasoning_tokens !== undefined && od.reasoning_tokens !== null) {\n      if (!esEnteroNoNeg(od.reasoning_tokens)) r.errores.push('reasoning_tokens inválido');\n      else {\n        r.tokens_razonamiento = od.reasoning_tokens; r.razonamiento_informado = true;\n        if (r.tokens_salida !== null && od.reasoning_tokens > r.tokens_salida) r.errores.push('Incoherente: reasoning_tokens > output_tokens');\n      }\n    }\n    return r;\n  }\n\n  // costo_tokens_usd = ((in - cache) * t_in + cache * t_cache + out * t_out) / 1e6\n  // El razonamiento ya está dentro de output_tokens: no se suma otra vez.\n  function costoTokens(u, t) {\n    if (!t || !(t.entrada > 0) || !(t.salida > 0) || !(t.cache >= 0)) return { costo: null, tipo: 'desconocido', motivo: 'Tarifas incompletas: costo no calculado.' };\n    if (u.errores.length || u.tokens_entrada === null || u.tokens_salida === null) return { costo: null, tipo: 'desconocido', motivo: 'Consumo desconocido o incoherente: ' + (u.errores.join('; ') || 'usage incompleto') + '. No se presume costo cero.' };\n    const cache = u.cache_informada ? u.tokens_cache : 0;\n    const costo = ((u.tokens_entrada - cache) * t.entrada + cache * t.cache + u.tokens_salida * t.salida) / 1000000;\n    if (u.cache_informada) return { costo: costo, tipo: 'calculado', motivo: 'Tokens medidos por usage de la API; costo calculado con tarifas configuradas. No es factura conciliada.' };\n    return { costo: costo, tipo: 'estimado', motivo: 'Caché no informada por la API: estimación conservadora sin descuento de caché (no se afirma caché medida = 0). No es factura conciliada.' };\n  }\n\n  // Reserva previa: entrada contada a tarifa normal (sin presumir caché) + salida máxima permitida.\n  function reservaLlamada(p) {\n    const tokens = (p.tokens_conteo * p.t.entrada + p.max_salida * p.t.salida) / 1000000;\n    const herramienta = (p.busquedas_max || 0) * (p.cargo_busqueda || 0);\n    const contenido = (p.tokens_contenido_supuesto || 0) * p.t.entrada / 1000000;\n    return { tokens: tokens, herramienta: herramienta, contenido: contenido, total: tokens + herramienta + contenido };\n  }\n\n  // Estado del presupuesto del caso a partir de las filas originales de rh_costos.\n  function estadoPresupuesto(filas) {\n    const gen = (filas || []).filter((f) => f && f.tipo_registro === 'generacion');\n    let contabilizado = 0; let pendiente = 0; let sinCota = 0;\n    gen.forEach((f) => {\n      const ec = String(f.estado_conciliacion || '');\n      if ((ec === 'calculado' || ec === 'estimado' || ec === 'conciliado') && esNum(f.costo_usd)) contabilizado += f.costo_usd;\n      else if (esNum(f.costo_reservado_usd)) pendiente += f.costo_reservado_usd;\n      else sinCota += 1;\n    });\n    return { intentos: gen.length, contabilizado: contabilizado, pendiente: pendiente, sin_cota: sinCota };\n  }\n\n  function evaluarAutorizacion(est, reserva, cfg) {\n    const motivos = [];\n    if (cfg.max_llamadas > 0 && est.intentos + 1 > cfg.max_llamadas) motivos.push('MAX_LLAMADAS alcanzado (' + est.intentos + ' intentos de generación de ' + cfg.max_llamadas + ')');\n    if (est.sin_cota > 0) motivos.push(est.sin_cota + ' llamada(s) previa(s) con consumo desconocido y sin reserva cuantificada');\n    if (!(cfg.tope_usd_caso > 0)) motivos.push('TOPE_USD_CASO no configurado (vacío no es ilimitado)');\n    if (reserva === null) motivos.push('Sin reserva calculable');\n    else {\n      const total = est.contabilizado + est.pendiente + reserva.total;\n      if (total > cfg.tope_usd_caso) motivos.push('Presupuesto insuficiente: contabilizado ' + est.contabilizado + ' + reservas pendientes ' + est.pendiente + ' + nueva reserva ' + reserva.total + ' = ' + total + ' USD > TOPE_USD_CASO ' + cfg.tope_usd_caso);\n    }\n    return motivos;\n  }\n\n  function mensajeErrorApi(status, body, modelo, fase) {\n    const e = (body && body.error) || {};\n    const msg = String(e.message || (typeof body === 'string' ? body : '') || '').slice(0, 300);\n    const code = String(e.code || '');\n    if (status === 404 || code === 'model_not_found' || /model/i.test(msg) && /(not exist|not found|does not have access|no access)/i.test(msg)) {\n      return 'El modelo ' + modelo + ' no está disponible para la credencial o cuenta (' + fase + ', HTTP ' + status + (code ? ', ' + code : '') + '): ' + msg + '. No se sustituye por otro modelo.';\n    }\n    return 'Error de API en ' + fase + ' (HTTP ' + status + (code ? ', ' + code : '') + '): ' + msg;\n  }\n\n  // Extrae el texto final de una respuesta; solo 'completed' libera contenido.\n  function extraerTexto(resp) {\n    const r = { status: resp && resp.status ? String(resp.status) : null, texto: null, motivo: '' };\n    if (!resp || typeof resp !== 'object') { r.motivo = 'Respuesta vacía'; return r; }\n    if (r.status !== 'completed') {\n      const det = resp.incomplete_details && resp.incomplete_details.reason ? ' (' + resp.incomplete_details.reason + ')' : '';\n      r.motivo = 'Respuesta no completada: status ' + r.status + det;\n      return r;\n    }\n    const msgs = (Array.isArray(resp.output) ? resp.output : []).filter((o) => o && o.type === 'message');\n    const partes = [];\n    msgs.forEach((m) => (m.content || []).forEach((c) => { if (c && c.type === 'output_text' && typeof c.text === 'string') partes.push(c.text); }));\n    if (!partes.length) { r.motivo = 'Sin texto de salida'; return r; }\n    r.texto = partes.join('\\n');\n    return r;\n  }\n\n  function hostPermitido(u, permitidos) {\n    try { const x = new URL(String(u)); const h = x.hostname.toLowerCase(); return x.protocol === 'https:' && permitidos.some((d) => h === d || h.endsWith('.' + d)); } catch (e) { return false; }\n  }\n  function normUrl(u) {\n    try { const x = new URL(String(u)); return x.hostname.toLowerCase().replace(/^www[.]/, '') + x.pathname.replace(/[/]+$/, ''); } catch (e) { return null; }\n  }\n\n  // Evidencia de búsqueda desde los metadatos devueltos (web_search_call y anotaciones), no desde el texto.\n  function extraerBusqueda(resp, permitidos) {\n    const out = resp && Array.isArray(resp.output) ? resp.output : [];\n    const llamadas = out.filter((o) => o && o.type === 'web_search_call');\n    const sinAccion = llamadas.filter((c) => !c.action || !c.action.type).length;\n    const cobrables = llamadas.filter((c) => !c.action || !c.action.type || c.action.type === 'search').length;\n    const completadas = llamadas.filter((c) => c.status === 'completed').length;\n    const fuentes = [];\n    llamadas.forEach((c) => { const ss = c.action && Array.isArray(c.action.sources) ? c.action.sources : []; ss.forEach((s) => { if (s && s.url) fuentes.push(String(s.url)); }); });\n    const anot = [];\n    out.filter((o) => o && o.type === 'message').forEach((m) => (m.content || []).forEach((p) => (p.annotations || []).forEach((a) => { if (a && a.type === 'url_citation' && a.url) anot.push({ url: String(a.url), title: String(a.title || '') }); })));\n    const setFuentes = new Set(fuentes.map(normUrl).filter(Boolean));\n    const recuperadasPermitidas = unicos(fuentes.filter((u) => hostPermitido(u, permitidos)));\n    const ajenas = unicos(fuentes.filter((u) => !hostPermitido(u, permitidos)));\n    const citasVerificadas = unicos(anot.filter((a) => hostPermitido(a.url, permitidos) && setFuentes.has(normUrl(a.url))).map((a) => a.url));\n    const citasNoVerificadas = unicos(anot.map((a) => a.url).filter((u) => citasVerificadas.indexOf(u) < 0));\n    const mostrar = citasVerificadas.length ? citasVerificadas : recuperadasPermitidas;\n    return {\n      llamadas_observadas: llamadas.length,\n      busquedas_cobrables: cobrables,\n      llamadas_sin_accion: sinAccion,\n      llamadas_completadas: completadas,\n      ids: llamadas.map((c) => String(c.id || '')),\n      fuentes_recuperadas: unicos(fuentes),\n      fuentes_permitidas: recuperadasPermitidas,\n      fuentes_ajenas: ajenas,\n      citas_verificadas: citasVerificadas,\n      citas_no_verificadas: citasNoVerificadas,\n      mostrar: mostrar,\n      verificable: completadas > 0 && recuperadasPermitidas.length > 0\n    };\n  }\n\n  // validado=true exige correcciones=[]; validado=false exige al menos una corrección concreta.\n  function validarRevision(o) {\n    const e = [];\n    if (!o || typeof o !== 'object') return ['Salida vacía'];\n    if (typeof o.validado !== 'boolean') e.push('validado no es booleano');\n    if (!esListaTxt(o.correcciones)) e.push('correcciones no es lista de textos');\n    if (!esListaTxt(o.observaciones)) e.push('observaciones no es lista de textos');\n    if (e.length) return e;\n    const concretas = o.correcciones.filter((c) => c.trim().length >= 8);\n    if (o.validado === true && o.correcciones.length > 0) e.push('Contradicción: validado=true con correcciones no vacías');\n    if (o.validado === false && concretas.length === 0) e.push('Contradicción: validado=false sin una corrección concreta');\n    return e;\n  }\n\n  // JSON siempre válido; si excede el límite guarda un resumen con indicación de truncamiento.\n  function jsonSeguro(v, n) {\n    const t = JSON.stringify(v === undefined ? null : v);\n    if (t.length <= n) return t;\n    const resumen = { truncado: true, longitud_original: t.length, resumen: t.slice(0, Math.max(0, n - 120)) };\n    let r = JSON.stringify(resumen);\n    while (r.length > n && resumen.resumen.length > 0) { resumen.resumen = resumen.resumen.slice(0, Math.floor(resumen.resumen.length * 0.8)); r = JSON.stringify(resumen); }\n    return r;\n  }\n\n  function cuerpoConteo(body) {\n    const permitidas = ['model', 'instructions', 'input', 'text', 'tools', 'tool_choice', 'reasoning', 'parallel_tool_calls'];\n    const c = {};\n    permitidas.forEach((k) => { if (body[k] !== undefined) c[k] = body[k]; });\n    return c;\n  }\n\n  function armarLlamadaEspecialista(s, p) {\n    const cfg = s.config;\n    const body = {\n      model: cfg.modelo,\n      instructions: p.instrucciones,\n      input: p.prompt,\n      text: { format: { type: 'json_schema', name: p.nombre_esquema, schema: p.esquema, strict: true } },\n      reasoning: { effort: cfg.reasoning_effort },\n      max_output_tokens: cfg.max_output_tokens,\n      store: false,\n      service_tier: 'default'\n    };\n    return {\n      llamada_id: s.caso_id + '-L' + p.numero,\n      caso_id: s.caso_id,\n      etapa: p.etapa,\n      agente: p.agente,\n      tipo: 'especialista',\n      body: body,\n      grupo_costo: 'operacion',\n      reintento: p.reintento || 0,\n      loop_id: p.loop_id || null,\n      skill_id: null,\n      version_propuesta: p.version_propuesta === undefined ? null : p.version_propuesta,\n      ejecucion_principal: s.ejecucion_id,\n      evento_id: s.evento ? s.evento.evento_id : null,\n      inicio_ms_caso: s.inicio_ms,\n      entrada_traza: p.entrada\n    };\n  }\n\n  return { esNum, esEnteroNoNeg, esListaTxt, leerUsage, costoTokens, reservaLlamada, estadoPresupuesto, evaluarAutorizacion, mensajeErrorApi, extraerTexto, hostPermitido, extraerBusqueda, validarRevision, jsonSeguro, cuerpoConteo, armarLlamadaEspecialista };\n})();\n\nconst s = $input.first().json;\nconst L = s.llamada_actual || {};\nconst cfg = s.config || {};\nconst errores = [];\nif (!L.llamada_id || !L.caso_id || !L.body) errores.push('Solicitud de llamada incompleta (falta llamada_id, caso_id o body)');\nif (L.body && L.body.model !== 'gpt-5') errores.push('Modelo no permitido: ' + (L.body && L.body.model) + ' (solo gpt-5, sin sustitución)');\n['temperature', 'top_p'].forEach((k) => { if (L.body && L.body[k] !== undefined) errores.push('Parámetro no admitido por el modelo/endpoint: ' + k); });\nif (L.body && L.body.reasoning && (L.body.reasoning.effort === 'none' || !L.body.reasoning.effort)) errores.push('reasoning.effort inválido para gpt-5');\nif (L.body && L.body.service_tier !== 'default') errores.push('Modalidad distinta de Standard (service_tier=default)');\nif (L.body && !(L.body.max_output_tokens > 0)) errores.push('max_output_tokens no definido');\nconst restante = (cfg.timeout_ms || 0) - (Date.now() - (L.inicio_ms_caso || Date.now()));\nreturn [{ json: { cuerpo_conteo: L.body ? RH.cuerpoConteo(L.body) : {}, errores_solicitud: errores, timeout_conteo_ms: Math.max(1000, Math.min(cfg.timeout_conteo_ms || 30000, restante)) } }];"
+      },
+      "id": "4cc25462-eb3e-47c7-b11c-6551da122ff7",
+      "name": "Preparar conteo",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        848,
+        -128
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Elaborado por: Jorge Valencia.\nreturn [{json:{intento:1,inicio_ms:Date.now(),caso_id:$('Recibir llamada').first().json.caso_id}}];"
+      },
+      "id": "25841398-cd4f-4461-92e3-c7f8c31f2f38",
+      "name": "Iniciar intento 1",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1088,
+        -128
+      ]
+    },
+    {
+      "parameters": {
+        "url": "={{ $('Configuracion P08').first().json.url_prueba }}",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "caso_id",
+              "value": "={{ $('Recibir llamada').first().json.caso_id }}"
+            },
+            {
+              "name": "intento",
+              "value": "1"
+            }
+          ]
+        },
+        "options": {
+          "response": {
+            "response": {
+              "fullResponse": true
+            }
+          },
+          "timeout": 1000
+        }
+      },
+      "id": "51c3932a-f91a-48df-8b08-e830c6e431d6",
+      "name": "HTTP intento 1",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1328,
+        -128
+      ],
+      "retryOnFail": false,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Elaborado por: Jorge Valencia.\nconst h=$input.first().json;\nconst inicio=$('Iniciar intento 1').first().json.inicio_ms;\nconst elapsed=Date.now()-inicio;\nconst error=h.error;\nconst text=typeof error==='string'?error:JSON.stringify(error||{});\nif(!error||!/ETIMEDOUT|ESOCKETTIMEDOUT|ECONNABORTED|timed.?out|timeout|aborted/i.test(text)||elapsed<800) throw new Error('El intento 1 no demuestra timeout; revisar servicio de prueba. Duracion='+elapsed+'; error='+text);\nreturn [{json:{intento:1,inicio_ms:inicio,fin_ms:Date.now(),duracion_observada_ms:elapsed,timeout_configurado_ms:1000,error_observado:error,timeout_observado:true}}];"
+      },
+      "id": "5be0bf2b-5e99-4960-bcf2-81232443abe9",
+      "name": "Verificar timeout 1",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1568,
+        -128
+      ]
+    },
+    {
+      "parameters": {
+        "amount": 1
+      },
+      "id": "061c2e04-f460-47b8-9d06-44019477485b",
+      "name": "Esperar antes del reintento",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        1808,
+        -128
+      ],
+      "webhookId": "d4510472-ed65-4974-a5e2-907f8b03274a"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Elaborado por: Jorge Valencia.\nreturn [{json:{intento:2,inicio_ms:Date.now(),caso_id:$('Recibir llamada').first().json.caso_id}}];"
+      },
+      "id": "23e6ebf0-92fd-4ad0-af19-1ab6170bb94b",
+      "name": "Iniciar intento 2",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2048,
+        -128
+      ]
+    },
+    {
+      "parameters": {
+        "url": "={{ $('Configuracion P08').first().json.url_prueba }}",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "caso_id",
+              "value": "={{ $('Recibir llamada').first().json.caso_id }}"
+            },
+            {
+              "name": "intento",
+              "value": "2"
+            }
+          ]
+        },
+        "options": {
+          "response": {
+            "response": {
+              "fullResponse": true
+            }
+          },
+          "timeout": 1000
+        }
+      },
+      "id": "6ff5a88e-f73e-4ef4-9598-cfa894d86707",
+      "name": "HTTP intento 2",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2288,
+        -128
+      ],
+      "retryOnFail": false,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Elaborado por: Jorge Valencia.\nconst h=$input.first().json;\nconst inicio=$('Iniciar intento 2').first().json.inicio_ms;\nconst elapsed=Date.now()-inicio;\nconst error=h.error;\nconst text=typeof error==='string'?error:JSON.stringify(error||{});\nif(!error||!/ETIMEDOUT|ESOCKETTIMEDOUT|ECONNABORTED|timed.?out|timeout|aborted/i.test(text)||elapsed<800) throw new Error('El intento 2 no demuestra timeout; revisar servicio de prueba. Duracion='+elapsed+'; error='+text);\nreturn [{json:{intento:2,inicio_ms:inicio,fin_ms:Date.now(),duracion_observada_ms:elapsed,timeout_configurado_ms:1000,error_observado:error,timeout_observado:true}}];"
+      },
+      "id": "a894de1b-2af7-4bd7-a78b-366ba9302a5a",
+      "name": "Verificar timeout 2",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2528,
+        -128
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Elaborado por: Jorge Valencia.\nconst intentos=[$('Verificar timeout 1').first().json,$('Verificar timeout 2').first().json];\nif(intentos.length!==2||intentos.some(x=>!x.timeout_observado))throw new Error('Se requieren dos timeouts observados.');\nreturn [{json:{error:{code:'P08_TIMEOUT_TRAS_DOS_INTENTOS',message:'Servicio de prueba sin respuesta dentro de 1000 ms en dos intentos.'},intentos}}];"
+      },
+      "id": "26425c98-2779-4613-b90b-dc3abb7eae1c",
+      "name": "Contar tokens de entrada",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2768,
+        -128
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Datos sintéticos: sin costos previos; no se consulta ninguna tabla.\nreturn [{json:{}}];"
+      },
+      "id": "624ff21a-616b-4a5f-a50f-dc0d6eb23f7d",
+      "name": "Leer costos del caso",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3008,
+        -128
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// RH-LIB v2 (2026-11-01) — funciones puras compartidas. Sin red, sin secretos.\nconst RH = (function () {\n  const esNum = (v) => typeof v === 'number' && Number.isFinite(v);\n  const esEnteroNoNeg = (v) => esNum(v) && v >= 0 && Math.floor(v) === v;\n  const esListaTxt = (v) => Array.isArray(v) && v.every((x) => typeof x === 'string');\n  const unicos = (a) => Array.from(new Set(a));\n\n  // Lee usage de Responses API sin sustituir ausencias por cero.\n  function leerUsage(usage) {\n    const r = { tokens_entrada: null, tokens_cache: null, tokens_salida: null, tokens_razonamiento: null, cache_informada: false, razonamiento_informado: false, usage_presente: false, errores: [] };\n    if (!usage || typeof usage !== 'object') { r.errores.push('usage ausente'); return r; }\n    r.usage_presente = true;\n    if (esEnteroNoNeg(usage.input_tokens)) r.tokens_entrada = usage.input_tokens; else r.errores.push('usage.input_tokens ausente o inválido');\n    if (esEnteroNoNeg(usage.output_tokens)) r.tokens_salida = usage.output_tokens; else r.errores.push('usage.output_tokens ausente o inválido');\n    const det = usage.input_tokens_details;\n    if (det && det.cached_tokens !== undefined && det.cached_tokens !== null) {\n      if (!esEnteroNoNeg(det.cached_tokens)) r.errores.push('cached_tokens inválido (' + String(det.cached_tokens) + ')');\n      else {\n        r.tokens_cache = det.cached_tokens; r.cache_informada = true;\n        if (r.tokens_entrada !== null && det.cached_tokens > r.tokens_entrada) r.errores.push('Incoherente: cached_tokens (' + det.cached_tokens + ') > input_tokens (' + r.tokens_entrada + ')');\n      }\n    }\n    const od = usage.output_tokens_details;\n    if (od && od.reasoning_tokens !== undefined && od.reasoning_tokens !== null) {\n      if (!esEnteroNoNeg(od.reasoning_tokens)) r.errores.push('reasoning_tokens inválido');\n      else {\n        r.tokens_razonamiento = od.reasoning_tokens; r.razonamiento_informado = true;\n        if (r.tokens_salida !== null && od.reasoning_tokens > r.tokens_salida) r.errores.push('Incoherente: reasoning_tokens > output_tokens');\n      }\n    }\n    return r;\n  }\n\n  // costo_tokens_usd = ((in - cache) * t_in + cache * t_cache + out * t_out) / 1e6\n  // El razonamiento ya está dentro de output_tokens: no se suma otra vez.\n  function costoTokens(u, t) {\n    if (!t || !(t.entrada > 0) || !(t.salida > 0) || !(t.cache >= 0)) return { costo: null, tipo: 'desconocido', motivo: 'Tarifas incompletas: costo no calculado.' };\n    if (u.errores.length || u.tokens_entrada === null || u.tokens_salida === null) return { costo: null, tipo: 'desconocido', motivo: 'Consumo desconocido o incoherente: ' + (u.errores.join('; ') || 'usage incompleto') + '. No se presume costo cero.' };\n    const cache = u.cache_informada ? u.tokens_cache : 0;\n    const costo = ((u.tokens_entrada - cache) * t.entrada + cache * t.cache + u.tokens_salida * t.salida) / 1000000;\n    if (u.cache_informada) return { costo: costo, tipo: 'calculado', motivo: 'Tokens medidos por usage de la API; costo calculado con tarifas configuradas. No es factura conciliada.' };\n    return { costo: costo, tipo: 'estimado', motivo: 'Caché no informada por la API: estimación conservadora sin descuento de caché (no se afirma caché medida = 0). No es factura conciliada.' };\n  }\n\n  // Reserva previa: entrada contada a tarifa normal (sin presumir caché) + salida máxima permitida.\n  function reservaLlamada(p) {\n    const tokens = (p.tokens_conteo * p.t.entrada + p.max_salida * p.t.salida) / 1000000;\n    const herramienta = (p.busquedas_max || 0) * (p.cargo_busqueda || 0);\n    const contenido = (p.tokens_contenido_supuesto || 0) * p.t.entrada / 1000000;\n    return { tokens: tokens, herramienta: herramienta, contenido: contenido, total: tokens + herramienta + contenido };\n  }\n\n  // Estado del presupuesto del caso a partir de las filas originales de rh_costos.\n  function estadoPresupuesto(filas) {\n    const gen = (filas || []).filter((f) => f && f.tipo_registro === 'generacion');\n    let contabilizado = 0; let pendiente = 0; let sinCota = 0;\n    gen.forEach((f) => {\n      const ec = String(f.estado_conciliacion || '');\n      if ((ec === 'calculado' || ec === 'estimado' || ec === 'conciliado') && esNum(f.costo_usd)) contabilizado += f.costo_usd;\n      else if (esNum(f.costo_reservado_usd)) pendiente += f.costo_reservado_usd;\n      else sinCota += 1;\n    });\n    return { intentos: gen.length, contabilizado: contabilizado, pendiente: pendiente, sin_cota: sinCota };\n  }\n\n  function evaluarAutorizacion(est, reserva, cfg) {\n    const motivos = [];\n    if (cfg.max_llamadas > 0 && est.intentos + 1 > cfg.max_llamadas) motivos.push('MAX_LLAMADAS alcanzado (' + est.intentos + ' intentos de generación de ' + cfg.max_llamadas + ')');\n    if (est.sin_cota > 0) motivos.push(est.sin_cota + ' llamada(s) previa(s) con consumo desconocido y sin reserva cuantificada');\n    if (!(cfg.tope_usd_caso > 0)) motivos.push('TOPE_USD_CASO no configurado (vacío no es ilimitado)');\n    if (reserva === null) motivos.push('Sin reserva calculable');\n    else {\n      const total = est.contabilizado + est.pendiente + reserva.total;\n      if (total > cfg.tope_usd_caso) motivos.push('Presupuesto insuficiente: contabilizado ' + est.contabilizado + ' + reservas pendientes ' + est.pendiente + ' + nueva reserva ' + reserva.total + ' = ' + total + ' USD > TOPE_USD_CASO ' + cfg.tope_usd_caso);\n    }\n    return motivos;\n  }\n\n  function mensajeErrorApi(status, body, modelo, fase) {\n    const e = (body && body.error) || {};\n    const msg = String(e.message || (typeof body === 'string' ? body : '') || '').slice(0, 300);\n    const code = String(e.code || '');\n    if (status === 404 || code === 'model_not_found' || /model/i.test(msg) && /(not exist|not found|does not have access|no access)/i.test(msg)) {\n      return 'El modelo ' + modelo + ' no está disponible para la credencial o cuenta (' + fase + ', HTTP ' + status + (code ? ', ' + code : '') + '): ' + msg + '. No se sustituye por otro modelo.';\n    }\n    return 'Error de API en ' + fase + ' (HTTP ' + status + (code ? ', ' + code : '') + '): ' + msg;\n  }\n\n  // Extrae el texto final de una respuesta; solo 'completed' libera contenido.\n  function extraerTexto(resp) {\n    const r = { status: resp && resp.status ? String(resp.status) : null, texto: null, motivo: '' };\n    if (!resp || typeof resp !== 'object') { r.motivo = 'Respuesta vacía'; return r; }\n    if (r.status !== 'completed') {\n      const det = resp.incomplete_details && resp.incomplete_details.reason ? ' (' + resp.incomplete_details.reason + ')' : '';\n      r.motivo = 'Respuesta no completada: status ' + r.status + det;\n      return r;\n    }\n    const msgs = (Array.isArray(resp.output) ? resp.output : []).filter((o) => o && o.type === 'message');\n    const partes = [];\n    msgs.forEach((m) => (m.content || []).forEach((c) => { if (c && c.type === 'output_text' && typeof c.text === 'string') partes.push(c.text); }));\n    if (!partes.length) { r.motivo = 'Sin texto de salida'; return r; }\n    r.texto = partes.join('\\n');\n    return r;\n  }\n\n  function hostPermitido(u, permitidos) {\n    try { const x = new URL(String(u)); const h = x.hostname.toLowerCase(); return x.protocol === 'https:' && permitidos.some((d) => h === d || h.endsWith('.' + d)); } catch (e) { return false; }\n  }\n  function normUrl(u) {\n    try { const x = new URL(String(u)); return x.hostname.toLowerCase().replace(/^www[.]/, '') + x.pathname.replace(/[/]+$/, ''); } catch (e) { return null; }\n  }\n\n  // Evidencia de búsqueda desde los metadatos devueltos (web_search_call y anotaciones), no desde el texto.\n  function extraerBusqueda(resp, permitidos) {\n    const out = resp && Array.isArray(resp.output) ? resp.output : [];\n    const llamadas = out.filter((o) => o && o.type === 'web_search_call');\n    const sinAccion = llamadas.filter((c) => !c.action || !c.action.type).length;\n    const cobrables = llamadas.filter((c) => !c.action || !c.action.type || c.action.type === 'search').length;\n    const completadas = llamadas.filter((c) => c.status === 'completed').length;\n    const fuentes = [];\n    llamadas.forEach((c) => { const ss = c.action && Array.isArray(c.action.sources) ? c.action.sources : []; ss.forEach((s) => { if (s && s.url) fuentes.push(String(s.url)); }); });\n    const anot = [];\n    out.filter((o) => o && o.type === 'message').forEach((m) => (m.content || []).forEach((p) => (p.annotations || []).forEach((a) => { if (a && a.type === 'url_citation' && a.url) anot.push({ url: String(a.url), title: String(a.title || '') }); })));\n    const setFuentes = new Set(fuentes.map(normUrl).filter(Boolean));\n    const recuperadasPermitidas = unicos(fuentes.filter((u) => hostPermitido(u, permitidos)));\n    const ajenas = unicos(fuentes.filter((u) => !hostPermitido(u, permitidos)));\n    const citasVerificadas = unicos(anot.filter((a) => hostPermitido(a.url, permitidos) && setFuentes.has(normUrl(a.url))).map((a) => a.url));\n    const citasNoVerificadas = unicos(anot.map((a) => a.url).filter((u) => citasVerificadas.indexOf(u) < 0));\n    const mostrar = citasVerificadas.length ? citasVerificadas : recuperadasPermitidas;\n    return {\n      llamadas_observadas: llamadas.length,\n      busquedas_cobrables: cobrables,\n      llamadas_sin_accion: sinAccion,\n      llamadas_completadas: completadas,\n      ids: llamadas.map((c) => String(c.id || '')),\n      fuentes_recuperadas: unicos(fuentes),\n      fuentes_permitidas: recuperadasPermitidas,\n      fuentes_ajenas: ajenas,\n      citas_verificadas: citasVerificadas,\n      citas_no_verificadas: citasNoVerificadas,\n      mostrar: mostrar,\n      verificable: completadas > 0 && recuperadasPermitidas.length > 0\n    };\n  }\n\n  // validado=true exige correcciones=[]; validado=false exige al menos una corrección concreta.\n  function validarRevision(o) {\n    const e = [];\n    if (!o || typeof o !== 'object') return ['Salida vacía'];\n    if (typeof o.validado !== 'boolean') e.push('validado no es booleano');\n    if (!esListaTxt(o.correcciones)) e.push('correcciones no es lista de textos');\n    if (!esListaTxt(o.observaciones)) e.push('observaciones no es lista de textos');\n    if (e.length) return e;\n    const concretas = o.correcciones.filter((c) => c.trim().length >= 8);\n    if (o.validado === true && o.correcciones.length > 0) e.push('Contradicción: validado=true con correcciones no vacías');\n    if (o.validado === false && concretas.length === 0) e.push('Contradicción: validado=false sin una corrección concreta');\n    return e;\n  }\n\n  // JSON siempre válido; si excede el límite guarda un resumen con indicación de truncamiento.\n  function jsonSeguro(v, n) {\n    const t = JSON.stringify(v === undefined ? null : v);\n    if (t.length <= n) return t;\n    const resumen = { truncado: true, longitud_original: t.length, resumen: t.slice(0, Math.max(0, n - 120)) };\n    let r = JSON.stringify(resumen);\n    while (r.length > n && resumen.resumen.length > 0) { resumen.resumen = resumen.resumen.slice(0, Math.floor(resumen.resumen.length * 0.8)); r = JSON.stringify(resumen); }\n    return r;\n  }\n\n  function cuerpoConteo(body) {\n    const permitidas = ['model', 'instructions', 'input', 'text', 'tools', 'tool_choice', 'reasoning', 'parallel_tool_calls'];\n    const c = {};\n    permitidas.forEach((k) => { if (body[k] !== undefined) c[k] = body[k]; });\n    return c;\n  }\n\n  function armarLlamadaEspecialista(s, p) {\n    const cfg = s.config;\n    const body = {\n      model: cfg.modelo,\n      instructions: p.instrucciones,\n      input: p.prompt,\n      text: { format: { type: 'json_schema', name: p.nombre_esquema, schema: p.esquema, strict: true } },\n      reasoning: { effort: cfg.reasoning_effort },\n      max_output_tokens: cfg.max_output_tokens,\n      store: false,\n      service_tier: 'default'\n    };\n    return {\n      llamada_id: s.caso_id + '-L' + p.numero,\n      caso_id: s.caso_id,\n      etapa: p.etapa,\n      agente: p.agente,\n      tipo: 'especialista',\n      body: body,\n      grupo_costo: 'operacion',\n      reintento: p.reintento || 0,\n      loop_id: p.loop_id || null,\n      skill_id: null,\n      version_propuesta: p.version_propuesta === undefined ? null : p.version_propuesta,\n      ejecucion_principal: s.ejecucion_id,\n      evento_id: s.evento ? s.evento.evento_id : null,\n      inicio_ms_caso: s.inicio_ms,\n      entrada_traza: p.entrada\n    };\n  }\n\n  return { esNum, esEnteroNoNeg, esListaTxt, leerUsage, costoTokens, reservaLlamada, estadoPresupuesto, evaluarAutorizacion, mensajeErrorApi, extraerTexto, hostPermitido, extraerBusqueda, validarRevision, jsonSeguro, cuerpoConteo, armarLlamadaEspecialista };\n})();\n\nconst s = $('Recibir llamada').first().json;\nconst L = s.llamada_actual || {};\nconst cfg = s.config || {};\nconst prep = $('Preparar conteo').first().json;\nconst h = $('Contar tokens de entrada').first().json || {};\nconst filas = $input.all().map((i) => i.json).filter((o) => o && o.llamada_id);\nconst motivos = (prep.errores_solicitud || []).slice();\nconst ejecucion_id = 'principal:' + L.ejecucion_principal + ';subflujo:' + $execution.id;\nlet conteo = null;\nlet estadoConteo;\nif (h.error && h.statusCode === undefined) {\n  estadoConteo = 'fallo_red_o_timeout';\n  motivos.push('El conteo previo de tokens falló (' + String((h.error && h.error.message) || h.error).slice(0, 200) + '); no se genera respuesta.');\n} else if (!(h.statusCode >= 200 && h.statusCode < 300)) {\n  estadoConteo = 'error_api';\n  motivos.push(RH.mensajeErrorApi(h.statusCode, h.body, L.body && L.body.model, 'conteo de tokens') + ' No se genera respuesta.');\n} else if (!RH.esEnteroNoNeg(h.body && h.body.input_tokens)) {\n  estadoConteo = 'sin_input_tokens';\n  motivos.push('El conteo no devolvió input_tokens válido; no se genera respuesta.');\n} else { conteo = h.body.input_tokens; estadoConteo = 'ok'; }\nif (filas.some((f) => f.llamada_id === L.llamada_id)) motivos.push('llamada_id ' + L.llamada_id + ' ya existe en rh_costos; no se repite la llamada.');\nconst est = RH.estadoPresupuesto(filas);\nconst restante = cfg.timeout_ms - (Date.now() - L.inicio_ms_caso);\nif (!(restante > 2000)) motivos.push('TIMEOUT_MS global agotado o insuficiente para otra solicitud.');\nconst esLft = L.tipo === 'lft';\nconst t = { entrada: cfg.tarifa_entrada, salida: cfg.tarifa_salida, cache: cfg.tarifa_cache };\nif (!(t.entrada > 0) || !(t.salida > 0) || t.cache === null || !(t.cache >= 0)) motivos.push('Tarifas incompletas.');\nif (esLft && !(cfg.cargo_busqueda_usd > 0)) motivos.push('CARGO_BUSQUEDA_USD pendiente.');\nif (esLft && (cfg.supuesto_tokens_contenido_busqueda === null || !(cfg.supuesto_tokens_contenido_busqueda >= 0))) motivos.push('SUPUESTO_TOKENS_CONTENIDO_BUSQUEDA pendiente.');\nlet reserva = null;\nif (conteo !== null && L.body) {\n  reserva = RH.reservaLlamada({ tokens_conteo: conteo, max_salida: L.body.max_output_tokens, t: t, busquedas_max: esLft ? (L.body.max_tool_calls || 0) : 0, cargo_busqueda: esLft ? cfg.cargo_busqueda_usd : 0, tokens_contenido_supuesto: esLft ? cfg.supuesto_tokens_contenido_busqueda : 0 });\n}\nRH.evaluarAutorizacion(est, reserva, cfg).forEach((m) => { if (motivos.indexOf(m) < 0) motivos.push(m); });\nconst permitido = motivos.length === 0;\nconst ahora = new Date().toISOString();\nconst fila_conteo = {\n  llamada_id: L.llamada_id + '-C', caso_id: L.caso_id, etapa: L.etapa, agente: L.agente, proveedor: 'openai', modelo: L.body ? L.body.model : null,\n  fecha_hora: ahora, tipo_registro: 'conteo_auxiliar', estado: estadoConteo, estado_conciliacion: 'no_aplica', unidad_cobro: 'no aplica (solicitud auxiliar de conteo)',\n  tokens_entrada_conteo: conteo, origen_dato: 'conteo_api_input_tokens', motivo_estimacion: 'Solicitud auxiliar POST /v1/responses/input_tokens; no es una llamada de generación ni cuenta en MAX_LLAMADAS. No se presume su facturación.',\n  ejecucion_id: ejecucion_id, grupo_costo: L.grupo_costo || 'operacion', evidencia: RH.jsonSeguro({ http_status: h.statusCode === undefined ? null : h.statusCode }, 500), loop_id: L.loop_id || null, skill_id: L.skill_id || null\n};\nlet motivoReserva = null;\nif (reserva) {\n  motivoReserva = 'Reserva previa = ' + conteo + ' tokens de entrada contados x tarifa normal (sin presumir caché) + ' + L.body.max_output_tokens + ' tokens de salida máximos x tarifa de salida = ' + reserva.tokens + ' USD';\n  if (esLft) motivoReserva += '; cargo de herramienta reservado ' + reserva.herramienta + ' USD (' + L.body.max_tool_calls + ' búsqueda máx.); estimación de contenido recuperado ' + reserva.contenido + ' USD (supuesto de ' + cfg.supuesto_tokens_contenido_busqueda + ' tokens; NO es cota garantizada)';\n  motivoReserva += '.';\n}\nconst fila_reserva = permitido ? {\n  llamada_id: L.llamada_id, caso_id: L.caso_id, etapa: L.etapa, agente: L.agente, proveedor: 'openai', modelo: L.body.model, fecha_hora: ahora, moneda: cfg.moneda,\n  estado: 'reservada', origen_dato: 'reserva_previa', motivo_estimacion: motivoReserva,\n  tokens_entrada: null, tokens_salida: null, tokens_cache: null, duracion_ms: null,\n  tarifa_entrada_millon: cfg.tarifa_entrada, tarifa_salida_millon: cfg.tarifa_salida, cargo_busqueda_usd: null, costo_usd: null, reintento: L.reintento || 0,\n  response_id: null, ejecucion_id: ejecucion_id, tipo_registro: 'generacion', modalidad: 'standard', unidad_cobro: esLft ? 'tokens + llamada de búsqueda web' : 'tokens',\n  fecha_tarifa: cfg.fecha_tarifa, url_tarifa: cfg.url_tarifa, version_tarifas: cfg.version_tarifas, grupo_costo: L.grupo_costo || 'operacion', estado_conciliacion: 'pendiente',\n  skill_id: L.skill_id || null, loop_id: L.loop_id || null, tokens_razonamiento: null, tarifa_cache_millon: cfg.tarifa_cache, costo_tokens_usd: null, cantidad_busquedas: null,\n  duracion_voz_seg: null, cantidad_unidades: null, tarifa_unitaria: esLft ? cfg.cargo_busqueda_usd : null, importe_incluido_usd: null, cargo_adicional_usd: null,\n  costo_reservado_usd: reserva.total, tokens_entrada_conteo: conteo, estimacion_contenido_usd: esLft ? reserva.contenido : null, evidencia: null, llamadas_ref: null\n} : null;\nreturn [{ json: { permitido: permitido, motivos: motivos, conteo: conteo, reserva: reserva, presupuesto: est, timeout_http_ms: Math.max(1000, Math.min(restante, cfg.timeout_ms)), ejecucion_id: ejecucion_id, fila_conteo: fila_conteo, fila_reserva: fila_reserva, t_control: Date.now() } }];"
+      },
+      "id": "1e77a29a-b80e-4827-a250-971ddc5f451f",
+      "name": "Control de presupuesto",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3248,
+        -128
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const s = $('Recibir llamada').first().json;\nconst ctrl = $('Control de presupuesto').first().json;\nconst motivos = (ctrl.motivos || []).slice();\nif (ctrl.permitido) {\n  let det = '';\n  try { const rr = $('Reservar llamada').first().json; det = rr && rr.error ? String((rr.error && rr.error.message) || rr.error).slice(0, 200) : 'sin id de fila'; } catch (e) { det = 'nodo no ejecutado'; }\n  motivos.push('No se pudo guardar la reserva previa en rh_costos (' + det + '); no se realizó la llamada pagada.');\n}\nconst out = JSON.parse(JSON.stringify(s));\nif (out.llamada_actual) delete out.llamada_actual.body;\nout.resultado_llamada = { permitido: false, motivos: motivos, generacion_intentada: false, llamada_id: s.llamada_actual ? s.llamada_actual.llamada_id : null, ejecucion_id: ctrl.ejecucion_id, conteo_tokens: ctrl.conteo, reserva_usd: ctrl.reserva ? ctrl.reserva.total : null, presupuesto: ctrl.presupuesto };\nreturn [{ json: out }];"
+      },
+      "id": "5c3ad7f8-d06e-465e-bf3d-afd4911cb383",
+      "name": "Devolver bloqueo",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3488,
+        -128
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Elaborado por: Jorge Valencia.\nconst bloqueo=$('Devolver bloqueo').first().json;\nconst r=bloqueo.resultado_llamada;\nconst control=$('Control de presupuesto').first().json;\nif(r.permitido!==false||r.generacion_intentada!==false||control.fila_reserva!==null)throw new Error('El control no bloqueo como se esperaba.');\nconst caso=$('Recibir llamada').first().json.caso_id;\nconst intentos=$('Contar tokens de entrada').first().json.intentos;\nconst mensaje='PRUEBA P08 - Resultado simulado. Folio '+caso+'. El servicio no respondio dentro del tiempo permitido en dos intentos. La solicitud se detuvo de forma controlada. No se genero una respuesta de IA ni se reservaron vacaciones. Puedes intentar mas tarde o contactar a Jorge Valencia.';\nreturn [{json:{autor:'Jorge Valencia',caso_id:caso,prueba:'P08',estado:'Error controlado',intentos_json:JSON.stringify(intentos),mensaje,registrado_en:new Date().toISOString()}}];"
+      },
+      "id": "3722c823-af7a-435d-92bd-c8d68b638a38",
+      "name": "Preparar registro P08",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3728,
+        -128
+      ]
+    },
+    {
+      "parameters": {
+        "dataTableId": {
+          "__rl": true,
+          "value": "CONFIGURAR_ID_TABLA_RH_PRUEBAS_P08",
+          "mode": "id"
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "autor",
+              "displayName": "autor",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "caso_id",
+              "displayName": "caso_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "prueba",
+              "displayName": "prueba",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "estado",
+              "displayName": "estado",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "intentos_json",
+              "displayName": "intentos_json",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "mensaje",
+              "displayName": "mensaje",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "registrado_en",
+              "displayName": "registrado_en",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {},
+        "operation": "insert"
+      },
+      "id": "fed50219-8014-453f-9353-5c53759cda4a",
+      "name": "Guardar error P08",
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        3968,
+        -128
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "dataTableId": {
+          "__rl": true,
+          "value": "CONFIGURAR_ID_TABLA_RH_PRUEBAS_P08",
+          "mode": "id"
+        },
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "caso_id",
+              "keyValue": "={{ $('Preparar registro P08').first().json.caso_id }}"
+            }
+          ]
+        }
+      },
+      "id": "ab9ca422-0ca1-414c-a2b1-c5b3814d35b6",
+      "name": "Releer error P08",
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        4208,
+        -128
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Elaborado por: Jorge Valencia.\nconst rows=$input.all().map(x=>x.json); const expected=$('Preparar registro P08').first().json;\nif(rows.length!==1||Object.keys(expected).some(k=>rows[0][k]!==expected[k])) throw new Error('La relectura no coincide con el registro de error esperado.');\nreturn [{json:{...expected,persistencia_verificada:true}}];"
+      },
+      "id": "7742d84e-31c6-4437-933b-d6cf8f810359",
+      "name": "Verificar persistencia P08",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        4448,
+        -128
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Configuracion P08').first().json.chat_id }}",
+        "text": "={{ $json.mensaje }}",
+        "additionalFields": {
+          "appendAttribution": false,
+          "parse_mode": "HTML"
+        }
+      },
+      "id": "fb5f32ae-8bb3-4e9f-92e0-38be0e437fa5",
+      "name": "Avisar por Telegram P08",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        4688,
+        -128
+      ],
+      "webhookId": "15613f57-67e7-44a3-af1e-cfe7c7cd4e79"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Elaborado por: Jorge Valencia.\nconst respuesta = $('Avisar por Telegram P08').first().json;\nconst t = respuesta.result ?? respuesta;\nconst r = $('Preparar registro P08').first().json;\nconst persistencia = $('Verificar persistencia P08').first().json;\nconst chatEsperado = String($('Configuracion P08').first().json.chat_id);\n\nif (respuesta.ok === false || !t.message_id ||\n    t.text !== r.mensaje || String(t.chat?.id) !== chatEsperado) {\n  throw new Error('No coincide la confirmacion de Telegram.');\n}\nif (persistencia.persistencia_verificada !== true) {\n  throw new Error('No se ha verificado la relectura del registro.');\n}\nconst intentos = JSON.parse(r.intentos_json);\nif (intentos.length !== 2 || intentos.some(i => i.timeout_observado !== true)) {\n  throw new Error('No constan los dos timeouts esperados.');\n}\n\nreturn [{ json: {\n  autor: 'Jorge Valencia',\n  prueba: 'P08',\n  resultado: 'TIMEOUT_REINTENTO_REGISTRO_Y_AVISO_VERIFICADOS',\n  caso_id: r.caso_id,\n  ejecucion_n8n_del_ensayo: r.caso_id.replace('ENSAYO-P08-', ''),\n  ejecucion_n8n_del_resumen: String($execution.id),\n  registrado_en: r.registrado_en,\n  resumen_emitido_en: new Date().toISOString(),\n  intentos,\n  max_intentos: 2,\n  timeout_por_intento_ms: 1000,\n  espera_entre_intentos_configurada_ms: 1000,\n  estado_persistido: r.estado,\n  relectura_coincidente: true,\n  mensaje_telegram: r.mensaje,\n  telegram_message_id: t.message_id,\n  envio_telegram_confirmado: true,\n  generacion_intentada: false,\n  reserva_de_vacaciones: false,\n  alcance: 'Ensayo aislado con servicio lento controlado, dos timeouts, bloqueo, escritura y relectura en tabla de prueba y mensaje Telegram. No es una caida real de OpenAI ni valida todos los caminos del flujo publicado.'\n}}];\n"
+      },
+      "id": "d705ac47-6f2f-4d19-809e-95bbc0982f44",
+      "name": "Resumen final P08",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        4928,
+        -128
+      ]
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Inicio manual": {
+      "main": [
+        [
+          {
+            "node": "Configuracion P08",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Configuracion P08": {
+      "main": [
+        [
+          {
+            "node": "Recibir llamada",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Recibir llamada": {
+      "main": [
+        [
+          {
+            "node": "Preparar conteo",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Preparar conteo": {
+      "main": [
+        [
+          {
+            "node": "Iniciar intento 1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Iniciar intento 1": {
+      "main": [
+        [
+          {
+            "node": "HTTP intento 1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP intento 1": {
+      "main": [
+        [
+          {
+            "node": "Verificar timeout 1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Verificar timeout 1": {
+      "main": [
+        [
+          {
+            "node": "Esperar antes del reintento",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Esperar antes del reintento": {
+      "main": [
+        [
+          {
+            "node": "Iniciar intento 2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Iniciar intento 2": {
+      "main": [
+        [
+          {
+            "node": "HTTP intento 2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP intento 2": {
+      "main": [
+        [
+          {
+            "node": "Verificar timeout 2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Verificar timeout 2": {
+      "main": [
+        [
+          {
+            "node": "Contar tokens de entrada",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Contar tokens de entrada": {
+      "main": [
+        [
+          {
+            "node": "Leer costos del caso",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Leer costos del caso": {
+      "main": [
+        [
+          {
+            "node": "Control de presupuesto",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Control de presupuesto": {
+      "main": [
+        [
+          {
+            "node": "Devolver bloqueo",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Devolver bloqueo": {
+      "main": [
+        [
+          {
+            "node": "Preparar registro P08",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Preparar registro P08": {
+      "main": [
+        [
+          {
+            "node": "Guardar error P08",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Guardar error P08": {
+      "main": [
+        [
+          {
+            "node": "Releer error P08",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Resumen final P08",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Releer error P08": {
+      "main": [
+        [
+          {
+            "node": "Verificar persistencia P08",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Verificar persistencia P08": {
+      "main": [
+        [
+          {
+            "node": "Avisar por Telegram P08",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Avisar por Telegram P08": {
+      "main": [
+        [
+          {
+            "node": "Resumen final P08",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  }
+}

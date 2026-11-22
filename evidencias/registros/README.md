@@ -28,3 +28,4 @@ Para leer conclusiones empezar por el [índice humano](../README.md). Estos arch
 | [Prueba_voz_confirmada_Jorge_Valencia.json](Prueba_voz_confirmada_Jorge_Valencia.json) | Respaldo de Prueba voz confirmada; consultar resultado, procedencia y alcance. |
 | [Publicacion_GitHub_20261121_Jorge_Valencia.json](Publicacion_GitHub_20261121_Jorge_Valencia.json) | Respaldo de Publicacion GitHub 20261121; consultar resultado, procedencia y alcance. |
 | [Registro_evidencias_Jorge_Valencia.json](Registro_evidencias_Jorge_Valencia.json) | Respaldo de Registro evidencias; consultar resultado, procedencia y alcance. |
+| [P08_ensayo_263_resumen_271_Jorge_Valencia.json](P08_ensayo_263_resumen_271_Jorge_Valencia.json) | Dos timeouts reales, relectura y Telegram; IDs separados de ensayo/resumen, procedencia e incidencias corregidas. |

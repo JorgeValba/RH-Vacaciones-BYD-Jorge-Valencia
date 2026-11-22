@@ -176,6 +176,26 @@
     },
     {
       "autor": "Jorge Valencia",
+      "evidencia_id": "E-P08-02",
+      "pruebas": [
+        "P08"
+      ],
+      "titulo": "Timeout, reintento, persistencia y aviso",
+      "tipo": "Ensayo controlado con n8n y Telegram",
+      "fecha_referencia": "2026-11-21T23:52:16.859Z / 2026-11-22T00:07:42.853Z",
+      "rutas": [
+        "evidencias/registros/P08_ensayo_263_resumen_271_Jorge_Valencia.json",
+        "evidencias/capturas/P08_timeout/E-P08-02_Aviso_Telegram_Jorge_Valencia.jpg",
+        "tests/P08/README.md",
+        "tests/P08/01_servicio_lento_Jorge_Valencia.json",
+        "tests/P08/02_timeout_registro_aviso_Jorge_Valencia.json"
+      ],
+      "resultado_observable": "Ensayo 263: timeouts 1048/1039 ms; dos intentos; error guardado/releído; aviso Telegram 111. Resumen corregido 271.",
+      "limite": "Servicio lento controlado y tabla de prueba. Resumen ejecutado por separado; no caída real de proveedor ni cobertura de todos los caminos publicados.",
+      "estado": "Comportamientos P08 verificados en el ensayo documentado; incidencias conservadas"
+    },
+    {
+      "autor": "Jorge Valencia",
       "evidencia_id": "E-P09-01",
       "pruebas": [
         "P09"
@@ -528,8 +548,8 @@
       "autor": "Jorge Valencia",
       "evidencia_id": "E-P08-01",
       "ruta": "tests/Prueba_P08_alcance_Jorge_Valencia.json",
-      "sha256": "2b54dcaee4b1bb47ce44b3d89cb1b669ef2ee6c2125f6ef642ae5175e1daf95a",
-      "bytes": 1078
+      "sha256": "4f86ce95e05320b632ae485ecb5f8c5b83a9c34a4c37c41756c510565c85ec8e",
+      "bytes": 1175
     },
     {
       "autor": "Jorge Valencia",
@@ -633,8 +653,8 @@
       "autor": "Jorge Valencia",
       "evidencia_id": "E-P13-01",
       "ruta": "evidencias/capturas/README.md",
-      "sha256": "4f5054a3d90d60afc9ed885021cae00736015c3eacbca8df0fedb34a683e5b20",
-      "bytes": 2196
+      "sha256": "90bb26ad0086c41a532f28025e605c89c1795df4d06ed24de40896cabe95e415",
+      "bytes": 2318
     },
     {
       "autor": "Jorge Valencia",
@@ -782,6 +802,41 @@
       "ruta": "costos/README.md",
       "sha256": "987b3acfe83d52ab3c646f34d49bfe0896484410ebd472c72a242a4b412af809",
       "bytes": 5938
+    },
+    {
+      "autor": "Jorge Valencia",
+      "evidencia_id": "E-P08-02",
+      "ruta": "evidencias/registros/P08_ensayo_263_resumen_271_Jorge_Valencia.json",
+      "sha256": "3c27c7b9c6ce98fad495217c457f2f694bea6262a234faeacf2344beb2efbeb1",
+      "bytes": 4363
+    },
+    {
+      "autor": "Jorge Valencia",
+      "evidencia_id": "E-P08-02",
+      "ruta": "evidencias/capturas/P08_timeout/E-P08-02_Aviso_Telegram_Jorge_Valencia.jpg",
+      "sha256": "fcc922d80ee4ac2a5d50ebaf74a2c36d4dfcc71c1f92885f245c96157bf2e925",
+      "bytes": 137730
+    },
+    {
+      "autor": "Jorge Valencia",
+      "evidencia_id": "E-P08-02",
+      "ruta": "tests/P08/README.md",
+      "sha256": "f67bf218b39305b95de5b99da26d27874b0049e8b1113733615ce65eb7696f74",
+      "bytes": 6517
+    },
+    {
+      "autor": "Jorge Valencia",
+      "evidencia_id": "E-P08-02",
+      "ruta": "tests/P08/01_servicio_lento_Jorge_Valencia.json",
+      "sha256": "1bdfc02be3fb7bd1806ce207e3295139c3aae8338bc03c754e883659c0789395",
+      "bytes": 2267
+    },
+    {
+      "autor": "Jorge Valencia",
+      "evidencia_id": "E-P08-02",
+      "ruta": "tests/P08/02_timeout_registro_aviso_Jorge_Valencia.json",
+      "sha256": "0916781ca7c73dee1a37a8a826852606ee1f9cbeca8d4426a118599d0b10b9fe",
+      "bytes": 54905
     }
   ],
   "capturas_copiadas_sin_editar": [
@@ -888,6 +943,14 @@
       "origen_privado": "P13_interfaz/Responsive_1366_panel_Jorge_Valencia.png",
       "tratamiento": "Copia literal; sin recorte ni edición.",
       "criterio_revision": "Viewport 1366 visible con panel sanitizado; no incluye perfil de Chrome."
+    },
+    {
+      "autor": "Jorge Valencia",
+      "ruta": "evidencias/capturas/P08_timeout/E-P08-02_Aviso_Telegram_Jorge_Valencia.jpg",
+      "sha256": "fcc922d80ee4ac2a5d50ebaf74a2c36d4dfcc71c1f92885f245c96157bf2e925",
+      "origen_privado": "P08_aviso_Telegram_263_Jorge_Valencia.jpg",
+      "tratamiento": "Copia literal; sin recorte ni edición.",
+      "criterio_revision": "Aviso de prueba con folio sintético; no muestra Chat ID, token ni código de acceso."
     }
   ],
   "regla_hash": "SHA-256 del archivo en este corte; volver a generar si cambia el contenido. No se hashea este mismo manifiesto.",

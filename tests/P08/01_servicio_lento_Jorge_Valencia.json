@@ -1,0 +1,89 @@
+{
+  "name": "RH — P08 servicio lento — Jorge Valencia",
+  "nodes": [
+    {
+      "parameters": {
+        "path": "rh-p08-lento-jv-20261121-6f572a",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "1e3472df-0da2-49a5-a606-dc3a8628b2c9",
+      "name": "Webhook P08 lento",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        80,
+        -32
+      ],
+      "webhookId": "e60af225-3a43-496c-89ea-e0b19f44ab14"
+    },
+    {
+      "parameters": {
+        "amount": 4
+      },
+      "id": "56c5749e-791d-4a03-8f50-06cb307cd9ee",
+      "name": "Esperar cuatro segundos",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        320,
+        -32
+      ],
+      "webhookId": "beb2a421-3e8f-41bf-a24a-ed5614cba314"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { autor: \"Jorge Valencia\", prueba: \"P08\", servicio_de_prueba: true, espera_configurada_ms: 4000, caso_id: $(\"Webhook P08 lento\").first().json.query.caso_id || null, intento: $(\"Webhook P08 lento\").first().json.query.intento || null } }}",
+        "options": {
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Cache-Control",
+                "value": "no-store"
+              }
+            ]
+          }
+        }
+      },
+      "id": "0c188fe7-198c-463c-8f75-f94268a68735",
+      "name": "Responder servicio de prueba",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        560,
+        -32
+      ]
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook P08 lento": {
+      "main": [
+        [
+          {
+            "node": "Esperar cuatro segundos",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Esperar cuatro segundos": {
+      "main": [
+        [
+          {
+            "node": "Responder servicio de prueba",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  }
+}

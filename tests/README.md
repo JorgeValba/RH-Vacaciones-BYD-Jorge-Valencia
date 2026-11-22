@@ -12,6 +12,7 @@ pruebas.csv es la matriz de resultados; los scripts locales comprueban el códig
 | Archivo o carpeta | Formato | Qué contiene y qué hacer con él |
 |---|---|---|
 | [panel_actualizado.test.mjs](panel_actualizado.test.mjs) | Módulo Node (.mjs) | Prueba de proyección, lectura, filtros, vigencia y recuperación del panel. |
+| [P08/](P08/README.md) | Dos exports JSON y README | Ensayo ampliado: servicio lento, dos timeouts, registro/relectura y mensaje Telegram; configuración y reproducción paso a paso. |
 | [Prueba_P08_alcance_Jorge_Valencia.json](Prueba_P08_alcance_Jorge_Valencia.json) | JSON (.json) | Diferencias de la copia P08 y hashes del código de control empleado. |
 | [Prueba_P08_conexion_Jorge_Valencia.json](Prueba_P08_conexion_Jorge_Valencia.json) | JSON (.json) | Ensayo n8n manual con fallo real DNS a un destino deliberadamente inválido; no llama a OpenAI. |
 | [Prueba_P09_limites_Jorge_Valencia.json](Prueba_P09_limites_Jorge_Valencia.json) | JSON (.json) | Ensayo n8n manual con fixtures de presupuesto/contador y un contraste autorizado. |
@@ -25,7 +26,7 @@ pruebas.csv es la matriz de resultados; los scripts locales comprueban el códig
 
 ## Cómo utilizarlo
 
-Desde la raíz ejecutar los cuatro comandos del README general. Abrir pruebas.csv en Excel como UTF-8 delimitado por comas. Los ensayos JSON se importan en workflows nuevos sin publicar.
+Desde la raíz ejecutar los cuatro comandos del README general. Abrir pruebas.csv en Excel como UTF-8 delimitado por comas. Los ensayos JSON se importan en workflows nuevos. Solo el auxiliar P08 de servicio lento se publica temporalmente; los ensayos manuales no requieren publicación.
 
 ## Entorno y configuración
 
@@ -57,8 +58,8 @@ Esperado: código de salida 0 y mensajes de comprobación. Para la puerta de pub
 
 ## Ensayos n8n y matriz
 
-Los JSON P08/P09/P10 se importan en workflows nuevos con inicio manual, sin publicar ni añadir otro Telegram Trigger. P08 hace una petición a un destino deliberadamente inválido; P09 ejecuta el control con entradas sintéticas; P10 lee el evento histórico y toma la rama de duplicado. La plantilla pública P10 exige seleccionar la tabla de solicitudes propia. Abrir el último nodo para leer el resumen y conservar su ID/fecha de ejecución.
+Los ensayos manuales P08/P09/P10 se importan en workflows nuevos, sin publicar ni añadir otro Telegram Trigger. El P08 histórico prueba fallo DNS; el [P08 ampliado](P08/README.md) publica temporalmente su auxiliar lento y añade timeout real, reintento, persistencia y aviso. P09 ejecuta el control con entradas sintéticas; P10 lee el evento histórico y toma la rama de duplicado. La plantilla pública P10 exige seleccionar la tabla de solicitudes propia. Abrir el último nodo para leer el resumen y conservar su ID/fecha de ejecución.
 
-Resultados recibidos: P08 ejecución 247, fallo DNS y generación bloqueada; P09 ejecución 246, dos bloqueos y un contraste autorizado; P10 ejecuciones 248/249, mismo evento/folio y una fila. Son ensayos aislados con los alcances indicados, no pruebas de caída real de OpenAI o de concurrencia de escritura.
+Resultados recibidos: P08 histórico 247, fallo DNS y generación bloqueada; ampliación 263 y resumen 271, dos timeouts, relectura y Telegram confirmados; P09 ejecución 246, dos bloqueos y un contraste autorizado; P10 ejecuciones 248/249, mismo evento/folio y una fila. Son ensayos aislados con los alcances indicados, no pruebas de caída real de OpenAI o de concurrencia de escritura.
 
 pruebas.csv conserva ID, fecha, versión, caso_id, entrada, esperado, observado, estado, ruta y evidencias_id. Algunas fechas son recepción de captura, no fecha de evento: leer la procedencia. Un estado descriptivo de alcance parcial no equivale a aprobar todos los escenarios de esa categoría.

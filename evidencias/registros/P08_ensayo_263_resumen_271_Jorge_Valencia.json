@@ -1,0 +1,92 @@
+{
+  "autor": "Jorge Valencia",
+  "prueba": "P08",
+  "resultado": "TIMEOUT_REINTENTO_REGISTRO_Y_AVISO_VERIFICADOS",
+  "caso_id": "ENSAYO-P08-263",
+  "ejecucion_n8n_del_ensayo": "263",
+  "ejecucion_n8n_del_resumen": "271",
+  "registrado_en": "2026-11-21T23:52:16.859Z",
+  "resumen_emitido_en": "2026-11-22T00:07:42.853Z",
+  "intentos": [
+    {
+      "intento": 1,
+      "inicio_ms": 1795305133709,
+      "fin_ms": 1795305134757,
+      "duracion_observada_ms": 1048,
+      "timeout_configurado_ms": 1000,
+      "error_observado": {
+        "message": "timeout of 1000ms exceeded",
+        "name": "AxiosError",
+        "code": "ECONNABORTED"
+      },
+      "timeout_observado": true
+    },
+    {
+      "intento": 2,
+      "inicio_ms": 1795305135770,
+      "fin_ms": 1795305136809,
+      "duracion_observada_ms": 1039,
+      "timeout_configurado_ms": 1000,
+      "error_observado": {
+        "message": "timeout of 1000ms exceeded",
+        "name": "AxiosError",
+        "code": "ECONNABORTED"
+      },
+      "timeout_observado": true
+    }
+  ],
+  "max_intentos": 2,
+  "timeout_por_intento_ms": 1000,
+  "espera_entre_intentos_configurada_ms": 1000,
+  "estado_persistido": "Error controlado",
+  "relectura_coincidente": true,
+  "mensaje_telegram": "PRUEBA P08 - Resultado simulado. Folio ENSAYO-P08-263. El servicio no respondio dentro del tiempo permitido en dos intentos. La solicitud se detuvo de forma controlada. No se genero una respuesta de IA ni se reservaron vacaciones. Puedes intentar mas tarde o contactar a Jorge Valencia.",
+  "telegram_message_id": 111,
+  "envio_telegram_confirmado": true,
+  "generacion_intentada": false,
+  "reserva_de_vacaciones": false,
+  "alcance": "Ensayo aislado con servicio lento controlado, dos timeouts, bloqueo, escritura y relectura en tabla de prueba y mensaje Telegram. No es una caida real de OpenAI ni valida todos los caminos del flujo publicado.",
+  "origen_evidencia": "Salida de n8n y diagnóstico compartidos por Jorge Valencia; exports finales recibidos y captura de Telegram. Sin consulta independiente de la API de n8n.",
+  "fecha_local_ensayo": "2026-11-21 17:52:16 America/Mexico_City",
+  "fecha_local_resumen": "2026-11-21 18:07:42 America/Mexico_City",
+  "separacion_observada_entre_intentos_ms": 1013,
+  "confirmacion_diagnostica_recibida": {
+    "telegram_ok": true,
+    "mensaje_id_presente": true,
+    "texto_coincide": true,
+    "chat_coincide": true
+  },
+  "tratamiento_publicacion": "Se omitieron stacks internos de Axios; códigos, mensajes, tiempos y resultados se conservan. Chat ID y credenciales no incluidos.",
+  "procedencia_exports": [
+    {
+      "archivo_fuente": "RH — P08 servicio lento — Jorge Valencia.json",
+      "sha256_export_original": "8d3c1c95b72d5f2a8ebcd89df850d75bc4e17df07f52d158f1e6fa83e10f8e50",
+      "archivo_publico": "tests/P08/01_servicio_lento_Jorge_Valencia.json"
+    },
+    {
+      "archivo_fuente": "RH — P08 timeout y registro — Jorge Valencia.json",
+      "sha256_export_original": "9d801c717b64c49d72806057df905cf7dad6a2f1c7dbbba0f5ac11c56a1c9058",
+      "archivo_publico": "tests/P08/02_timeout_registro_aviso_Jorge_Valencia.json"
+    }
+  ],
+  "incidencias_y_correcciones": [
+    {
+      "incidencia": "Campos null al escribir la tabla de prueba.",
+      "correccion": "Configurar mapeo de las siete columnas."
+    },
+    {
+      "incidencia": "Tabulaciones añadidas al mapeo manual y segundo nodo configurado para insertar.",
+      "correccion": "Guardar con Map Automatically y releer con Get filtrado por caso_id."
+    },
+    {
+      "incidencia": "Resumen no reconocía la respuesta de Telegram.",
+      "correccion": "Leer directamente Avisar por Telegram P08 y extraer result; mantener comprobaciones de texto y chat."
+    }
+  ],
+  "limites": [
+    "Ensayo aislado con un destino lento controlado, no caída real de OpenAI ni agotamiento de cuota.",
+    "El ensayo 263 llegó a persistencia y envío; el resumen definitivo se ejecutó por separado en 271 usando los datos conservados.",
+    "No se atribuyen automáticamente estos parámetros ni la tabla de ensayo a todos los caminos del flujo principal publicado.",
+    "Sin llamadas de generación a OpenAI o ElevenLabs; el consumo de ejecuciones de n8n no se convierte aquí en un costo cero."
+  ]
+}

@@ -1,6 +1,6 @@
 {
   "autor": "Jorge Valencia",
-  "estado": "Preparada; ejecución en n8n pendiente",
+  "estado": "Ensayo histórico ejecutado en 247; alcance DNS, complementado por E-P08-02",
   "nodos": 8,
   "destino_de_ensayo": "https://rh-prueba-conexion.invalid/p08",
   "nodos_codigo_identico": [
@@ -23,5 +23,6 @@
     "Leer costos sustituido por historial vacío, sin tablas.",
     "Se conserva código de preparación, autorización y devolución de bloqueo; sin nodos de generación.",
     "No se prueba entrega Telegram ni persistencia de error en tablas."
-  ]
+  ],
+  "evidencia_ampliada": "evidencias/README.md#e-p08-02"
 }
