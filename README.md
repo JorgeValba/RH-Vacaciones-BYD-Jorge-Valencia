@@ -10,6 +10,12 @@ Guía para utilizar, revisar y recrear el sistema de vacaciones de RH. El escena
 
 El [informe técnico y empresarial de Jorge Valencia](docs/Informe_tecnico_empresarial_Jorge_Valencia.pdf) abre el PDF final con el análisis del proyecto, costos, casos de uso y anexos de reproducción. Se conserva tal como fue entregado por su autor. Está incluido en la carpeta docs/ al descargar el ZIP de esta versión del repositorio.
 
+## ZIP de entrega
+
+Elaborado por: Jorge Valencia. Descargar el [ZIP de la rama main del repositorio](https://github.com/JorgeValba/RH-Vacaciones-BYD-Jorge-Valencia/archive/refs/heads/main.zip), que contiene el informe PDF de docs/, el README, los workflows, datos sanitizados, costos y evidencias de esa versión. Al guardarlo, renombrar el archivo como **Valencia_Jorge_AI_Tools_ProyectoFinal.zip**, según la página 13 de la Guía del estudiante.
+
+Usar una descarga nueva después del último cambio; un ZIP descargado antes no se actualiza. La rama de entrega es main. El commit exacto se consulta en el [historial de cambios de main](https://github.com/JorgeValba/RH-Vacaciones-BYD-Jorge-Valencia/commits/main/), que identifica la versión a comparar con el ZIP. Los enlaces de evidencia fijados a commits anteriores conservan sus cortes históricos.
+
 ## Nombres documentales de los agentes
 
 Elaborado por: Jorge Valencia. Para las descripciones del repositorio y el informe se utilizan estos nombres de psicólogos reconocidos, siempre acompañados del rol técnico para conservar la trazabilidad:
