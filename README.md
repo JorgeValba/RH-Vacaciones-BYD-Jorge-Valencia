@@ -144,11 +144,67 @@ Otros parámetros del export, como tarifas de búsqueda y límite de herramienta
 
 ## 9. Inicio y caso de prueba
 
-Publicar primero 02_llm; después el principal con sus referencias resueltas; por último voz y panel cuando sus tablas y credenciales estén listas. Mantener el bot sin otros receptores de webhook/polling simultáneos. Usar URLs de producción para el sistema publicado, no las webhook-test que requieren una escucha temporal.
+Elaborado por: Jorge Valencia. Los siguientes tres ejercicios utilizan **Telegram, el panel HTML y HR assistant BYD de ElevenLabs**, conservando el mismo folio en cada recorrido. Son instrucciones para ejecutar pruebas nuevas; no resultados adicionales ya obtenidos. Las pruebas históricas P01/P02 siguen en la matriz y no se sustituyen por estos ejercicios.
 
-Enviar `/ayuda`: debe mostrar comandos. Enviar `/probar_control`: debe comprobar el control sin reservar vacaciones ni llamar al modelo. Si esa comprobación falla, revisar estado y reserva antes de continuar con decisiones.
+### Preparar los tres canales
 
-Ejemplo de solicitud: `/nuevo EMP-004 2026-12-14 2026-12-18`. El resultado depende del saldo, calendario y reservas actuales: debe devolver un folio con una propuesta revisada o una detención explicada. Si queda pendiente, usar exactamente el folio y versión devueltos: `/aprobar FOLIO V1` o `/rechazar FOLIO V1 motivo`, sustituyendo V1 si la respuesta muestra otra versión. Decidir dentro de la vigencia y volver a consultar `/estado FOLIO`.
+Publicar primero 02_llm y después el principal con sus referencias resueltas; publicar voz y panel cuando sus tablas y credenciales estén listas. Mantener un solo receptor del bot y usar URLs de producción. Para la demostración existente, solicitar un pase privado y enviar `/acceso CODIGO_PRIVADO`; no publicar el código.
+
+Enviar `/ayuda` y `/probar_control` en Telegram. El segundo comprueba el control sin reservar vacaciones ni llamar al modelo. Si falla, revisar el control y las reservas antes de decidir. Las solicitudes nuevas y las consultas de ElevenLabs pueden consumir saldo.
+
+- [Bot HR_BYD_bot](https://t.me/HR_BYD_bot): abre el chat donde se crean solicitudes y se aprueban o rechazan con folio, versión y acceso vigentes.
+- [Panel HTML](https://jorgevalba.github.io/RH-Vacaciones-BYD-Jorge-Valencia/#panel): abre Seguimiento de solicitudes para actualizar, buscar el folio y revisar Historial de Registros.
+- [Asistente del HTML](https://jorgevalba.github.io/RH-Vacaciones-BYD-Jorge-Valencia/#asistente): abre la sección que contiene el widget HR assistant BYD de ElevenLabs para consultar estado por voz o texto. El asistente no aprueba ni rechaza.
+
+Para voz, aceptar la interacción, iniciar llamada y permitir micrófono. Si se usa texto, registrarlo como consulta escrita. Una captura del chat no acredita voz hablada; para voz conservar audio y referencia de conversación. Si el micrófono está denegado, documentar la alternativa sin marcar voz exitosa.
+
+### Caso 1 Crear y aprobar con seguimiento en los tres canales
+
+1. **Telegram:** enviar `/nuevo EMP-001 2026-12-07 2026-12-11`. Guardar folio, versión y hora reales. En una copia limpia con los datos originales se esperan cinco días laborables, saldo disponible diez, proyectado cinco y prima estimada MXN 750. En la instancia existente comprobar primero saldo, calendario y reservas.
+2. **HTML:** pulsar Restablecer y Actualizar datos; pegar el folio devuelto en Buscar folio. Comparar la fila del historial con la propuesta de Telegram. Revisar fuente y fecha: un respaldo antiguo no demuestra el estado actual.
+3. **ElevenLabs desde el HTML:** pedir «Consulta el estado del folio FOLIO_DEVUELTO», sustituyendo el marcador por el identificador completo. Confirmar caracteres ambiguos. Contrastar la respuesta de consultar_estado_rh con el registro.
+4. **Telegram:** si sigue pendiente y vigente, copiar el comando `/aprobar` devuelto por el bot, con su folio y versión exactos, dentro de los treinta minutos. Después enviar `/estado FOLIO_DEVUELTO`.
+5. **HTML y ElevenLabs:** actualizar el panel y volver a consultar el mismo folio en el widget. Se espera Aprobada. En copia limpia el saldo pasa a cinco cuando se confirma la reserva; antes, cinco era solo el saldo proyectado.
+6. **Comprobar:** conservar mensajes, fila del panel y respuesta del widget. El propietario verifica cuatro especialistas, decisión y una sola reserva del caso en las tablas. No repetir una aprobación para obtener otra captura.
+
+### Caso 2 Consultar un caso existente en los tres canales
+
+1. **Telegram:** enviar `/estado VAC-20261102-YTLSBKE8E`. El corte histórico registra EMP-005, Aprobada, V1 y cuatro días. Comparar con la lectura actual; no prometer que futuras respuestas sean iguales. Una copia limpia no incluye ese folio: usar allí el creado en el caso 1.
+2. **HTML:** restablecer filtros, actualizar y buscar exactamente el mismo folio. Comparar estado y días de la fila con Telegram. Los indicadores se recalculan para el conjunto filtrado, no siempre para toda la base.
+3. **ElevenLabs desde el HTML:** pedir «Consulta el estado del folio VAC-20261102-YTLSBKE8E», o el folio propio si se recreó la instancia. Registrar si la consulta fue hablada o escrita. El agente debe consultar la herramienta y no completar el identificador por intuición.
+4. **Comprobar:** guardar las tres lecturas con folio y hora cercana. Se espera información compatible, sin una segunda solicitud ni reserva. Puede existir auditoría y costo de consulta. Si un panel muestra Expirada y otro canal el estado almacenado, revisar la vigencia y las reglas de presentación antes de concluir que hay un error.
+
+### Caso 3 Rechazar y verificar el resultado en los tres canales
+
+1. **Telegram:** enviar `/nuevo EMP-004 2026-12-14 2026-12-18`. En copia limpia se esperan cinco días, saldo diez, proyectado cinco y prima estimada MXN 937.50. Guardar su nuevo folio y versión. No usar el caso histórico aprobado del caso 2.
+2. **HTML y ElevenLabs:** localizar el nuevo folio en el panel y consultar su estado con HR assistant BYD mientras esté pendiente. Las lecturas no sustituyen la decisión de RH ni deben agotar su vigencia.
+3. **Telegram:** si está Pendiente de aprobación y vigente, enviar `/rechazar FOLIO_DEVUELTO VERSION_DEVUELTA No se autoriza este periodo de prueba`. Sustituir ambos marcadores por los datos recibidos, por ejemplo V1 si esa es la versión vigente. Si venció, requiere ajuste o cambió la versión, registrar esa situación sin forzar el rechazo.
+4. **Telegram:** conservar la confirmación y enviar `/estado FOLIO_DEVUELTO`. Se espera Rechazada y el motivo registrado.
+5. **HTML:** actualizar y buscar el mismo folio. La fila debe mostrar Rechazada cuando el endpoint entregue el dato actual; el caso no debe añadir días aprobados.
+6. **ElevenLabs desde el HTML:** pedir «Consulta el estado del folio FOLIO_DEVUELTO». Se espera que consultar_estado_rh devuelva el estado rechazado y el asistente lo comunique sin modificar la solicitud.
+7. **Comprobar:** contrastar solicitud y auditoría; comparar reservas antes y después para verificar que no haya una nueva reserva de este caso. Las reservas semilla y otros casos permanecen separados.
+
+### Dónde queda registrado y qué conservar
+
+El propietario abre **Data tables** en el proyecto n8n y revisa:
+
+| Registro | Cómo localizarlo | Qué revisar |
+|---|---|---|
+| rh_solicitudes | caso_id igual al folio | Estado, motivo, version_propuesta, propuesta_json y actualizado_en |
+| rh_trazas | caso_id igual al folio | Cuatro especialistas, etapas, salida_json y auditoría de decisión; ejecucion_id |
+| rh_costos | caso_id y llamada_id | Consumo, tokens, tarifa, estado y origen medido o estimado; sin duplicar resúmenes |
+| rh aprobadas | aprobacion_id de la decisión, si existe | Empleado, fechas y dias_reservados; una reserva en aprobación y ninguna nueva por rechazo |
+
+rh aprobadas no contiene una columna caso_id: usar la referencia de aprobación disponible en la decisión y la comparación antes/después. Cero filas en un filtro no significa que toda la tabla esté vacía. En **Executions** del workflow, localizar la corrida por hora y mensaje; crear y decidir producen eventos distintos vinculados al mismo folio.
+
+La consulta de ElevenLabs pasa por 03_voz y su auditoría; conservar también la respuesta de herramienta y la referencia de sesión si se acredita voz. El pase del bot no concede acceso administrativo a n8n. El evaluador puede usar el panel sanitizado y pedir al propietario un extracto sanitizado del caso.
+
+- [Esquema de tablas](datos/Esquema_tablas_Jorge_Valencia.json): contiene columnas y tipos para revisar solicitudes, trazas, costos, reservas y accesos.
+- [Herramientas de ElevenLabs](agentes/voz/README.md#herramientas-de-servidor): explica las consultas de estado y saldo y sus restricciones.
+- [Matriz de pruebas](tests/pruebas.csv): relaciona entradas, resultados y alcance de las pruebas documentadas.
+- [Índice de evidencias](evidencias/README.md#resultados-en-lenguaje-claro): localiza respaldos históricos y sus límites.
+
+Conservar entrada, esperado, observado, fecha/hora, folio, versión y evidencia de los tres canales. Si cambia el calendario, saldo, periodo o disponibilidad, revisar el esperado. Ante una escritura ambigua o control ocupado, conciliar antes de repetir; no declarar éxito por una captura aislada. La operación se guarda en n8n y el HTML consulta su proyección: no se hace un commit en GitHub por cada solicitud.
 
 ## 10. Resultado esperado y validación
 
