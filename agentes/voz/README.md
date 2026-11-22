@@ -39,3 +39,19 @@ Ambas usan POST a la Production URL del workflow 03_voz, cabecera X-RH-Voz-Key c
 consultar_estado_rh envía operación consultar_estado, folio proporcionado y conversacion_id del sistema; consultar_saldo_rh envía operación consultar_saldo, empleado_id ficticio y la misma referencia de sesión. El receptor valida esquema, permisos de herramienta y auditoría.
 
 La base de conocimiento documentada es 1044_Ley_Federal_del_Trabajo.pdf con RAG. Para otra cuenta, cargar una fuente autorizada y asociarla; el ID de conocimiento de la cuenta de Jorge no es el archivo PDF importable. El agente informa y consulta; no aprueba vacaciones.
+
+<!-- INICIO LECTURA SEMANTICA -->
+## Lectura e interpretación de los archivos
+
+Esta guía de lectura es una ayuda documental añadida por Jorge Valencia para revisión humana o asistida por IA. La guía del curso exige trazabilidad y reproducibilidad; no impone estas fichas ni convierte una descripción en prueba ejecutada. El archivo enlazado es la fuente; su README explica cómo interpretarlo, con procedencia, fecha y alcance.
+
+### [Configuracion_activa_Jorge_Valencia.json](Configuracion_activa_Jorge_Valencia.json)
+
+**Tipo y uso:** Snapshot histórico de configuración ElevenLabs.
+
+**Qué contiene:** agent_id, branch_id y version_id fijan versión; prompt_path, llm, knowledge_base y herramientas describen el agente recuperado el 4 de noviembre.
+
+**Cómo interpretarlo:** Cruzar la versión/fecha con los otros registros de límites y dominio. max_tokens=-1 pertenece a este snapshot; la lectura posterior documenta el límite 1500 de otra versión.
+
+**Alcance y límite:** El nombre «activa» no actualiza el archivo en vivo. No es una exportación completa instalable ni prueba de una conversación exitosa.
+<!-- FIN LECTURA SEMANTICA -->

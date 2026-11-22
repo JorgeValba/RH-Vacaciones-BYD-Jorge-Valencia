@@ -274,14 +274,16 @@
       ],
       "titulo": "Interfaz móvil y escritorio",
       "tipo": "Capturas de viewport",
-      "fecha_referencia": "Corte histórico o recepción 2026-11-04; ver archivo fuente",
+      "fecha_referencia": "Interfaz histórica 2026-11-04; captura de permiso recibida 2026-11-21, fecha del evento no visible",
       "rutas": [
         "evidencias/capturas/P13_interfaz/E-P13-01_390_panel_Jorge_Valencia.png",
         "evidencias/capturas/P13_interfaz/E-P13-01_1366_panel_Jorge_Valencia.png",
-        "evidencias/capturas/README.md"
+        "evidencias/capturas/README.md",
+        "evidencias/registros/P13_microfono_denegado_Jorge_Valencia.json",
+        "evidencias/capturas/P13_interfaz/E-P13-01_Microfono_denegado_Jorge_Valencia.png"
       ],
-      "resultado_observable": "Panel en anchos visibles de 390 y 1366 px; evidencia visual del reacomodo de componentes.",
-      "limite": "No acredita por imagen teclado, permisos de micrófono o accesibilidad completa; widget observado con obstrucción en teléfono real.",
+      "resultado_observable": "Capturas de escritorio/móvil y confirmaciones de interacción; captura nueva con Permission denied, aviso de micrófono y alternativas de texto/Telegram visibles.",
+      "limite": "La nueva captura documenta denegación de permiso y alternativa visible; no demuestra respuesta exitosa del chat bajo bloqueo ni muestra la configuración exacta de Chrome. Las confirmaciones de teclado y filtros conservan su procedencia.",
       "estado": "Evidencia documentada; alcance descrito en la ficha"
     },
     {
@@ -609,8 +611,8 @@
       "autor": "Jorge Valencia",
       "evidencia_id": "E-P11-01",
       "ruta": "docs/P11_Skills_loops_Jorge_Valencia.md",
-      "sha256": "ea1cdca45ecc2f049d18b401d9c2ebf11cf4b44c6a15c46e2294030a2ecc9596",
-      "bytes": 8665
+      "sha256": "6f93079b7c8cfc6acd71f194efba8321802f30a2d0d98c3e8109e735ec4bcbbc",
+      "bytes": 8746
     },
     {
       "autor": "Jorge Valencia",
@@ -665,8 +667,8 @@
       "autor": "Jorge Valencia",
       "evidencia_id": "E-P13-01",
       "ruta": "evidencias/capturas/README.md",
-      "sha256": "90bb26ad0086c41a532f28025e605c89c1795df4d06ed24de40896cabe95e415",
-      "bytes": 2318
+      "sha256": "98ca7c38a57c23fa382a86236a71c8fbab78efab696b698d33ff4049d14593e9",
+      "bytes": 9025
     },
     {
       "autor": "Jorge Valencia",
@@ -700,8 +702,8 @@
       "autor": "Jorge Valencia",
       "evidencia_id": "E-P14-01",
       "ruta": "costos/README.md",
-      "sha256": "0e9fd90a682eee13131efe330b69b450a3dd2e7003ec8e6991779a238825759f",
-      "bytes": 18145
+      "sha256": "6030fa027339befc888627a3558d3bd5fa41f983e08cbe04e35d73aede83d860",
+      "bytes": 21912
     },
     {
       "autor": "Jorge Valencia",
@@ -784,8 +786,8 @@
       "autor": "Jorge Valencia",
       "evidencia_id": "E-DAT-01",
       "ruta": "datos/README.md",
-      "sha256": "c8f6a9e87d399f90393c9a96f5b6077652bb294483916eabe157d575643bbf24",
-      "bytes": 3381
+      "sha256": "593b8201ca5972037c80c63eb2a52a9a845dfc89613bf7d9e1995e87d927c470",
+      "bytes": 5135
     },
     {
       "autor": "Jorge Valencia",
@@ -812,8 +814,8 @@
       "autor": "Jorge Valencia",
       "evidencia_id": "E-COST-01",
       "ruta": "costos/README.md",
-      "sha256": "0e9fd90a682eee13131efe330b69b450a3dd2e7003ec8e6991779a238825759f",
-      "bytes": 18145
+      "sha256": "6030fa027339befc888627a3558d3bd5fa41f983e08cbe04e35d73aede83d860",
+      "bytes": 21912
     },
     {
       "autor": "Jorge Valencia",
@@ -833,8 +835,8 @@
       "autor": "Jorge Valencia",
       "evidencia_id": "E-P08-02",
       "ruta": "tests/P08/README.md",
-      "sha256": "f67bf218b39305b95de5b99da26d27874b0049e8b1113733615ce65eb7696f74",
-      "bytes": 6517
+      "sha256": "da20d57895ab6aca0a7223cfe583839e5d4a9a5a9f7dff9d0fdd7ddf2c5d361e",
+      "bytes": 8488
     },
     {
       "autor": "Jorge Valencia",
@@ -933,6 +935,20 @@
       "ruta": "costos/optimizacion_panel.csv",
       "sha256": "2d55e0bf116ef42cf54d2500741478fd0378375c81bca1e9f2b0a5859cc15ef9",
       "bytes": 1444
+    },
+    {
+      "autor": "Jorge Valencia",
+      "evidencia_id": "E-P13-01",
+      "ruta": "evidencias/registros/P13_microfono_denegado_Jorge_Valencia.json",
+      "sha256": "600f172dc95c59663358c26dcd1cd5bf9dc37e33015512ef03410de96e91b6c1",
+      "bytes": 1913
+    },
+    {
+      "autor": "Jorge Valencia",
+      "evidencia_id": "E-P13-01",
+      "ruta": "evidencias/capturas/P13_interfaz/E-P13-01_Microfono_denegado_Jorge_Valencia.png",
+      "sha256": "196a78b7774943a9c1b5719fb082c760f516244dceb36d5cb098c94a4b5fc878",
+      "bytes": 150757
     }
   ],
   "capturas_copiadas_sin_editar": [
@@ -1047,6 +1063,13 @@
       "origen_privado": "P08_aviso_Telegram_263_Jorge_Valencia.jpg",
       "tratamiento": "Copia literal; sin recorte ni edición.",
       "criterio_revision": "Aviso de prueba con folio sintético; no muestra Chat ID, token ni código de acceso."
+    },
+    {
+      "autor": "Jorge Valencia",
+      "ruta": "evidencias/capturas/P13_interfaz/E-P13-01_Microfono_denegado_Jorge_Valencia.png",
+      "sha256": "196a78b7774943a9c1b5719fb082c760f516244dceb36d5cb098c94a4b5fc878",
+      "origen_privado": "codex-clipboard-ad5eb463-26c0-4307-9c18-a473eefc4c67.png",
+      "tratamiento": "Copia literal sin edición; fecha/hora del evento no visible."
     }
   ],
   "regla_hash": "SHA-256 del archivo en este corte; volver a generar si cambia el contenido. No se hashea este mismo manifiesto.",

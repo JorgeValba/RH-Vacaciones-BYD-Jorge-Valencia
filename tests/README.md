@@ -67,3 +67,49 @@ pruebas.csv conserva ID, fecha, versión, caso_id, entrada, esperado, observado,
 ## Optimización del sondeo del panel
 
 El panel actualiza automáticamente cada cinco minutos; conserva consulta al abrir, al volver a pestaña y manual. [Comparación de costo y calidad](../tests/Optimizacion_panel_Jorge_Valencia.md): diez criterios offline antes/después, con el compromiso de frescura declarado. No es una prueba de navegador o carga.
+
+<!-- INICIO LECTURA SEMANTICA -->
+## Lectura e interpretación de los archivos
+
+Esta guía de lectura es una ayuda documental añadida por Jorge Valencia para revisión humana o asistida por IA. La guía del curso exige trazabilidad y reproducibilidad; no impone estas fichas ni convierte una descripción en prueba ejecutada. El archivo enlazado es la fuente; su README explica cómo interpretarlo, con procedencia, fecha y alcance.
+
+### [Prueba_P08_alcance_Jorge_Valencia.json](Prueba_P08_alcance_Jorge_Valencia.json)
+
+**Tipo y uso:** Descripción de procedencia del ensayo P08 inicial.
+
+**Qué contiene:** nodos_codigo_identico lista tres hashes del control; diferencias_explicitas y destino_de_ensayo explican la adaptación; evidencia_ampliada enlaza el ensayo posterior.
+
+**Cómo interpretarlo:** Leer «idéntico» solo para los nodos enumerados, no para todo el flujo. El destino .invalid es deliberadamente no resoluble.
+
+**Alcance y límite:** No contiene una ejecución nueva ni prueba timeouts observados; consultar salida 247 y ampliación 263/271.
+
+### [Prueba_P08_conexion_Jorge_Valencia.json](Prueba_P08_conexion_Jorge_Valencia.json)
+
+**Tipo y uso:** Workflow de ensayo n8n importable.
+
+**Qué contiene:** Ensayo manual aislado de fallo DNS y bloqueo, usando código de control exportado. nodes contiene 8 nodos y connections enlaza pasos; parameters contiene datos/acciones de prueba.
+
+**Cómo interpretarlo:** Importar y configurar según el README de tests/P08 o la guía específica antes de ejecutar. active=false es estado de la exportación, no resultado de la prueba.
+
+**Alcance y límite:** La presencia de nodos no demuestra ejecución. No generar respuesta real ni sustituir el principal; los resultados observados están en registros/P08_ejecucion_247.
+
+### [Prueba_P09_limites_Jorge_Valencia.json](Prueba_P09_limites_Jorge_Valencia.json)
+
+**Tipo y uso:** Workflow de ensayo n8n importable.
+
+**Qué contiene:** Tres escenarios sintéticos que ejercitan presupuesto, máximo de llamadas y caso permitido. nodes contiene 4 nodos y connections enlaza pasos; parameters contiene datos/acciones de prueba.
+
+**Cómo interpretarlo:** Importar y configurar según el README de tests/P08 o la guía específica antes de ejecutar. active=false es estado de la exportación, no resultado de la prueba.
+
+**Alcance y límite:** La presencia de nodos no demuestra ejecución. Los fixtures son entradas diseñadas para probar, no consumo de usuarios. La salida documentada corresponde a ejecución 246.
+
+### [Prueba_P10_evento_duplicado_Jorge_Valencia.json](Prueba_P10_evento_duplicado_Jorge_Valencia.json)
+
+**Tipo y uso:** Workflow de ensayo n8n importable.
+
+**Qué contiene:** Consulta e IF de deduplicación contra un evento histórico persistido. nodes contiene 7 nodos y connections enlaza pasos; parameters contiene datos/acciones de prueba.
+
+**Cómo interpretarlo:** Importar y configurar según el README de tests/P08 o la guía específica antes de ejecutar. active=false es estado de la exportación, no resultado de la prueba.
+
+**Alcance y límite:** La presencia de nodos no demuestra ejecución. Ensayo de solo lectura, sin primera escritura ni concurrencia; comparar las salidas 248/249.
+<!-- FIN LECTURA SEMANTICA -->

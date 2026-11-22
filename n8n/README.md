@@ -71,3 +71,59 @@ Para importar: crear workflow vacío → ⋯ → Import from File → selecciona
 Comprobar /ayuda y /probar_control. Una solicitud válida devuelve folio o explicación de detención; una decisión debe usar el folio y la versión exactos. Consultar Executions para identificar entrada, último nodo y salida. Los ensayos aislados de tests/ se ejecutan manualmente, sin publicar.
 
 Para detener el servicio, desactivar el workflow correspondiente, sin borrar sus tablas. Ante reserva parcial, revisar caso y reserva antes de reintentar o liberar control. Para solucionar errores, consultar el manual y el mapa por nodo: un ID de tabla de otra cuenta no se vuelve válido por tener el mismo nombre visible.
+
+<!-- INICIO LECTURA SEMANTICA -->
+## Lectura e interpretación de los archivos
+
+Esta guía de lectura es una ayuda documental añadida por Jorge Valencia para revisión humana o asistida por IA. La guía del curso exige trazabilidad y reproducibilidad; no impone estas fichas ni convierte una descripción en prueba ejecutada. El archivo enlazado es la fuente; su README explica cómo interpretarlo, con procedencia, fecha y alcance.
+
+### [01_principal_Jorge_Valencia.json](01_principal_Jorge_Valencia.json)
+
+**Tipo y uso:** Workflow n8n importable, sanitizado.
+
+**Qué contiene:** Entrada Telegram, acceso compartido, tablas, cuatro agentes, revisión y decisión humana. nodes contiene 121 nodos; connections define ramas; parameters configura acciones; settings conserva opciones.
+
+**Cómo interpretarlo:** Importar según el manual y revisar Configuración; Cargar skills versionados; Agentes 1–4; rutas de aprobación y registro. Consultar Mapa_configuracion para sustituir IDs/credenciales por nombre. active=false permite importar inactivo.
+
+**Alcance y límite:** La exportación no demuestra su ejecución ni que el servicio esté apagado hoy. Importar no publica, no crea todas las tablas y no repone secretos eliminados.
+
+### [02_llm_Jorge_Valencia.json](02_llm_Jorge_Valencia.json)
+
+**Tipo y uso:** Workflow n8n importable, sanitizado.
+
+**Qué contiene:** Llamada GPT-5 controlada: conteo, presupuesto, reserva, generación y conciliación. nodes contiene 17 nodos; connections define ramas; parameters configura acciones; settings conserva opciones.
+
+**Cómo interpretarlo:** Importar según el manual y revisar Preparar conteo; Control de presupuesto; Generar respuesta; Persistir resultado. Consultar Mapa_configuracion para sustituir IDs/credenciales por nombre. active=false permite importar inactivo.
+
+**Alcance y límite:** La exportación no demuestra su ejecución ni que el servicio esté apagado hoy. Importar no publica, no crea todas las tablas y no repone secretos eliminados.
+
+### [03_voz_Jorge_Valencia.json](03_voz_Jorge_Valencia.json)
+
+**Tipo y uso:** Workflow n8n importable, sanitizado.
+
+**Qué contiene:** Webhook autenticado de lectura de estado/saldo del mismo sistema. nodes contiene 20 nodos; connections define ramas; parameters configura acciones; settings conserva opciones.
+
+**Cómo interpretarlo:** Importar según el manual y revisar Webhook voz autenticado; Configuración voz; validar consulta; leer tablas; auditoría y respuesta. Consultar Mapa_configuracion para sustituir IDs/credenciales por nombre. active=false permite importar inactivo.
+
+**Alcance y límite:** La exportación no demuestra su ejecución ni que el servicio esté apagado hoy. Importar no publica, no crea todas las tablas y no repone secretos eliminados.
+
+### [04_panel_Jorge_Valencia.json](04_panel_Jorge_Valencia.json)
+
+**Tipo y uso:** Workflow n8n importable, sanitizado.
+
+**Qué contiene:** Webhook público que proyecta exclusivamente campos sanitizados del panel. nodes contiene 5 nodos; connections define ramas; parameters configura acciones; settings conserva opciones.
+
+**Cómo interpretarlo:** Importar según el manual y revisar Panel: recibir consulta; leer solicitudes; preparar resumen permitido; respuesta HTTP. Consultar Mapa_configuracion para sustituir IDs/credenciales por nombre. active=false permite importar inactivo.
+
+**Alcance y límite:** La exportación no demuestra su ejecución ni que el servicio esté apagado hoy. Importar no publica, no crea todas las tablas y no repone secretos eliminados.
+
+### [Mapa_configuracion_Jorge_Valencia.json](Mapa_configuracion_Jorge_Valencia.json)
+
+**Tipo y uso:** Inventario de vinculaciones a resolver después de importar.
+
+**Qué contiene:** vinculaciones contiene 58 entradas workflow/nodo/tabla_o_expresion e identifica referencias a tablas o placeholders.
+
+**Cómo interpretarlo:** Localizar workflow y nodo; reemplazar CONFIGURAR_* por los IDs de la instancia de destino según el manual, preservando las expresiones que dependen de Configuración.
+
+**Alcance y límite:** No es un workflow ejecutable ni contiene los secretos. Un nombre de tabla no equivale al ID interno de otra instancia.
+<!-- FIN LECTURA SEMANTICA -->

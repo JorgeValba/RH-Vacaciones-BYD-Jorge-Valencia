@@ -36,7 +36,7 @@ Los registros son históricos, lecturas de configuración o ensayos aislados seg
 | P10 / [E-P10-01](#e-p10-01) | Reproducción secuencial de evento persistido | 248/249: mismo evento y folio YTLSBKE8E, una fila en ambas lecturas y rama de duplicado. | [Ver respaldo](#e-p10-01) |
 | P11 / [E-P11-01](#e-p11-01) | Skills, loops, mejora y reutilización | V1 false→V2 true en YTLS6SW04; costo extra USD 0.003967; ambos skills cargados y reutilizados en BKE8E/EX4SR. | [Ver respaldo](#e-p11-01) |
 | P12 / [E-P12-01](#e-p12-01) | Actions: bloqueo y recuperación | 41396056569 bloquea artefacto/publicación por validación; 41396256574 publica al retirar inyección. Mismo commit. | [Ver respaldo](#e-p12-01) |
-| P13 / [E-P13-01](#e-p13-01) | Interfaz móvil y escritorio | Panel en anchos visibles de 390 y 1366 px; evidencia visual del reacomodo de componentes. | [Ver respaldo](#e-p13-01) |
+| P13 / [E-P13-01](#e-p13-01) | Interfaz móvil y escritorio | Capturas de escritorio/móvil y confirmaciones de interacción; captura nueva con Permission denied, aviso de micrófono y alternativas de texto/Telegram visibles. | [Ver respaldo](#e-p13-01) |
 | P14 / [E-P14-01](#e-p14-01) | Costos y trazabilidad | 48 generaciones con trazas y fórmulas conciliadas; nueve sesiones ElevenLabs documentadas; USD 0.27757026 de subtotal identificado. | [Ver respaldo](#e-p14-01) |
 | P14, P13 / [E-P14-02](#e-p14-02) | Panel sin filtros | KPI 13 solicitudes, dos pendientes, catorce días aprobados, con fecha/fuente visibles en el corte. | [Ver respaldo](#e-p14-02) |
 | P14, P13 / [E-P14-03](#e-p14-03) | Gráfica e historial del corte | Cantidades por estado, barras desde cero e historial de trece folios ficticios. | [Ver respaldo](#e-p14-03) |
@@ -298,17 +298,19 @@ Para el informe, citar el ID de la ficha y el enlace al archivo del commit de en
 
 **Interfaz móvil y escritorio** · Capturas de viewport
 
-**Referencia:** Corte histórico o recepción 2026-11-04; ver archivo fuente.
+**Referencia:** Interfaz histórica 2026-11-04; captura de permiso recibida 2026-11-21, fecha del evento no visible.
 
-**Observación:** Panel en anchos visibles de 390 y 1366 px; evidencia visual del reacomodo de componentes.
+**Observación:** Capturas de escritorio/móvil y confirmaciones de interacción; captura nueva con Permission denied, aviso de micrófono y alternativas de texto/Telegram visibles.
 
-**Alcance:** No acredita por imagen teclado, permisos de micrófono o accesibilidad completa; widget observado con obstrucción en teléfono real.
+**Alcance:** La nueva captura documenta denegación de permiso y alternativa visible; no demuestra respuesta exitosa del chat bajo bloqueo ni muestra la configuración exacta de Chrome. Las confirmaciones de teclado y filtros conservan su procedencia.
 
 **Archivos:**
 
 - [E-P13-01_390_panel_Jorge_Valencia.png](capturas/P13_interfaz/E-P13-01_390_panel_Jorge_Valencia.png)
 - [E-P13-01_1366_panel_Jorge_Valencia.png](capturas/P13_interfaz/E-P13-01_1366_panel_Jorge_Valencia.png)
 - [README.md](capturas/README.md)
+
+**Nueva captura de permiso:** [imagen original](capturas/P13_interfaz/E-P13-01_Microfono_denegado_Jorge_Valencia.png) y [lectura estructurada](registros/P13_microfono_denegado_Jorge_Valencia.json). Buscar “Permission denied” en el widget y el aviso con alternativas en la página; no atribuir una respuesta de texto que no aparece.
 
 ## E-P14-01
 
@@ -442,3 +444,11 @@ Las trece capturas se distribuyen en [capturas/](capturas/README.md). Los JSON d
 Tabla derivada del Excel para presentación: [escenarios mensuales](../costos/Escenarios_mensuales_presentacion_Jorge_Valencia.png), referencia E-COST-01. No es captura de ejecución.
 
 Comparación de costo y calidad del sondeo: [método y resultados offline](../tests/Optimizacion_panel_Jorge_Valencia.md), E-COST-01. Diez criterios antes/después; no prueba de carga ni ahorro facturado.
+
+<!-- INICIO LECTURA SEMANTICA -->
+## Lectura e interpretación de los archivos
+
+Esta guía de lectura es una ayuda documental añadida por Jorge Valencia para revisión humana o asistida por IA. La guía del curso exige trazabilidad y reproducibilidad; no impone estas fichas ni convierte una descripción en prueba ejecutada. El archivo enlazado es la fuente; su README explica cómo interpretarlo, con procedencia, fecha y alcance.
+
+Esta carpeta documenta su componente y remite al README que explica los datos y evidencias concretos.
+<!-- FIN LECTURA SEMANTICA -->

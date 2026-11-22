@@ -35,3 +35,11 @@ La lectura debe permitir localizar tablas, credenciales y pasos sin tener que de
 - [Guía general](../README.md): requisitos, instalación, inicio, credenciales, parada y solución de problemas.
 - [Índice de evidencias](../evidencias/README.md): resultados y archivos relacionados.
 - [Matriz de pruebas](../tests/pruebas.csv): entradas, esperados y resultados observados.
+
+<!-- INICIO LECTURA SEMANTICA -->
+## Lectura e interpretación de los archivos
+
+Esta guía de lectura es una ayuda documental añadida por Jorge Valencia para revisión humana o asistida por IA. La guía del curso exige trazabilidad y reproducibilidad; no impone estas fichas ni convierte una descripción en prueba ejecutada. El archivo enlazado es la fuente; su README explica cómo interpretarlo, con procedencia, fecha y alcance.
+
+Los Markdown son documentos explicativos: caso, arquitectura, manual, uso de IA y análisis de P11/Actions. Se distinguen afirmaciones de diseño de resultados observados enlazados. La arquitectura describe relaciones; el manual explica reproducción; las pruebas están en tests y evidencias, no se deducen del diagrama.
+<!-- FIN LECTURA SEMANTICA -->

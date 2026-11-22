@@ -55,3 +55,29 @@ Al recoger evidencia, **despublicar solo el servicio lento auxiliar**. El ensayo
 | Resumen ejecutado por separado | Conservar IDs del ensayo y del resumen; no atribuirlo a una única ejecución sin fallas |
 
 El ensayo histórico [DNS 247](../../evidencias/registros/P08_ejecucion_247_Jorge_Valencia.json) se conserva como antecedente de alcance menor. Los intentos fallidos de configuración y su corrección constan en el [registro del ensayo ampliado](../../evidencias/registros/P08_ensayo_263_resumen_271_Jorge_Valencia.json).
+
+<!-- INICIO LECTURA SEMANTICA -->
+## Lectura e interpretación de los archivos
+
+Esta guía de lectura es una ayuda documental añadida por Jorge Valencia para revisión humana o asistida por IA. La guía del curso exige trazabilidad y reproducibilidad; no impone estas fichas ni convierte una descripción en prueba ejecutada. El archivo enlazado es la fuente; su README explica cómo interpretarlo, con procedencia, fecha y alcance.
+
+### [01_servicio_lento_Jorge_Valencia.json](01_servicio_lento_Jorge_Valencia.json)
+
+**Tipo y uso:** Workflow de ensayo n8n importable.
+
+**Qué contiene:** Servicio HTTP de ensayo que espera cuatro segundos antes de responder. nodes contiene 3 nodos y connections enlaza pasos; parameters contiene datos/acciones de prueba.
+
+**Cómo interpretarlo:** Importar y configurar según el README de tests/P08 o la guía específica antes de ejecutar. active=false es estado de la exportación, no resultado de la prueba.
+
+**Alcance y límite:** La presencia de nodos no demuestra ejecución. Publicarlo expone un endpoint de prueba; detenerlo al terminar. No es un proveedor real fallando.
+
+### [02_timeout_registro_aviso_Jorge_Valencia.json](02_timeout_registro_aviso_Jorge_Valencia.json)
+
+**Tipo y uso:** Workflow de ensayo n8n importable.
+
+**Qué contiene:** Ensayo con dos HTTP de timeout 1000 ms, espera acotada, registro/relectura y aviso Telegram. nodes contiene 21 nodos y connections enlaza pasos; parameters contiene datos/acciones de prueba.
+
+**Cómo interpretarlo:** Importar y configurar según el README de tests/P08 o la guía específica antes de ejecutar. active=false es estado de la exportación, no resultado de la prueba.
+
+**Alcance y límite:** La presencia de nodos no demuestra ejecución. Configurar tabla exclusiva y credencial/chat propios; el resumen 271 verificó el ensayo 263 tras correcciones. No usar como reemplazo automático del workflow productivo.
+<!-- FIN LECTURA SEMANTICA -->

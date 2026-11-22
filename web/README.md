@@ -63,3 +63,29 @@ La lectura dinámica ocurre al abrir, al pulsar Actualizar y cada sesenta segund
 ## Optimización del sondeo del panel
 
 El panel actualiza automáticamente cada cinco minutos; conserva consulta al abrir, al volver a pestaña y manual. [Comparación de costo y calidad](../tests/Optimizacion_panel_Jorge_Valencia.md): diez criterios offline antes/después, con el compromiso de frescura declarado. No es una prueba de navegador o carga.
+
+<!-- INICIO LECTURA SEMANTICA -->
+## Lectura e interpretación de los archivos
+
+Esta guía de lectura es una ayuda documental añadida por Jorge Valencia para revisión humana o asistida por IA. La guía del curso exige trazabilidad y reproducibilidad; no impone estas fichas ni convierte una descripción en prueba ejecutada. El archivo enlazado es la fuente; su README explica cómo interpretarlo, con procedencia, fecha y alcance.
+
+### [config.json](config.json)
+
+**Tipo y uso:** Configuración pública que lee el navegador.
+
+**Qué contiene:** agent_id, panel_url, telegram_url y conexion_registros_verificada; stale_hours conserva un parámetro declarado.
+
+**Cómo interpretarlo:** agent_id identifica el widget y panel_url el resumen permitido; no son claves secretas. conexion_registros_verificada es una declaración que se respalda con P03, no una prueba autónoma.
+
+**Alcance y límite:** Los tiempos efectivos se leen en app.js: consulta automática 300 s y control de fecha de respuesta. No deducir el comportamiento solo de stale_hours.
+
+### [panel.json](data/panel.json)
+
+**Tipo y uso:** Respaldo público fechado del panel.
+
+**Qué contiene:** schema_version=1, modo=SIMULADO, tipo_datos=ficticios_sanitizados, exportado_en y trece casos públicos del corte.
+
+**Cómo interpretarlo:** Usado como respaldo/fixture. Agrupar casos por estado/equipo y sumar días solo de Aprobada. La fecha identifica antigüedad; no es una respuesta nueva porque se abra hoy.
+
+**Alcance y límite:** No contiene salarios ni accesos. La aplicación intenta el endpoint primero y advierte si debe conservar la copia; la etiqueta SIMULADO no sustituye una auditoría de privacidad.
+<!-- FIN LECTURA SEMANTICA -->

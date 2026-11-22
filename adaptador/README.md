@@ -30,3 +30,11 @@ node tests/skills.test.mjs comprueba dos casos, hashes y rechazo de identificado
 - [Guía general](../README.md): requisitos, instalación, inicio, credenciales, parada y solución de problemas.
 - [Índice de evidencias](../evidencias/README.md): resultados y archivos relacionados.
 - [Matriz de pruebas](../tests/pruebas.csv): entradas, esperados y resultados observados.
+
+<!-- INICIO LECTURA SEMANTICA -->
+## Lectura e interpretación de los archivos
+
+Esta guía de lectura es una ayuda documental añadida por Jorge Valencia para revisión humana o asistida por IA. La guía del curso exige trazabilidad y reproducibilidad; no impone estas fichas ni convierte una descripción en prueba ejecutada. El archivo enlazado es la fuente; su README explica cómo interpretarlo, con procedencia, fecha y alcance.
+
+cargar_skills.mjs es código del adaptador que lee y valida los SKILL.md y proyecta reglas por rol. Su resultado de carga se contrasta con trazas de carga_skill y versiones; la existencia de la función no demuestra una llamada real.
+<!-- FIN LECTURA SEMANTICA -->

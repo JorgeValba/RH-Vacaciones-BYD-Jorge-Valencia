@@ -68,3 +68,59 @@ Cada rol utiliza tres piezas: instrucciones, contrato de salida y entrada de ref
 | [especialistas/revision/entrada_template.js](especialistas/revision/entrada_template.js) | Expresión de entrada de referencia para n8n; indica los datos que recibe el especialista. |
 | [especialistas/revision/instrucciones_base.txt](especialistas/revision/instrucciones_base.txt) | Instrucciones del rol; se incorporan al prompt del nodo correspondiente. |
 | [especialistas/revision/salida.schema.json](especialistas/revision/salida.schema.json) | Contrato de salida JSON; define campos y tipos admitidos para validar la respuesta. |
+
+<!-- INICIO LECTURA SEMANTICA -->
+## Lectura e interpretación de los archivos
+
+Esta guía de lectura es una ayuda documental añadida por Jorge Valencia para revisión humana o asistida por IA. La guía del curso exige trazabilidad y reproducibilidad; no impone estas fichas ni convierte una descripción en prueba ejecutada. El archivo enlazado es la fuente; su README explica cómo interpretarlo, con procedencia, fecha y alcance.
+
+### [Contratos_Jorge_Valencia.json](Contratos_Jorge_Valencia.json)
+
+**Tipo y uso:** Contrato de interfaces de los cuatro especialistas.
+
+**Qué contiene:** especialistas relaciona rol, nodos de preparación/llamada/validación, instrucciones_base, salida_schema y plantilla de entrada.
+
+**Cómo interpretarlo:** Seguir cada rol desde su entrada hasta el schema; caso_id viaja en el sobre de llamada/traza y no se agrega arbitrariamente a la salida estricta.
+
+**Alcance y límite:** Describe qué debe recibir/entregar el agente; no prueba que una ejecución haya cumplido el contrato. Ver trazas por llamada.
+
+### [consulta/salida.schema.json](especialistas/consulta/salida.schema.json)
+
+**Tipo y uso:** JSON Schema: contrato, no salida de una ejecución.
+
+**Qué contiene:** type, required y properties definen campos/tipos. Obligatorios: datos_suficientes, datos_disponibles, faltantes, fuentes_seleccionadas, observaciones. additionalProperties=false excluye claves no previstas.
+
+**Cómo interpretarlo:** Leer primero required, después properties y restricciones. datos_suficientes expresa suficiencia para continuar y fuentes_seleccionadas identifica referencias recuperadas, no citas inventadas.
+
+**Alcance y límite:** Un schema puede definir validado sin contener el resultado true/false de un caso. El cumplimiento se demuestra con respuesta validada y traza, no con la existencia de este archivo.
+
+### [propuesta/salida.schema.json](especialistas/propuesta/salida.schema.json)
+
+**Tipo y uso:** JSON Schema: contrato, no salida de una ejecución.
+
+**Qué contiene:** type, required y properties definen campos/tipos. Obligatorios: resumen, dias_solicitados, saldo_actual, saldo_proyectado, prima_bruta_mxn, prima_adicional_mxn, cobertura_ok, alertas, fuentes_citadas. additionalProperties=false excluye claves no previstas.
+
+**Cómo interpretarlo:** Leer primero required, después properties y restricciones. saldo_proyectado es posterior hipotético; prima_bruta/adicional son estimaciones; cobertura_ok no equivale a aprobación.
+
+**Alcance y límite:** Un schema puede definir validado sin contener el resultado true/false de un caso. El cumplimiento se demuestra con respuesta validada y traza, no con la existencia de este archivo.
+
+### [recepcion/salida.schema.json](especialistas/recepcion/salida.schema.json)
+
+**Tipo y uso:** JSON Schema: contrato, no salida de una ejecución.
+
+**Qué contiene:** type, required y properties definen campos/tipos. Obligatorios: empleado_id, fecha_inicio, fecha_fin, campos_faltantes, observaciones. additionalProperties=false excluye claves no previstas.
+
+**Cómo interpretarlo:** Leer primero required, después properties y restricciones. campos_faltantes enumera información que debe aclararse; empleado/fechas son datos capturados, no autorización.
+
+**Alcance y límite:** Un schema puede definir validado sin contener el resultado true/false de un caso. El cumplimiento se demuestra con respuesta validada y traza, no con la existencia de este archivo.
+
+### [revision/salida.schema.json](especialistas/revision/salida.schema.json)
+
+**Tipo y uso:** JSON Schema: contrato, no salida de una ejecución.
+
+**Qué contiene:** type, required y properties definen campos/tipos. Obligatorios: validado, correcciones, observaciones. additionalProperties=false excluye claves no previstas.
+
+**Cómo interpretarlo:** Leer primero required, después properties y restricciones. validado=false exige corregir o detener; validado=true supera esa revisión, pero no concede vacaciones.
+
+**Alcance y límite:** Un schema puede definir validado sin contener el resultado true/false de un caso. El cumplimiento se demuestra con respuesta validada y traza, no con la existencia de este archivo.
+<!-- FIN LECTURA SEMANTICA -->

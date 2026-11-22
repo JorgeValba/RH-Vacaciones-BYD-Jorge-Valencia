@@ -1,0 +1,37 @@
+{
+  "autor": "Jorge Valencia",
+  "prueba": "P13",
+  "evidencia_id": "E-P13-01",
+  "fecha_recepcion_contexto": "2026-11-21",
+  "fecha_evento_confirmada": null,
+  "origen": "Captura literal aportada por Jorge tras las instrucciones para bloquear el micrófono en el sitio; sin control remoto ni lectura de permisos del navegador.",
+  "url_visible": "https://jorgevalba.github.io/RH-Vacaciones-BYD-Jorge-Valencia/#asistente",
+  "resultado_visible": "Permiso denegado en el widget y alternativa visible en la página",
+  "texto_widget": [
+    "Se produjo un error",
+    "Permission denied"
+  ],
+  "texto_pagina_visible": [
+    "No se pudo activar el micrófono.",
+    "Si el micrófono está bloqueado",
+    "widget o Telegram."
+  ],
+  "otras_observaciones": [
+    "Consentimiento marcado.",
+    "Campo de entrada de texto visible en el widget.",
+    "Enlace Telegram visible en la página."
+  ],
+  "interpretacion": "La interfaz comunica un fallo de permiso y muestra canales alternativos; satisface la observación de alternativa visible del apartado de micrófono de P13.",
+  "limites": [
+    "No muestra el panel de permisos de Chrome; no se infiere su configuración exacta únicamente de la imagen.",
+    "No contiene una respuesta del chat escrita mientras el micrófono está bloqueado; disponibilidad visual no equivale a prueba funcional de ese canal.",
+    "No acredita una conversación de voz exitosa ni permite cuantificar consumo/créditos.",
+    "No se conoce la fecha/hora exacta del evento a partir de la captura."
+  ],
+  "captura_publica": {
+    "ruta": "evidencias/capturas/P13_interfaz/E-P13-01_Microfono_denegado_Jorge_Valencia.png",
+    "sha256": "196a78b7774943a9c1b5719fb082c760f516244dceb36d5cb098c94a4b5fc878",
+    "tratamiento": "Copia literal sin edición"
+  },
+  "fuente_imagen_original": "codex-clipboard-ad5eb463-26c0-4307-9c18-a473eefc4c67.png"
+}

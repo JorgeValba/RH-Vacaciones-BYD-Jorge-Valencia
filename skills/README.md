@@ -40,3 +40,19 @@ Ejecutar node tests/skills.test.mjs y consultar E-P11-01. El JSON diferencia la 
 GitHub puede mostrar la pestaña de vista previa por defecto: no significa que el .md falte. Download raw file descarga el contenido; Raw permite guardarlo como texto con nombre SKILL.md. El proyecto no requiere instalar un archivo ZIP adicional.
 
 Las trazas muestran negocio 1.0.1 y seguridad 1.0.0 cargados en YTLSBKE8E y YTLSEX4SR. Los archivos actuales son revisiones documentales 1.0.2 y 1.0.1: las reglas se mantienen, pero sus hashes cambian al corregir documentación. El JSON de snapshots conserva ambas referencias sin atribuir al runtime una revisión que no ejecutó.
+
+<!-- INICIO LECTURA SEMANTICA -->
+## Lectura e interpretación de los archivos
+
+Esta guía de lectura es una ayuda documental añadida por Jorge Valencia para revisión humana o asistida por IA. La guía del curso exige trazabilidad y reproducibilidad; no impone estas fichas ni convierte una descripción en prueba ejecutada. El archivo enlazado es la fuente; su README explica cómo interpretarlo, con procedencia, fecha y alcance.
+
+### [Snapshots_n8n_Jorge_Valencia.json](Snapshots_n8n_Jorge_Valencia.json)
+
+**Tipo y uso:** Mapa de versiones de skills y snapshots compilados.
+
+**Qué contiene:** modo_carga=snapshot_compilado y dos entradas skills con ruta/skill_id, version, sha256_fuente e integridad_fnv1a; version_documento/sha256_documento describen el MD revisado.
+
+**Cómo interpretarlo:** Comparar la traza con version y sha256_fuente del snapshot ejecutado; usar los campos *_documento para la revisión actual del SKILL.md. No son necesariamente los mismos bytes.
+
+**Alcance y límite:** Un hash o MD en GitHub no actualiza automáticamente n8n. El adaptador compila/carga; las trazas aportan la evidencia operativa.
+<!-- FIN LECTURA SEMANTICA -->

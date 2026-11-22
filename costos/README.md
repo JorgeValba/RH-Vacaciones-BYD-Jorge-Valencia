@@ -131,3 +131,59 @@ Se verifican fórmulas guardadas, seis totales frente al CSV, sumas por caso/eta
 Para otro corte, actualizar ledger, fuentes, metadata, pagos y proyecciones de forma coherente; nunca editar un subtotal para forzar coincidencia. No se consumen créditos para abrir o revisar estos archivos. La [guía general](../README.md) describe servicios y credenciales por nombre; el [índice de evidencias](../evidencias/README.md) y la [matriz de pruebas](../tests/pruebas.csv) relacionan las evidencias del sistema.
 
 La comparación del sondeo se conserva en [optimizacion_panel.csv](optimizacion_panel.csv), y el método, criterios y resultados en [la prueba de optimización](../tests/Optimizacion_panel_Jorge_Valencia.md).
+
+<!-- INICIO LECTURA SEMANTICA -->
+## Lectura e interpretación de los archivos
+
+Esta guía de lectura es una ayuda documental añadida por Jorge Valencia para revisión humana o asistida por IA. La guía del curso exige trazabilidad y reproducibilidad; no impone estas fichas ni convierte una descripción en prueba ejecutada. El archivo enlazado es la fuente; su README explica cómo interpretarlo, con procedencia, fecha y alcance.
+
+### [Conciliacion_costos_Jorge_Valencia.json](Conciliacion_costos_Jorge_Valencia.json)
+
+**Tipo y uso:** Auditoría numérica del CSV n8n histórico.
+
+**Qué contiene:** filas/tipos, tokens, tarifas_registradas, total_generaciones_usd, casos y listas de anomalías; sha256 fija el CSV original.
+
+**Cómo interpretarlo:** 48 generaciones suman USD 0.13586950. Listas de duplicados/diferencias vacías indican que el cruce revisado no halló esas anomalías; conteos auxiliares y loop no se suman como nuevas generaciones.
+
+**Alcance y límite:** No contiene por sí solo las nueve sesiones ElevenLabs ni toda construcción. No es factura ni costo completo de cuenta.
+
+### [Escenarios_mensuales_presentacion_Jorge_Valencia.png](Escenarios_mensuales_presentacion_Jorge_Valencia.png)
+
+**Tipo y uso:** Tabla calculada, no captura de prueba.
+
+**Qué contiene:** Tres volúmenes mensuales y columnas Base/Mayor consumo en USD, con mezcla y exclusiones al pie.
+
+**Cómo interpretarlo:** Leer como proyección de planes normales después de optimizar el sondeo. Los tramos de cuota hacen que no crezca linealmente.
+
+**Alcance y límite:** Es derivada de Escenarios presentación del Excel; no factura, prueba de carga ni ahorro real acreditado.
+
+### [Resumen_general_costos_Jorge_Valencia.png](Resumen_general_costos_Jorge_Valencia.png)
+
+**Tipo y uso:** Tabla calculada para diapositiva.
+
+**Qué contiene:** Creación por mes Plus atribuido, operación base 100 casos, promedio integral y primer mes.
+
+**Cómo interpretarlo:** USD 20 de creación es escenario de atribución; USD 31.51 operación y USD 51.51 primer mes no son la caja reportada de USD 25.
+
+**Alcance y límite:** No sumar el equivalente API a Plus ni la recarga de USD 5 otra vez al consumo. No valora horas humanas.
+
+### [Resumen_y_supuestos_Jorge_Valencia.json](Resumen_y_supuestos_Jorge_Valencia.json)
+
+**Tipo y uso:** Modelo económico y límites: mezcla de observado, declarado y estimado.
+
+**Qué contiene:** Subtotales del corte, supuestos, pagos reportados, estimación de desarrollo, proyeccion_pagada, tablas de presentación y tratamiento de optimización.
+
+**Cómo interpretarlo:** Consultar la fecha y origen de cada bloque. subtotal_es_factura=false y gasto_total_proyecto_usd=null impiden confundir uso identificado con caja o gasto completo. Diferenciar recarga API, suscripción y consumo.
+
+**Alcance y límite:** El trial de n8n es un reporte histórico, no el plan actual. Totales proyectados dependen de mezcla/cuotas y no son una prueba de carga o factura.
+
+### [Sesiones_consolidadas_Jorge_Valencia.json](Sesiones_consolidadas_Jorge_Valencia.json)
+
+**Tipo y uso:** Consolidación de metadata de nueve sesiones ElevenLabs.
+
+**Qué contiene:** Cada elemento de sesiones contiene conversation_id, text_only, duración, créditos, cost_fiat y componentes llm_price/platform_price.
+
+**Cómo interpretarlo:** Sumar cost_fiat una vez por sesión; los componentes ya están dentro de ese total. text_only=true no genera minutos de voz por el mero tiempo que estuvo abierto el chat.
+
+**Alcance y límite:** total_metadata_usd es consumo informado, no comprobante de pago. Créditos no equivalen automáticamente a dólares; no contiene todo el historial ni transcripciones.
+<!-- FIN LECTURA SEMANTICA -->

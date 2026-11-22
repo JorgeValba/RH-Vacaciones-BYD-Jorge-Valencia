@@ -30,3 +30,11 @@ En Actions, validar/publicar deben terminar en success para un despliegue válid
 - [Guía general](../../README.md): requisitos, instalación, inicio, credenciales, parada y solución de problemas.
 - [Índice de evidencias](../../evidencias/README.md): resultados y archivos relacionados.
 - [Matriz de pruebas](../../tests/pruebas.csv): entradas, esperados y resultados observados.
+
+<!-- INICIO LECTURA SEMANTICA -->
+## Lectura e interpretación de los archivos
+
+Esta guía de lectura es una ayuda documental añadida por Jorge Valencia para revisión humana o asistida por IA. La guía del curso exige trazabilidad y reproducibilidad; no impone estas fichas ni convierte una descripción en prueba ejecutada. El archivo enlazado es la fuente; su README explica cómo interpretarlo, con procedencia, fecha y alcance.
+
+pages.yml es una receta YAML de Actions: on dispara el flujo; jobs.validar ejecuta comprobaciones; needs impide publicar si validar falla; jobs.publicar despliega web. Un YAML correcto no prueba un run exitoso: consultar ID, commit, conclusion y pasos en Actions.
+<!-- FIN LECTURA SEMANTICA -->

@@ -30,3 +30,11 @@ Contrastar propuesta V1, revisión negativa, V2 y revisión positiva del mismo c
 - [Guía general](../README.md): requisitos, instalación, inicio, credenciales, parada y solución de problemas.
 - [Índice de evidencias](../evidencias/README.md): resultados y archivos relacionados.
 - [Matriz de pruebas](../tests/pruebas.csv): entradas, esperados y resultados observados.
+
+<!-- INICIO LECTURA SEMANTICA -->
+## Lectura e interpretación de los archivos
+
+Esta guía de lectura es una ayuda documental añadida por Jorge Valencia para revisión humana o asistida por IA. La guía del curso exige trazabilidad y reproducibilidad; no impone estas fichas ni convierte una descripción en prueba ejecutada. El archivo enlazado es la fuente; su README explica cómo interpretarlo, con procedencia, fecha y alcance.
+
+LOOPS.md especifica entradas, retorno, límites y salida de los controles. Sus valores son reglas del diseño/versiones descritas; contrastar trazas loop_calidad/loop_seguridad y la corrección V1→V2 para demostrar ejecución. Iteración de control no significa necesariamente otra llamada facturada.
+<!-- FIN LECTURA SEMANTICA -->
