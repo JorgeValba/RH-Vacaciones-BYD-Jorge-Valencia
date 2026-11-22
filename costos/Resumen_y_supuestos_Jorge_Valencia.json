@@ -29,7 +29,8 @@
     "ejecuciones_restantes_aritmeticas": 9855,
     "dias_restantes_reportados": 12,
     "fecha_final_exacta": null,
-    "n8n_suscripcion_pagada_confirmada": false
+    "n8n_suscripcion_pagada_confirmada": false,
+    "contexto": "Reporte histórico de prueba gratuita del 4 de noviembre; no representa la suscripción pagada reportada posteriormente."
   },
   "optimizacion": {
     "tipo": "Contrafactual, no A/B ejecutado",
@@ -47,5 +48,33 @@
     "Las proyecciones no son una cotización superior de n8n ni una conversión monetaria de EUR a USD.",
     "El contrafactual de caché/polling no es una prueba A/B de calidad.",
     "Las cuotas de la cuenta son declaraciones fechadas del usuario, no verificación actual de facturación."
-  ]
+  ],
+  "fecha_actualizacion_pagos": "2026-11-21",
+  "nombre_plan_proyecto_reportado": "HR-Agent- BYD",
+  "pagos_reportados_actualizados": {
+    "autor": "Jorge Valencia",
+    "nombre_plan_proyecto": "HR-Agent- BYD",
+    "nombre_es_denominacion_del_usuario": true,
+    "fecha_reporte": "2026-11-21",
+    "fuente": "Declaraciones de Jorge Valencia, sin factura ni consulta directa de Billing",
+    "openai": {
+      "tipo": "recarga_prepago_api",
+      "recarga_unica_usd": "5.00",
+      "otras_recargas_reportadas": false,
+      "es_consumo_total_facturado": false,
+      "saldo_actual_usd": null
+    },
+    "n8n": {
+      "suscripcion_pagada_confirmada_por_usuario": true,
+      "monto_mensual_usd": "20.00",
+      "meses_pagados_reportados": 1,
+      "plan_oficial_verificado": false,
+      "limite_actual_ejecuciones": null,
+      "fecha_vencimiento_actual": null
+    },
+    "desembolso_identificado_reportado_usd": "25.00",
+    "compromiso_fijo_mensual_n8n_usd": "20.00",
+    "tratamiento": "USD 25 = una recarga OpenAI USD 5 + un mes n8n USD 20. No es USD 25 al mes ni consumo de tokens por USD 5. No sumar nuevamente el consumo documentado para calcular desembolso. La denominación HR-Agent- BYD fue indicada por el usuario, no verificada como nombre comercial de n8n.",
+    "alcance": "Importes reportados por el autor; no se deduce saldo restante ni gasto total histórico del proyecto."
+  }
 }

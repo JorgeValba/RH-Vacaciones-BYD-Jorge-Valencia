@@ -43,7 +43,7 @@ Los registros son históricos, lecturas de configuración o ensayos aislados seg
 | P14, P13 / [E-P14-04](#e-p14-04) | Filtro por equipo | EQ-B produce KPI 1/0/0 y una fila con cobertura insuficiente. | [Ver respaldo](#e-p14-04) |
 | Apoyo / [E-CFG-01](#e-cfg-01) | Dominio y límite ElevenLabs | Main releída con hostname jorgevalba.github.io y max_tokens=1500. | [Ver respaldo](#e-cfg-01) |
 | Apoyo / [E-DAT-01](#e-dat-01) | Esquemas y muestra reproducible | Once tablas lógicas, seis CSV iniciales y manual de vinculación/configuración. | [Ver respaldo](#e-dat-01) |
-| P14 / [E-COST-01](#e-cost-01) | Proyecciones y disponibilidad | Seis escenarios a 100/1,000/10,000 casos; cuota n8n 145/10,000 y doce días restantes reportados por Jorge. | [Ver respaldo](#e-cost-01) |
+| P14 / [E-COST-01](#e-cost-01) | Proyecciones históricas y pagos reportados | Seis escenarios; recarga OpenAI USD 5 y mensualidad n8n USD 20, desembolso reportado USD 25 separado del uso. | [Ver respaldo](#e-cost-01) |
 
 
 
@@ -408,19 +408,20 @@ Para el informe, citar el ID de la ficha y el enlace al archivo del commit de en
 
 ## E-COST-01
 
-**Proyecciones y disponibilidad** · Escenarios calculados y declaración del usuario
+**Proyecciones históricas y pagos reportados** · Hipótesis de volumen y actualización del autor
 
-**Referencia:** Corte histórico o recepción 2026-11-04; ver archivo fuente.
+**Referencia:** guía páginas 9–10, tarifas, registros, plataformas y proyecciones.
 
-**Observación:** Seis escenarios a 100/1,000/10,000 casos; cuota n8n 145/10,000 y doce días restantes reportados por Jorge.
+**Observación:** escenarios.csv conserva seis proyecciones históricas a 100/1000/10000 casos mensuales. El 21 de noviembre Jorge Valencia reportó la suscripción mensual n8n USD 20 y confirmó una única recarga de saldo OpenAI USD 5, bajo la denominación HR-Agent- BYD. Desembolso identificado reportado: USD 25. El consumo medido se conserva por separado para evitar sumarlo otra vez a la recarga.
 
-**Alcance:** No prueba de carga ni cotización cerrada. EUR y USD separados, fecha final exacta de prueba no confirmada; escenarios no equivalen al gasto observado.
+**Alcance:** pagos declarados por el autor, no verificación directa de facturas. No se deduce saldo actual ni cuota vigente del nuevo plan. Los escenarios de noviembre 4 siguen siendo históricos; la prueba gratuita 145/10000 y doce días restantes es un antecedente, no el estado actual. No se publica información de pago personal.
 
 **Archivos:**
 
-- [escenarios.csv](../costos/escenarios.csv)
-- [Resumen_y_supuestos_Jorge_Valencia.json](../costos/Resumen_y_supuestos_Jorge_Valencia.json)
-- [README.md](../costos/README.md)
+- [Pagos reportados](../costos/pagos_reportados.csv).
+- [Explicación y conciliación](../costos/README.md#hr-agent--byd-pagos-reportados-y-consumo).
+- [Supuestos y actualización](../costos/Resumen_y_supuestos_Jorge_Valencia.json).
+- [Escenarios históricos](../costos/escenarios.csv).
 
 ## Uso de referencias
 

@@ -1,0 +1,3 @@
+autor,nombre_plan_proyecto,proveedor,concepto,monto_usd,moneda,periodicidad,fecha_pago,fecha_reporte,fuente,tratamiento,saldo_actual_usd,incluido_en_consumo_por_llamada
+Jorge Valencia,HR-Agent- BYD,OpenAI,Recarga de saldo API,5.00,USD,Recarga única reportada; no es cuota mensual,,2026-11-21,"Declaración de Jorge Valencia: USD 5 de saldo cargado, sin nuevas recargas",Desembolso prepago; el consumo posterior utiliza este saldo. No sumar otra vez las llamadas como desembolso.,,no
+Jorge Valencia,HR-Agent- BYD,n8n,Suscripción mensual,20.00,USD,Mensual,,2026-11-21,Declaración de Jorge Valencia: USD 20 en el plan mensual de n8n,Pago de plataforma por un mes reportado; no atribuirlo a cada caso ni a cada llamada.,,no

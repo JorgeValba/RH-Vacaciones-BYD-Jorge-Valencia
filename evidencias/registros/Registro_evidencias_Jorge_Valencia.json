@@ -397,16 +397,17 @@
       "pruebas": [
         "P14"
       ],
-      "titulo": "Proyecciones y disponibilidad",
+      "titulo": "Proyecciones históricas y pagos reportados",
       "tipo": "Escenarios calculados y declaración del usuario",
-      "fecha_referencia": "Corte histórico o recepción 2026-11-04; ver archivo fuente",
+      "fecha_referencia": "Proyecciones del 2026-11-04; pagos reportados el 2026-11-21",
       "rutas": [
         "costos/escenarios.csv",
         "costos/Resumen_y_supuestos_Jorge_Valencia.json",
-        "costos/README.md"
+        "costos/README.md",
+        "costos/pagos_reportados.csv"
       ],
-      "resultado_observable": "Seis escenarios a 100/1,000/10,000 casos; cuota n8n 145/10,000 y doce días restantes reportados por Jorge.",
-      "limite": "No prueba de carga ni cotización cerrada. EUR y USD separados, fecha final exacta de prueba no confirmada; escenarios no equivalen al gasto observado.",
+      "resultado_observable": "Seis escenarios históricos; actualización HR-Agent- BYD: recarga OpenAI USD 5 y mensualidad n8n USD 20. Desembolso reportado USD 25, separado del consumo.",
+      "limite": "Importes declarados por el autor, sin factura ni saldo actual. Los planes/cupos históricos de los escenarios no se atribuyen al plan pagado actual.",
       "estado": "Evidencia documentada; alcance descrito en la ficha"
     }
   ],
@@ -674,8 +675,8 @@
       "autor": "Jorge Valencia",
       "evidencia_id": "E-P14-01",
       "ruta": "costos/Resumen_y_supuestos_Jorge_Valencia.json",
-      "sha256": "905c9a4797af3d2352a3314c10000fb6ffafea77b8807da9547a8c64871478be",
-      "bytes": 2324
+      "sha256": "ef805e41ee5283aaa06b3e341ff6c6da5ddbd8d1d8b7d74f908db1a50fbd6dd9",
+      "bytes": 3940
     },
     {
       "autor": "Jorge Valencia",
@@ -688,8 +689,8 @@
       "autor": "Jorge Valencia",
       "evidencia_id": "E-P14-01",
       "ruta": "costos/README.md",
-      "sha256": "987b3acfe83d52ab3c646f34d49bfe0896484410ebd472c72a242a4b412af809",
-      "bytes": 5938
+      "sha256": "c77be4d23daebdb84305dbf0ee184f0413376a1ac5e701c0f1f620a9a4911f73",
+      "bytes": 8638
     },
     {
       "autor": "Jorge Valencia",
@@ -793,15 +794,15 @@
       "autor": "Jorge Valencia",
       "evidencia_id": "E-COST-01",
       "ruta": "costos/Resumen_y_supuestos_Jorge_Valencia.json",
-      "sha256": "905c9a4797af3d2352a3314c10000fb6ffafea77b8807da9547a8c64871478be",
-      "bytes": 2324
+      "sha256": "ef805e41ee5283aaa06b3e341ff6c6da5ddbd8d1d8b7d74f908db1a50fbd6dd9",
+      "bytes": 3940
     },
     {
       "autor": "Jorge Valencia",
       "evidencia_id": "E-COST-01",
       "ruta": "costos/README.md",
-      "sha256": "987b3acfe83d52ab3c646f34d49bfe0896484410ebd472c72a242a4b412af809",
-      "bytes": 5938
+      "sha256": "c77be4d23daebdb84305dbf0ee184f0413376a1ac5e701c0f1f620a9a4911f73",
+      "bytes": 8638
     },
     {
       "autor": "Jorge Valencia",
@@ -837,6 +838,13 @@
       "ruta": "tests/P08/02_timeout_registro_aviso_Jorge_Valencia.json",
       "sha256": "0916781ca7c73dee1a37a8a826852606ee1f9cbeca8d4426a118599d0b10b9fe",
       "bytes": 54905
+    },
+    {
+      "autor": "Jorge Valencia",
+      "evidencia_id": "E-COST-01",
+      "ruta": "costos/pagos_reportados.csv",
+      "sha256": "abef247ede8461d5b4e44afdcd2e83b482056ff01d92a52ecc91cba96df62c25",
+      "bytes": 729
     }
   ],
   "capturas_copiadas_sin_editar": [
