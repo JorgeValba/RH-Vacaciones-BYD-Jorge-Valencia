@@ -15,6 +15,7 @@ Los CSV permiten filtrar y recalcular; los JSON conservan conciliaciones y supue
 | [tarifas.csv](tarifas.csv) | CSV UTF-8 (.csv) | Tarifas históricas GPT-5, referencias públicas de plataforma y mensualidad reportada, con fuente y fecha. |
 | [Conciliacion_costos_Jorge_Valencia.json](Conciliacion_costos_Jorge_Valencia.json) | JSON (.json) | Recalculo de 48 generaciones, cruce con trazas y costo incremental del loop. |
 | [costos.csv](costos.csv) | CSV UTF-8 (.csv) | Ledger de 144 registros: 135 de n8n y nueve sesiones de ElevenLabs, sin duplicar componentes. |
+| [verificar_desarrollo.py](verificar_desarrollo.py) | Python (.py) | Reproduce caracteres, deduplicación, hashes y costos estimados; solo biblioteca estándar, sin API ni escrituras. |
 | [desarrollo_estimado.csv](desarrollo_estimado.csv) | CSV UTF-8 (.csv) | Veinte unidades de desarrollo estimadas con todos los campos de registro, fuente y método; no son llamadas reales de API. |
 | [pagos_reportados.csv](pagos_reportados.csv) | CSV UTF-8 (.csv) | Recarga OpenAI y mensualidad n8n declaradas por el autor; separadas del consumo por llamada. |
 | [escenarios.csv](escenarios.csv) | CSV UTF-8 (.csv) | Seis proyecciones: base/mayor consumo a 100, 1,000 y 10,000 casos mensuales. |
@@ -142,3 +143,5 @@ La entrada usa tarifa regular sin descuento como supuesto de comparación. Cach�
 **Atribución de suscripción:** el Excel presenta un escenario explícito de un mes de Plus de referencia, asignado 100% al proyecto: USD 20. Meses y proporción son editables, no se afirman como duración/uso reales. Bajo ese supuesto, USD 25 de desembolsos reportados + USD 20 de Plus de referencia = USD 45 de escenario; no es una factura total comprobada. No sumar además los USD 1.37607250 de equivalente API. El precio realmente pagado, impuestos y otros meses no se inventan.
 
 **Campos de la estimación:** fecha_hora, caso_id, llamada_id, etapa, agente, proveedor, modelo_version (real no identificado y referencia explícita), tokens_entrada, tokens_salida, tokens_cache, duracion_voz_seg, unidad_cobro, tarifas, costo_equivalente_api_usd, moneda, estado, reintento y origen_dato. Se añaden caracteres, artefacto, fuente, hash, método, fuente/fecha de tarifa y tratamiento Plus. El registro medido costos.csv conserva sus 144 filas y no se mezcla con estas veinte estimaciones.
+
+Para verificar de forma independiente la estimación desde la raíz del repositorio: `python costos/verificar_desarrollo.py`. Debe devolver veinte unidades y USD 1.37607250; si cambia un artefacto, el hash o conteo deja de coincidir y el script se detiene, en lugar de presentar un resultado antiguo como actualizado.
