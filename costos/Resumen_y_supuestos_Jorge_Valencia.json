@@ -76,5 +76,19 @@
     "compromiso_fijo_mensual_n8n_usd": "20.00",
     "tratamiento": "USD 25 = una recarga OpenAI USD 5 + un mes n8n USD 20. No es USD 25 al mes ni consumo de tokens por USD 5. No sumar nuevamente el consumo documentado para calcular desembolso. La denominación HR-Agent- BYD fue indicada por el usuario, no verificada como nombre comercial de n8n.",
     "alcance": "Importes reportados por el autor; no se deduce saldo restante ni gasto total histórico del proyecto."
+  },
+  "estimacion_capacidad_autorizada_por_usuario": {
+    "autor": "Jorge Valencia",
+    "fecha_referencia": "2026-11-21",
+    "permiso": "Jorge solicitó cálculo aproximado sin confirmar cuotas de cuenta",
+    "n8n_ejecuciones_mes_referencia": 2500,
+    "n8n_cuota_es_confirmacion_cuenta": false,
+    "elevenlabs_minutos_free_referencia": 15,
+    "elevenlabs_free_es_plan_actual_confirmado": false,
+    "fuentes": [
+      "https://n8n.io/pricing/",
+      "https://elevenlabs.io/pricing/agents"
+    ],
+    "tratamiento": "Hipótesis explícitas; costo mensual superior queda no cotizado cuando la capacidad no cubre las ejecuciones."
   }
 }

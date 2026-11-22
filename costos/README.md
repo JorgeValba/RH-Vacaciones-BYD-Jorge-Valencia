@@ -11,6 +11,8 @@ Los CSV permiten filtrar y recalcular; los JSON conservan conciliaciones y supue
 
 | Archivo o carpeta | Formato | Qué contiene y qué hacer con él |
 |---|---|---|
+| [Costos_auditables_Jorge_Valencia.xlsx](Costos_auditables_Jorge_Valencia.xlsx) | Excel (.xlsx) | Seis hojas con registro, fórmulas auditables, casos/etapas, fuentes, pagos y proyecciones. Abrir primero Resumen. |
+| [tarifas.csv](tarifas.csv) | CSV UTF-8 (.csv) | Tarifas históricas GPT-5, referencias públicas de plataforma y mensualidad reportada, con fuente y fecha. |
 | [Conciliacion_costos_Jorge_Valencia.json](Conciliacion_costos_Jorge_Valencia.json) | JSON (.json) | Recalculo de 48 generaciones, cruce con trazas y costo incremental del loop. |
 | [costos.csv](costos.csv) | CSV UTF-8 (.csv) | Ledger de 144 registros: 135 de n8n y nueve sesiones de ElevenLabs, sin duplicar componentes. |
 | [pagos_reportados.csv](pagos_reportados.csv) | CSV UTF-8 (.csv) | Recarga OpenAI y mensualidad n8n declaradas por el autor; separadas del consumo por llamada. |
@@ -87,3 +89,30 @@ Los registros de uso corresponden a un corte histórico y no permiten deducir el
 **Proyecciones históricas:** escenarios.csv conserva las hipótesis y tarifas fechadas del 4 de noviembre, incluyendo referencias de planes en EUR. No se sustituyen silenciosamente por la suscripción USD 20: no se han verificado las cuotas del nuevo plan para garantizar que soporte todos los volúmenes proyectados. El reporte antiguo de prueba gratuita queda identificado como histórico en Resumen_y_supuestos.
 
 Para Excel, abrir ambos CSV como UTF-8 delimitado por comas. Mantener IDs y fechas como texto al importar. No unir los dos registros para sumar indistintamente pagos y consumo.
+
+## Estructura exigida y libro Excel
+
+La **página 10 de la Guía del estudiante** permite **costos.csv o costos.xlsx**. No obliga a un diseño específico de Excel. Se conservó costos.csv como fuente y se agregó Costos_auditables_Jorge_Valencia.xlsx para facilitar la revisión. El libro utiliza números y fórmulas, no imágenes de tablas. No ejecuta los agentes ni reemplaza n8n.
+
+| Hoja | Contenido y uso |
+|---|---|
+| Resumen | Uso GPT-5/ElevenLabs, desembolso, promedio de tres aprobados, rechazo separado y alcance de optimización |
+| Casos y etapas | Trece folios y cuatro especialistas; agrupaciones calculadas desde Registro |
+| Registro | Los 144 registros de costos.csv con sus 43 campos; dos columnas adicionales recalculan y contrastan las 48 generaciones |
+| Tarifas | Entradas, caché, salida, cuota/plataformas, fuentes y fechas. Los datos históricos y las referencias actuales se distinguen |
+| Escenarios | Base y mayor consumo para 100/1000/10000 casos; mezcla, minutos, ejecución y planes. Recalcula subtotal y marca capacidad insuficiente |
+| Pagos | Recarga USD 5 y mensualidad USD 20 reportadas. Es fuente del desembolso del Resumen, no consumo de tokens |
+
+**Campos de página 10:** Registro mantiene fecha_hora, caso_id, llamada_id, etapa, agente, proveedor, modelo, tokens_entrada, tokens_salida, tokens_cache, duracion_sesion_seg, unidad_cobro, tarifas, importe_usd, moneda, estado, reintento y origen_dato. También conserva fuentes/fechas e importes incluidos/adicionales. Una celda vacía representa dato no informado o no aplicable según Esquema_registro; no se interpreta como cero.
+
+**Muestra mínima:** los casos aprobados YTLRX08S4, YTLS2ZE8C y YTLSBKE8E y el rechazado YTLS6SW04 tienen cuatro especialistas trazables. El consumo GPT-5 de los tres aprobados es USD 0.03527875, promedio USD 0.01175958 por aprobado; el rechazo USD 0.01680325 se presenta aparte. Son promedios solo GPT-5 del corte. La conversación hablada conectada se relaciona mediante E-P03-02 y sus cargos identificados; no se reparte arbitrariamente entre los tres casos.
+
+**Estimación autorizada por el autor:** para explorar capacidad se usan 2500 ejecuciones/mes de n8n Starter como referencia pública y 15 minutos de ElevenLabs Free como hipótesis de plan gratuito. Fuentes consultadas el 21 de noviembre de 2026: [n8n](https://n8n.io/pricing/) y [ElevenLabs](https://elevenlabs.io/pricing/agents). Esto no verifica el plan/cupo contratado por Jorge. Los USD 20 mensuales siguen siendo el importe reportado, no una conversión de los EUR del catálogo.
+
+Los escenarios históricos ya seleccionan planes de voz de pago cuando sus minutos exceden Free. En Excel se añade la cuota de referencia n8n y se suma su mensualidad reportada solo si las ejecuciones estimadas caben. Cuando la superan, aparece **No cotizado** para el total ampliado en USD. Los subtotales variables siguen siendo visibles; no se cobra un plan insuficiente como si permitiera atender 10000 casos. Se mantienen separados los EUR históricos y USD.
+
+**Costo y calidad, página 10:** se propone aprovechar caché/contexto reutilizable y reducir sondeos innecesarios del panel. El descuento de caché se cuantifica sobre las mismas llamadas: USD 0.13831750 sin descuento frente a USD 0.13586950 con descuento, diferencia USD 0.00244800. Conserva las salidas históricas como referencia, pero no es una prueba A/B de calidad de una modificación. Menor sondeo ahorra ejecuciones a costa de frescura; no se modifica la revalidación de aprobación. Las correcciones del loop tienen su costo incremental medido por separado.
+
+**Inversión de construcción y operación:** las llamadas del escenario de demostración se clasifican como desarrollo/pruebas. El uso de IA para crear prompts, código y skills fuera de esas ejecuciones no se recuperó en los registros recibidos. Se presenta no disponible, separado del consumo medido y de los pagos. La recarga no reconstruye ese uso ni la mensualidad n8n acredita un costo completo del proyecto.
+
+**Validación realizada:** sumas y agrupaciones recalculadas, reconciliación con CSV, revisión de fórmulas sin errores de celda, prueba de cambio/restauración de la mensualidad y revisión visual de las seis hojas. El libro guardado conserva fórmulas y resultados calculados. Su edición nativa en Microsoft Excel no se ha ensayado desde este entorno. Para actualizar el corte, reemplazar de forma coherente los CSV y regenerar el libro; no editar un subtotal para forzar coincidencia.

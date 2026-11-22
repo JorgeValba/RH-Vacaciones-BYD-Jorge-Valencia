@@ -328,6 +328,9 @@ Para el informe, citar el ID de la ficha y el enlace al archivo del commit de en
 - [Sesiones_consolidadas_Jorge_Valencia.json](../costos/Sesiones_consolidadas_Jorge_Valencia.json)
 - [README.md](../costos/README.md)
 
+- [Excel auditable de costos](../costos/Costos_auditables_Jorge_Valencia.xlsx).
+- [Tarifas con fuentes y fechas](../costos/tarifas.csv).
+
 ## E-P14-02
 
 **Panel sin filtros** · Captura de panel
@@ -422,6 +425,9 @@ Para el informe, citar el ID de la ficha y el enlace al archivo del commit de en
 - [Explicación y conciliación](../costos/README.md#hr-agent--byd-pagos-reportados-y-consumo).
 - [Supuestos y actualización](../costos/Resumen_y_supuestos_Jorge_Valencia.json).
 - [Escenarios históricos](../costos/escenarios.csv).
+
+- [Excel auditable de costos](../costos/Costos_auditables_Jorge_Valencia.xlsx).
+- [Tarifas con fuentes y fechas](../costos/tarifas.csv).
 
 ## Uso de referencias
 

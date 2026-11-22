@@ -1,0 +1,15 @@
+autor,proveedor,concepto,unidad,precio,moneda,fecha_referencia,fuente,alcance
+Jorge Valencia,OpenAI GPT-5,Entrada no cache,millón tokens,1.25,USD,2026-11-01,https://developers.openai.com/api/docs/pricing,Tarifa histórica del registro; cache es subconjunto de entrada y razonamiento de salida.
+Jorge Valencia,OpenAI GPT-5,Entrada cache,millón tokens,0.125,USD,2026-11-01,https://developers.openai.com/api/docs/pricing,Tarifa histórica del registro; cache es subconjunto de entrada y razonamiento de salida.
+Jorge Valencia,OpenAI GPT-5,Salida,millón tokens,10,USD,2026-11-01,https://developers.openai.com/api/docs/pricing,Tarifa histórica del registro; cache es subconjunto de entrada y razonamiento de salida.
+Jorge Valencia,n8n,Mensualidad reportada HR-Agent- BYD,mes,20,USD,2026-11-21,Declaración de Jorge Valencia,"Pago reportado; denominación del usuario, no verificación del plan comercial."
+Jorge Valencia,n8n,Cuota Starter de referencia,ejecuciones/mes,2500,ejecuciones,2026-11-21,https://n8n.io/pricing/,Hipótesis de capacidad autorizada por el usuario; no cuota confirmada de su cuenta.
+Jorge Valencia,ElevenLabs,"Free, mensualidad de referencia",mes,0,USD,2026-11-21,https://elevenlabs.io/pricing/agents,Escenario Free de referencia; créditos incluidos no significan consumo cero.
+Jorge Valencia,ElevenLabs,"Free, minutos incluidos",minutos/mes,15,minutos,2026-11-21,https://elevenlabs.io/pricing/agents,Hipótesis de plan gratuito; no saldo remanente ni plan actual confirmado.
+Jorge Valencia,ElevenLabs,Starter mensual,mes,6,USD,2026-11-21,https://elevenlabs.io/pricing/agents,Tarifa pública regular sin promoción; no pago de Jorge. Minutos incluidos 75. Excluye impuestos.
+Jorge Valencia,ElevenLabs,Creator mensual,mes,22,USD,2026-11-21,https://elevenlabs.io/pricing/agents,Tarifa pública regular sin promoción; no pago de Jorge. Minutos incluidos 275. Excluye impuestos.
+Jorge Valencia,ElevenLabs,Pro mensual,mes,99,USD,2026-11-21,https://elevenlabs.io/pricing/agents,Tarifa pública regular sin promoción; no pago de Jorge. Minutos incluidos 1238. Excluye impuestos.
+Jorge Valencia,ElevenLabs,Scale mensual,mes,299,USD,2026-11-21,https://elevenlabs.io/pricing/agents,Tarifa pública regular sin promoción; no pago de Jorge. Minutos incluidos 3738. Excluye impuestos.
+Jorge Valencia,ElevenLabs,Business mensual,mes,990,USD,2026-11-21,https://elevenlabs.io/pricing/agents,Tarifa pública regular sin promoción; no pago de Jorge. Minutos incluidos 12375. Excluye impuestos.
+Jorge Valencia,ElevenLabs,Hosting de texto,mensaje,0.003,USD,2026-11-21,https://elevenlabs.io/pricing/agents,Referencia para proyección; uso de LLM va por separado según desglose.
+Jorge Valencia,ElevenLabs,Llamada adicional,minuto,0.08,USD,2026-11-21,https://elevenlabs.io/pricing/agents,Referencia estándar; aplica disponibilidad del plan y concurrencia. No cuota incluida ni cargo ya pagado.
