@@ -410,7 +410,8 @@
         "costos/pagos_reportados.csv",
         "costos/Costos_auditables_Jorge_Valencia.xlsx",
         "costos/tarifas.csv",
-        "costos/desarrollo_estimado.csv"
+        "costos/desarrollo_estimado.csv",
+        "costos/Resumen_general_costos_Jorge_Valencia.png"
       ],
       "resultado_observable": "Seis escenarios históricos; actualización HR-Agent- BYD: recarga OpenAI USD 5 y mensualidad n8n USD 20. Desembolso reportado USD 25, separado del consumo.",
       "limite": "Importes declarados por el autor, sin factura ni saldo actual. Los planes/cupos históricos de los escenarios no se atribuyen al plan pagado actual.",
@@ -681,8 +682,8 @@
       "autor": "Jorge Valencia",
       "evidencia_id": "E-P14-01",
       "ruta": "costos/Resumen_y_supuestos_Jorge_Valencia.json",
-      "sha256": "5355cb1044e775d95c83a4ae307d14e132deef274e60575dd6425012dafe1afb",
-      "bytes": 6429
+      "sha256": "8b13ccd9e7020a4099937c0928bef92c7ae50d1f0b021e5f59dd1580e0380669",
+      "bytes": 7007
     },
     {
       "autor": "Jorge Valencia",
@@ -695,8 +696,8 @@
       "autor": "Jorge Valencia",
       "evidencia_id": "E-P14-01",
       "ruta": "costos/README.md",
-      "sha256": "8816e9eeaffbb69249d8cd1a4d1fb2b82dfa96ced0792b354737f1854cbd8f04",
-      "bytes": 18074
+      "sha256": "08c1b61cf5acd392743f1421f2b589cd1206555e38baf20a596996b7da9018b0",
+      "bytes": 19667
     },
     {
       "autor": "Jorge Valencia",
@@ -800,15 +801,15 @@
       "autor": "Jorge Valencia",
       "evidencia_id": "E-COST-01",
       "ruta": "costos/Resumen_y_supuestos_Jorge_Valencia.json",
-      "sha256": "5355cb1044e775d95c83a4ae307d14e132deef274e60575dd6425012dafe1afb",
-      "bytes": 6429
+      "sha256": "8b13ccd9e7020a4099937c0928bef92c7ae50d1f0b021e5f59dd1580e0380669",
+      "bytes": 7007
     },
     {
       "autor": "Jorge Valencia",
       "evidencia_id": "E-COST-01",
       "ruta": "costos/README.md",
-      "sha256": "8816e9eeaffbb69249d8cd1a4d1fb2b82dfa96ced0792b354737f1854cbd8f04",
-      "bytes": 18074
+      "sha256": "08c1b61cf5acd392743f1421f2b589cd1206555e38baf20a596996b7da9018b0",
+      "bytes": 19667
     },
     {
       "autor": "Jorge Valencia",
@@ -856,8 +857,8 @@
       "autor": "Jorge Valencia",
       "evidencia_id": "E-P14-01",
       "ruta": "costos/Costos_auditables_Jorge_Valencia.xlsx",
-      "sha256": "9aa40e92ec859db217402ad94f941c0e6ceb58cf466e7fb3b79bc07811343cf6",
-      "bytes": 59773
+      "sha256": "f3c090e3961039eb9f330a88c0acf3309d5e43d150f7b9b8b21b55211a2005f8",
+      "bytes": 61129
     },
     {
       "autor": "Jorge Valencia",
@@ -870,8 +871,8 @@
       "autor": "Jorge Valencia",
       "evidencia_id": "E-COST-01",
       "ruta": "costos/Costos_auditables_Jorge_Valencia.xlsx",
-      "sha256": "9aa40e92ec859db217402ad94f941c0e6ceb58cf466e7fb3b79bc07811343cf6",
-      "bytes": 59773
+      "sha256": "f3c090e3961039eb9f330a88c0acf3309d5e43d150f7b9b8b21b55211a2005f8",
+      "bytes": 61129
     },
     {
       "autor": "Jorge Valencia",
@@ -893,6 +894,13 @@
       "ruta": "costos/desarrollo_estimado.csv",
       "sha256": "36fb1e19b39b304542a8b7c7cefe5f76f9499feac479df575d7f0335deb11b3f",
       "bytes": 20735
+    },
+    {
+      "autor": "Jorge Valencia",
+      "evidencia_id": "E-COST-01",
+      "ruta": "costos/Resumen_general_costos_Jorge_Valencia.png",
+      "sha256": "c6123af07ce79b8a6ade1d90d75f286a7ed736b1154bbbb75b11dc77ae2adb9a",
+      "bytes": 95625
     }
   ],
   "capturas_copiadas_sin_editar": [

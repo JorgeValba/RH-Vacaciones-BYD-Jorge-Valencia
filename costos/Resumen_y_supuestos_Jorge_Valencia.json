@@ -131,5 +131,19 @@
       "https://developers.openai.com/api/docs/models/gpt-5",
       "https://help.openai.com/en/articles/6950777-what-is-chatgpt-plus"
     ]
+  },
+  "tabla_presentacion": {
+    "autor": "Jorge Valencia",
+    "periodo": "Escenario un mes",
+    "moneda": "USD",
+    "total_estimado_desembolso_un_mes": "45.00",
+    "desembolso_identificado_reportado": "25.00",
+    "plus_referencia_atribuido": "20.00",
+    "n8n_reportado": "20.00",
+    "recarga_api_reportada": "5.00",
+    "elevenlabs_sin_pago_identificado_hipotesis_free": "0.00",
+    "equivalente_api_desarrollo_no_sumable": "1.37607250",
+    "es_factura_total_comprobada": false,
+    "imagen_derivada": "costos/Resumen_general_costos_Jorge_Valencia.png"
   }
 }

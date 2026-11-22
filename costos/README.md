@@ -11,11 +11,12 @@ Los CSV permiten filtrar y recalcular; los JSON conservan conciliaciones y supue
 
 | Archivo o carpeta | Formato | Qué contiene y qué hacer con él |
 |---|---|---|
-| [Costos_auditables_Jorge_Valencia.xlsx](Costos_auditables_Jorge_Valencia.xlsx) | Excel (.xlsx) | Siete hojas con registro, fórmulas auditables, casos/etapas, fuentes, pagos y proyecciones. Abrir primero Resumen. |
+| [Costos_auditables_Jorge_Valencia.xlsx](Costos_auditables_Jorge_Valencia.xlsx) | Excel (.xlsx) | Ocho hojas con registro, fórmulas auditables, casos/etapas, fuentes, pagos y proyecciones. Abrir primero Resumen. |
 | [tarifas.csv](tarifas.csv) | CSV UTF-8 (.csv) | Tarifas históricas GPT-5, referencias públicas de plataforma y mensualidad reportada, con fuente y fecha. |
 | [Conciliacion_costos_Jorge_Valencia.json](Conciliacion_costos_Jorge_Valencia.json) | JSON (.json) | Recalculo de 48 generaciones, cruce con trazas y costo incremental del loop. |
 | [costos.csv](costos.csv) | CSV UTF-8 (.csv) | Ledger de 144 registros: 135 de n8n y nueve sesiones de ElevenLabs, sin duplicar componentes. |
 | [verificar_desarrollo.py](verificar_desarrollo.py) | Python (.py) | Reproduce caracteres, deduplicación, hashes y costos estimados; solo biblioteca estándar, sin API ni escrituras. |
+| [Resumen_general_costos_Jorge_Valencia.png](Resumen_general_costos_Jorge_Valencia.png) | Imagen PNG | Tabla derivada de la hoja Presentación, lista para insertar en una diapositiva. No es una captura de ejecución. |
 | [desarrollo_estimado.csv](desarrollo_estimado.csv) | CSV UTF-8 (.csv) | Veinte unidades de desarrollo estimadas con todos los campos de registro, fuente y método; no son llamadas reales de API. |
 | [pagos_reportados.csv](pagos_reportados.csv) | CSV UTF-8 (.csv) | Recarga OpenAI y mensualidad n8n declaradas por el autor; separadas del consumo por llamada. |
 | [escenarios.csv](escenarios.csv) | CSV UTF-8 (.csv) | Seis proyecciones: base/mayor consumo a 100, 1,000 y 10,000 casos mensuales. |
@@ -98,6 +99,7 @@ La **página 10 de la Guía del estudiante** permite **costos.csv o costos.xlsx*
 
 | Hoja | Contenido y uso |
 |---|---|
+| Presentación | Tabla para diapositiva: presupuesto estimado de un mes USD 45 y desembolso reportado USD 25, diferenciados |
 | Resumen | Uso GPT-5/ElevenLabs, desembolso, promedio de tres aprobados, rechazo separado y alcance de optimización |
 | Desarrollo | Estimación por texto, supuestos editables, fórmula de la guía, agregación por etapa y referencia de suscripción Plus |
 | Casos y etapas | Trece folios y cuatro especialistas; agrupaciones calculadas desde Registro |
@@ -118,7 +120,7 @@ Los escenarios históricos ya seleccionan planes de voz de pago cuando sus minut
 
 **Inversión de construcción y operación:** las llamadas del escenario de demostración se clasifican como desarrollo/pruebas. El uso de IA para crear prompts, código y skills fuera de esas ejecuciones no se recuperó en los registros recibidos. Se presenta no disponible, separado del consumo medido y de los pagos. La recarga no reconstruye ese uso ni la mensualidad n8n acredita un costo completo del proyecto.
 
-**Validación realizada:** sumas y agrupaciones recalculadas, reconciliación con CSV, revisión de fórmulas sin errores de celda, prueba de cambio/restauración de la mensualidad y revisión visual de las siete hojas. El libro guardado conserva fórmulas y resultados calculados. Su edición nativa en Microsoft Excel no se ha ensayado desde este entorno. Para actualizar el corte, reemplazar de forma coherente los CSV y regenerar el libro; no editar un subtotal para forzar coincidencia.
+**Validación realizada:** sumas y agrupaciones recalculadas, reconciliación con CSV, revisión de fórmulas sin errores de celda, prueba de cambio/restauración de la mensualidad y revisión visual de las ocho hojas. El libro guardado conserva fórmulas y resultados calculados. Su edición nativa en Microsoft Excel no se ha ensayado desde este entorno. Para actualizar el corte, reemplazar de forma coherente los CSV y regenerar el libro; no editar un subtotal para forzar coincidencia.
 
 ## Estimación de prompts, skills y código con ChatGPT Plus
 
@@ -145,3 +147,18 @@ La entrada usa tarifa regular sin descuento como supuesto de comparación. Cach�
 **Campos de la estimación:** fecha_hora, caso_id, llamada_id, etapa, agente, proveedor, modelo_version (real no identificado y referencia explícita), tokens_entrada, tokens_salida, tokens_cache, duracion_voz_seg, unidad_cobro, tarifas, costo_equivalente_api_usd, moneda, estado, reintento y origen_dato. Se añaden caracteres, artefacto, fuente, hash, método, fuente/fecha de tarifa y tratamiento Plus. El registro medido costos.csv conserva sus 144 filas y no se mezcla con estas veinte estimaciones.
 
 Para verificar de forma independiente la estimación desde la raíz del repositorio: `python costos/verificar_desarrollo.py`. Debe devolver veinte unidades y USD 1.37607250; si cambia un artefacto, el hash o conteo deja de coincidir y el script se detiene, en lugar de presentar un resultado antiguo como actualizado.
+
+## Tabla para diapositiva: presupuesto de un mes
+
+La hoja Presentación enlaza las fuentes Pagos y Desarrollo mediante fórmulas. La imagen PNG es su exportación para compartir, no una nueva prueba del sistema. Elaborado por Jorge Valencia.
+
+| Concepto | USD | Base |
+|---|---:|---|
+| ChatGPT Plus | 20.00 | Referencia pública de un mes, atribución hipotética 100% al proyecto |
+| n8n | 20.00 | Mensualidad reportada por el autor |
+| OpenAI API | 5.00 | Recarga de saldo reportada; no costo de tokens consumidos |
+| ElevenLabs | 0.00 | Hipótesis Free y sin pago identificado; no significa uso cero |
+| Total estimado del proyecto para un mes | 45.00 | Presupuesto de demostración, no factura total comprobada |
+| Desembolso identificado reportado | 25.00 | Solo n8n y recarga API; Plus sigue como estimación de referencia |
+
+El equivalente de desarrollo USD 1.37607250 no se suma a los USD 45: el autor utilizó el uso incluido de Plus. La tabla aproxima financiación/desembolso de un mes, no un costo contable exacto de todo el historial. La parte no consumida de la recarga sigue siendo saldo; no se presenta como gasto íntegro de tokens. Para otro periodo cambiar meses/proporción en Desarrollo y regenerar la tabla.
