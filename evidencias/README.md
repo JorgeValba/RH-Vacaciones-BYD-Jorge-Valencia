@@ -43,7 +43,7 @@ Los registros son históricos, lecturas de configuración o ensayos aislados seg
 | P14, P13 / [E-P14-04](#e-p14-04) | Filtro por equipo | EQ-B produce KPI 1/0/0 y una fila con cobertura insuficiente. | [Ver respaldo](#e-p14-04) |
 | Apoyo / [E-CFG-01](#e-cfg-01) | Dominio y límite ElevenLabs | Main releída con hostname jorgevalba.github.io y max_tokens=1500. | [Ver respaldo](#e-cfg-01) |
 | Apoyo / [E-DAT-01](#e-dat-01) | Esquemas y muestra reproducible | Once tablas lógicas, seis CSV iniciales y manual de vinculación/configuración. | [Ver respaldo](#e-dat-01) |
-| P14 / [E-COST-01](#e-cost-01) | Proyecciones históricas y pagos reportados | Seis escenarios; recarga OpenAI USD 5 y mensualidad n8n USD 20, desembolso reportado USD 25 separado del uso. | [Ver respaldo](#e-cost-01) |
+| P14 / [E-COST-01](#e-cost-01) | Escenarios pagados y pagos reportados | Seis escenarios pagados con cuotas y extras; pagos reportados USD 25 separados del uso y de la proyección. | [Ver respaldo](#e-cost-01) |
 
 
 
@@ -413,7 +413,7 @@ Para el informe, citar el ID de la ficha y el enlace al archivo del commit de en
 
 ## E-COST-01
 
-**Proyecciones históricas y pagos reportados** · Hipótesis de volumen y actualización del autor
+**Escenarios pagados y pagos reportados** · Hipótesis de volumen y actualización del autor
 
 **Referencia:** guía páginas 9–10, tarifas, registros, plataformas y proyecciones.
 
@@ -424,7 +424,7 @@ Para el informe, citar el ID de la ficha y el enlace al archivo del commit de en
 **Archivos:**
 
 - [Pagos reportados](../costos/pagos_reportados.csv).
-- [Explicación y conciliación](../costos/README.md#hr-agent--byd-pagos-reportados-y-consumo).
+- [Explicación y conciliación](../costos/README.md#pagos-reportados-costo-y-caja).
 - [Supuestos y actualización](../costos/Resumen_y_supuestos_Jorge_Valencia.json).
 - [Escenarios históricos](../costos/escenarios.csv).
 
@@ -438,3 +438,5 @@ Para el informe, citar el ID de la ficha y el enlace al archivo del commit de en
 En el informe se puede citar «véase E-P04-01» y enlazar a esa ficha. El registro de archivos conserva SHA-256 del corte documental, no una certificación externa de fecha/autenticidad.
 
 Las trece capturas se distribuyen en [capturas/](capturas/README.md). Los JSON de P08–P10 son salidas compartidas por Jorge de ensayos aislados; no se presentan como un webhook duplicado real, una caída real del proveedor o una prueba concurrente.
+
+Tabla derivada del Excel para presentación: [escenarios mensuales](../costos/Escenarios_mensuales_presentacion_Jorge_Valencia.png), referencia E-COST-01. No es captura de ejecución.
