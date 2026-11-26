@@ -2,28 +2,18 @@
 
 Autor: Jorge Valencia.
 
-Grabación de respaldo del proyecto **HR Agent BYD**, aportada por Jorge Valencia y conservada íntegramente, sin recortes ni recompresión.
+## Ver el video
 
-## Descargar el video
+[Abrir el video de respaldo de HR Agent BYD en Google Drive](https://drive.google.com/file/d/13u5DkdUkjwXkar-f6KN1HYRr5VFiJW3I/view?usp=sharing).
 
-Abrir la [publicación «Video de Respaldo — Jorge Valencia» del mismo repositorio](https://github.com/JorgeValba/RH-Vacaciones-BYD-Jorge-Valencia/releases/tag/video-respaldo-20261126). En **Assets**, seleccionar **Video_respaldo_Jorge_Valencia.mp4** para descargar la grabación original.
+El enlace dirige a la grabación del proyecto compartida por Jorge Valencia en Google Drive. Permite abrir el reproductor del video y descargar el archivo si los permisos de Drive lo permiten.
 
-El enlace dirige a los archivos adjuntos de esa publicación de GitHub. El video se aloja allí porque su tamaño supera el límite de 100 MiB por archivo del historial Git. Esta carpeta es el punto de acceso al video.
+## Acceso y descarga del proyecto
 
-## Archivo y reproducción
+El video está alojado en Google Drive; esta carpeta conserva su enlace de acceso. El ZIP del repositorio incluye este README, pero no el archivo de video. Para disponer de una copia sin conexión, descargar el video por separado desde Drive.
 
-- Archivo publicado: `Video_respaldo_Jorge_Valencia.mp4`.
-- Nombre original: `Video examen Elda .mp4`.
-- Tamaño: 395 389 408 bytes (aproximadamente 395.4 MB).
-- Duración: 9 minutos y 48 segundos.
-- Formato: MP4, video HEVC/H.265 y audio AAC.
-- Resolución: 1072 × 820 píxeles.
-- SHA-256: `50869dc880fd805e42229eb6a8ce4910ca32a9f014094cec349cd18535ddbc26`.
+Si Drive solicita acceso, el propietario debe revisar los permisos del archivo para que la persona evaluadora pueda verlo.
 
-Descargar el MP4 y abrirlo con un reproductor compatible con HEVC/H.265. La vista previa en el navegador depende de la compatibilidad del dispositivo. No hace falta importar el archivo a n8n ni configurar credenciales para reproducirlo.
+## Alcance
 
-## Descarga del proyecto y alcance
-
-El ZIP automático del código incluye este README y su enlace, pero **no incluye el MP4 alojado como archivo adjunto de la publicación**. Para conservar el proyecto junto con su grabación, descargar ambos por separado.
-
-La grabación complementa los registros y el acceso funcional; no sustituye las pruebas reproducibles ni acredita por sí sola la disponibilidad actual de los servicios. Se conserva la duración original de 9:48; no se presenta como una versión recortada al intervalo de 5 a 8 minutos de la guía.
+La grabación complementa las evidencias y las instrucciones de reproducción del repositorio; no sustituye el acceso funcional al sistema.
